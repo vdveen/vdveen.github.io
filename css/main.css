@@ -28,7 +28,7 @@ a:hover {
 }
 h1 {
     border-top: 1px solid #556f91;
-    font-size: 3em;
+    font-size: 2.5em;
     font-family:'Trebuchet MS', Arial, sans-serif;
 }
 
@@ -58,5 +58,5 @@ ul.posts li {
 }
 
 div.blog-index {
-    border-left: 1px solid #556f91;
+    border-top: 1px solid #556f91;
 }
