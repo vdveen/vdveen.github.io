@@ -1,2 +1,4 @@
 name: veenspace
 markdown: kramdown
+gems:
+  - jekyll-sitemap
