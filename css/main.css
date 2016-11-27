@@ -62,3 +62,7 @@ ul.posts li {
 div.blog-index {
     border-top: 1px solid #556f91;
 }
+
+img.header {    
+    float: left;
+}
