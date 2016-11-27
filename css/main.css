@@ -7,7 +7,8 @@ nav ul {
     padding: 0px;
     color: #49668D;
     font-weight: bold;
-    width: 100px
+    width: 100px;
+    height: 60px:
 }
 
 footer ul {
@@ -19,7 +20,6 @@ footer ul {
 }
 nav ul li, footer ul li {
     display: inline;
-    list-style-position: inside;
     margin-right: 20px;
 }
 a {
@@ -38,7 +38,7 @@ h1 {
 
 h2 {
     border-left: 1px solid #556f91;
-    margin: 0 0 0 1em
+    margin-left: 10px;
     font-size: 2em;
     font-family:'Trebuchet MS', Arial, sans-serif;
 }
