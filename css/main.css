@@ -6,7 +6,7 @@ nav ul {
     font-family:'Trebuchet MS', Arial, sans-serif;
     padding: 0px;
     color: #49668D;
-    list-style: none;
+    list-style-position: inside;
     font-weight: bold;
     width: 100px
 }
