@@ -51,3 +51,9 @@ ul.posts {
 ul.posts li {
     list-style: none;
 }
+
+imgs {
+    display: block
+    margin-left: auto;
+    margin-right: auto;
+}
