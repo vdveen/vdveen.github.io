@@ -2,16 +2,12 @@ body {
     margin: 60px auto;
     width: 60%;
 }
-nav ul {
-    font-family:'Trebuchet MS', Arial, sans-serif;
-    padding: 0px;
-    color: #49668D;
-    font-weight: bold;
+nav {
     width: 100px;
     height: 60px:
 }
 
-footer ul {
+nav ul, footer ul {
     font-family:'Trebuchet MS', Arial, sans-serif;
     padding: 0px;
     color: #49668D;
@@ -37,7 +33,6 @@ h1 {
 }
 
 h2 {
-    border-left: 1px solid #556f91;
     margin-left: 10px;
     font-size: 2em;
     font-family:'Trebuchet MS', Arial, sans-serif;
@@ -62,6 +57,6 @@ ul.posts li {
     list-style: none;
 }
 
-imgs {
-    display: block
+div.blog-index {
+    border-left: 1px solid #556f91;
 }
