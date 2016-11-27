@@ -65,5 +65,5 @@ div.blog-index {
 }
 
 img.header {    
-    float: center;
+    display:inline-block;
 }
