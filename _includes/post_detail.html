@@ -1,10 +1,13 @@
+<!-- Include a post with its content. Respectively h2 title, URL to post in arrow, content. -->
+
 <h2 class="entry-title">
 {% if post.title %}
     {{ post.title }}
 {% endif %}
-</h2>
 
-<a href="{{ root_url }}{{ post.url }}">Go to post here</a>
+<a href="{{ root_url }}{{ post.url }}">➡</a>
+
+</h2>
 
 <div class="entry-content">{{ content }}</div>
 
