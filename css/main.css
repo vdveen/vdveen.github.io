@@ -3,7 +3,6 @@ body {
     width: 60%;
 }
 nav ul, footer ul {
-    /*font-family:'Helvetica', 'Arial', 'Sans-Serif';*/
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     padding: 0px;
     color: #49668D;
@@ -25,8 +24,13 @@ a:hover {
 h1 {
     font-size: 3em;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    /*font-family:'Times New Roman', Times, serif;*/
 }
+
+h2 {
+    font-size: 2em;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
 p {
     font-size: 1.5em;
     line-height: 1.4em;
