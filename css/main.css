@@ -15,18 +15,20 @@ nav ul li, footer ul li {
 }
 a {
     text-decoration: none;
-    color: #556f91;
+    color: #556f91; /* Slightly lighter variant of the veenspace dark blue*/
 }
 a:hover {
     text-decoration: underline;
     color: #49668D;
 }
 h1 {
+    border-top: 1px solid #556f91;
     font-size: 3em;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 h2 {
+    border-top: 1px solid #556f91;
     font-size: 2em;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
@@ -37,7 +39,7 @@ p {
     color: #333;
 }
 footer {
-    border-top: 1px solid #d5d5d5;
+    border-top: 1px solid #B3CDEA;
     font-size: .8em;
 }
 
