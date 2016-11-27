@@ -6,7 +6,6 @@ nav ul {
     font-family:'Trebuchet MS', Arial, sans-serif;
     padding: 0px;
     color: #49668D;
-    list-style-position: inside;
     font-weight: bold;
     width: 100px
 }
@@ -20,6 +19,7 @@ footer ul {
 }
 nav ul li, footer ul li {
     display: inline;
+    list-style-position: inside;
     margin-right: 20px;
 }
 a {
@@ -38,6 +38,7 @@ h1 {
 
 h2 {
     border-left: 1px solid #556f91;
+    margin-left: 10px
     font-size: 2em;
     font-family:'Trebuchet MS', Arial, sans-serif;
 }
