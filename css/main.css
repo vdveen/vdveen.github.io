@@ -4,7 +4,6 @@ body {
 }
 nav {
     width: 100px;
-    height: 60px;
 }
 
 nav ul, footer ul {
@@ -45,6 +44,10 @@ p {
 footer {
     border-top: 1px solid #B3CDEA;
     font-size: .8em;
+}
+
+ul {
+    list-style-position: inside;
 }
 
 ul.posts { 

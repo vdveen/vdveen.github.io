@@ -9,4 +9,4 @@ and rivers I couldn't resist visualizing it. The visualization is not intended a
 depiction (most of the canals are too small to be visible at this scale). Rather, I went for
 an intriguing visual that reveals spatial patterns.  
 
-<a data-flickr-embed="true" data-header="true"  href="https://www.flickr.com/photos/vdveen/30470188293/in/dateposted-public/" title="Waterways of North Holland"><img src="https://c2.staticflickr.com/6/5681/30470188293_56548c4d01_o.png" width="1624" height="2888" alt="Waterways of North Holland"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
+<a data-flickr-embed="true" data-header="true"  href="https://www.flickr.com/photos/vdveen/30470188293/in/dateposted-public/" title="Waterways of North Holland"><img src="https://c2.staticflickr.com/6/5681/30470188293_56548c4d01_o.png" width="203" height="361" alt="Waterways of North Holland"></a><script async src="//embedr.flickr.com/assets/client-code.js" charset="utf-8"></script>
