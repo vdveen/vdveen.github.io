@@ -1,15 +1,46 @@
----
-layout: default1
-title: Veenspace Test Page
----
-<!-- Opening text -->
-<div class="blurb">
-	<!-- <p> Welcome. </p> -->
-</div>
+<!DOCTYPE html>
+	<html>
+		<head>
+			<!-- link to main stylesheet -->
+			<link rel="stylesheet" type="text/css" href="css/normalize.css">
+			<link rel="stylesheet" type="text/css" href="css/skeleton.css">
+		</head>
 
-<!-- This part fetches the most recent post -->
-<div class="blog-index">  
-  {% assign post = site.posts.first %}
-  {% assign content = post.content %}
-	{% include post_detail.html %}
-</div>
+		<body>
+			<div class="container" style="text-align:center">
+				<div class="row" style="margin-top: 10%">
+					<img src="assets/veenspace.svg" width="20%" >
+					<hr></hr>
+					
+				</div>
+				
+				<div class="row">
+					<div class="four columns"> 
+						<img class="u-max-full-width" src="assets/antwerpen22.svg" style="border-radius: 100%; border:1px solid #E1E1E1"></img>
+						<h3> <a href = https://www.flickr.com/photos/vdveen/albums/72157633213147572> Subway Maps </a></h3>
+					</div>
+					<div class="four columns"> 
+						<img class="u-max-full-width" src="assets/cartography.png" style="border-radius: 100%; border:1px solid #E1E1E1"></img>
+						<h3> <a href = https://www.flickr.com/photos/vdveen/36866992111/in/dateposted-public/> Cartography </a></h3>
+					</div>
+					<div class="four columns"> 
+						<img class="u-max-full-width" src="assets/photography.png" style="border-radius: 100%; border:1px solid #E1E1E1"></img>
+						<h3> <a href = https://www.flickr.com/photos/vdveen/albums/72157633213147572> Photography </a></h3>
+					</div>
+				</div>
+
+				
+			<hr></hr>
+			<footer>
+	    		<ul>
+	        		<li>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></li>
+				</ul>
+			</footer>
+			</div>
+
+
+		</body>
+	
+	</html>
+
+	
