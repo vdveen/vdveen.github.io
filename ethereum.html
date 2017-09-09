@@ -1090,7 +1090,169 @@
 
 <body class='typora-export'>
   <div id='write' class='is-node'>
-    <p><img src='assets/Artboard%207.svg' alt='Artboard 7' /></p><h1><a name='header-n603' class='md-header-anchor '></a>Ethereum: A Visual Explanation</h1><h3><a name='header-n604' class='md-header-anchor '></a>What is Ethereum?</h3><p>When you try to find out what Ethereum really is, it doesn&#39;t take long to get lost in jargon and buzzwords.  It&#39;s uncensorable. It&#39;s decentralized. It&#39;s a blockchain. It&#39;s unregulated. It&#39;s secure. In one sentence, Ethereum is <em>a generalised protocol for decentralized, secure transaction-based state-changing virtual machines</em>.</p><p>If you&#39;re like me, you&#39;re now stuck with more questions than before. What are decentralized nodes? What is blockchain? How does it <em>look</em> like? Why should I care?</p><p>I decided to delve into books and papers on Ethereum to explain - in plain English and with illustration - how Ethereum <em>really</em> works. </p><p>But first: why does it matter?</p><h3><a name='header-n613' class='md-header-anchor '></a>The Big Picture</h3><p>There is a lot of hype around digital currencies like Bitcoin and Ethereum. This is in no small part because of the insane price rises over the last few years. In 2010, a Bitcoin enthusiast used 10,000 bitcoins to buy two pizzas. Seven years later, those pizzas are worth over <em>forty million dollars</em>. $40,000,000. (You can check the current pizza price <a href='https://twitter.com/bitcoin_pizza'>here</a>.)</p><p>The Ethereum currency, called Ether (and shortened to ETH) has also risen dramatically. So on the one hand, you have a bunch of speculators cheering this new technology on, hoping that it will continue to rise spectacularly. They don&#39;t need to understand how it works as long as the price continues to go up.</p><p>But on the other hand, you have people who believe that Ethereum could just be <strong><em>the biggest innovation in economics since the invention of money</em></strong>. </p><p>And yes, this has to do with all the buzzwords I mentioned. What makes Ethereum unlike anything before is that it is designed as a global, programmable computer with programmable money. It&#39;s not just a digital way to store value like Bitcoin is. </p><p>This global computer consists of thousands of individual computers connected to each other. All information is stored in what&#39;s called a blockchain. Each of those indivual computers has a copy of all the information, so if one computer fails it&#39;s not a big deal. </p><p><map illustration here></p><p>This global computer - called the Ethereum Virtual Machine - can be used to write agreements about anything of value, between anyone on the planet, in a transparent and secure way. It can be used to write apps that anyone can access and interact with. And it&#39;s not just limited to people - <em>computers</em> can interact with the Ethereum Virtual Machine as well. </p><p>These exchanges of value cannot be controlled by any individual, organization or government. Once something is on the blockchain it can&#39;t be changed on a whim.</p><p><strong><em>Ethereum can give everyone the power to exchange value, much like the Internet has given everyone the power to communicate.</em></strong> </p><p>Note the word &#39;can&#39;. Although Ethereum in its current state can do an awful lot already, it&#39;s still early and learning curves are still remarkably steep. With that in mind, what <em>is</em> Ethereum how does it really work?</p><p></p><h3><a name='header-n636' class='md-header-anchor '></a>Part One: What Does Ethereum Consist Of?</h3><p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re gonna start there. What happens when you transfer money to someone? Well, your account is reduced by some amount of money, and another account is increased by the exact same amount of money.</p><p>Regular banks keep a record of all transactions and use that to determine how much you have. Your balance is simply all money that went in minus all money that went out. To keep track of everyone&#39;s money, banks create a large, time-ordered list of transactions. Such a record of all transactions like that is called a <em>ledger</em> :</p><p></p><table><thead><tr><th></th><th>From</th><th>To</th><th>Value</th></tr></thead><tbody><tr><td>0001</td><td>Alice</td><td>Bob</td><td>2 Coins</td></tr><tr><td>0002</td><td>Carol</td><td>Dave</td><td>6 Coins</td></tr><tr><td>0003</td><td>...</td><td>...</td><td>...</td></tr></tbody></table><p></p><p>The blockchain is basically a digital version of a ledger. A block is nothing more than a few dozen transactions with some information about the block itself. Really, <a href='https://etherchain.org/block/4252446'>see for yourself.</a> Each block must say which block came before it - this is the <em>chain</em> part of blockchain. In other words, there is a chain of blocks from the very first block (aptly called the &#39;genesis block&#39;) to the current block. </p><p><blockchain illustration here></p><p>Every computer in the network store a copy of this blockchain locally. When a new block is successfully added to the chain, every computer updates their version of the blockchain with peer-to-peer filesharing.<br/></p><p>The above is true for both Bitcoin and Ethereum (and a bunch of other blockchains), but this is also where the differences begin. Ethereum stores not just transactions, but also <em>states</em>. A state is simply something that an object has and that can be changed. The <code>color</code> state of a traffic light might be <code>green</code>, but it might also be <code>red</code>. <code>color = green</code> and <code>color = red</code> are two different states. </p><p>Ethereum can store all kinds of states describing all kinds of real things, from monetary value and data files to your pet&#39;s name. If you have an Ethereum wallet, its balance is stored as a state (literally as <code>balance = ...</code>). This information is not stored in the blockchain, but in a separate state database. As you might expect, you use a transaction to reduce your balance and increase someone else&#39;s balance by the same amount. </p><p>But how do you create a state for your pet&#39;s name, and how do you change it? Here&#39;s the key: Ethereum transactions don&#39;t just change account balances. In Ethereum, a transaction can change <em>any</em> kind of state. If you - for some reason - have stored <code>petname =  Mr. Fluffalopolous</code> , you use a transaction to change that state to <code>petname = Mr. Fluffalopolous the Third</code>. </p><p>Note that you can&#39;t just change someone else&#39;s states - this isn&#39;t Wikipedia. There are rules about what you can and can&#39;t do with transactions. This is what people mean when they talk about the Ethereum <em>protocol.</em> A protocol is simply a bunch of rules about what is and isn&#39;t allowed. Some things just aren&#39;t allowed by the protocol. You can&#39;t send more money than you have, for example. The protocol leaves it up to you to decide who is allowed to change your pet&#39;s name. This is one of the freedoms you have when programming with Ethereum. </p><p>So if someone asks you what Ethereum <em>is</em>, you can now give them a good answer. Ethereum is a global mainframe computer. This computer runs on three main ingredients:</p><ol start='' ><li>States, which can be changed by</li><li>Transactions, which are governed by</li><li>The Ethereum Protocol</li></ol><p></p><h3><a name='header-n693' class='md-header-anchor '></a>Part 2. Decentralized Security</h3><p>So what makes it secure?</p><p></p><p></p><p></p><p></p><h2><a name='header-n698' class='md-header-anchor '></a>Notes</h2><p></p><ul><li><p>What makes a blockchain cool</p><ul><li>P2P</li><li>Asymmetric Cryptography</li><li>Crypto Hashing</li></ul></li><li><p>​</p></li></ul><p>Ether allows you to build an economic system in software. That&#39;s the promise. For whatever you like, and run it on the EVM. Ether is Turing complete and is based on states. </p><p>Those states make it different from regular web apps, who need to be constantly running and allowing connections. Once a state is in the blockchain, every node will know about said state change and querying is trivial. No cc, no payment API, accounts required. You can move money around faster than you can email someone. </p><p>Microtransactions are thus feasible. </p><p>Blocks can store dictionaries, so you can also store files, licenses, royalties, and what more. </p><p>Ether is more a cryprocommodity than a currency. You can use ETH to run programs in the EVM and pay for transactions, so it has intrinsic value and is not just a store of value like BTC.</p><p>No individual can create more Ether out of thin air, unlike central banks. </p><p></p><p>Decentralized; Secure; Generalized; Transaction Ledger</p><ul><li>A ledger is a method of keeping track of who has what. </li><li>It needs to be in balance. With regular banking systems, millions of dollars are required to keep this in balance; if not, you could create money out of thin air. </li><li>The Ethereum protocol disallows unbalances. It can rapidly check balances and validate transactions. </li><li>The blockchain is a bunch of data objects pointing to earlier data objects (genesis block being the first)</li><li>Eth is a network of computers</li><li>Each computer keeps a copy of the blockchain and runs any program that happens in there.</li><li>This is why it can be trusted. And it makes querying trivial</li><li>&quot;In Ethereum, it is fast and inexpensive (if not yet easy) to develop and deploy
+    <p><img src='assets/Artboard%207.svg' alt='Artboard 7' /></p>
+<h1>Ethereum: A Visual Explanation</h1>
+<h3>What is Ethereum?</h3>
+<p>When you try to find out what Ethereum really is, it doesn&#39;t take long to get lost in jargon and buzzwords.  It&#39;s uncensorable. It&#39;s decentralized. It&#39;s a blockchain. It&#39;s unregulated. It&#39;s secure. When you string all of those together, you could say that Ethereum is <code>a generalised protocol for decentralized, secure transaction-based state-changing virtual machines</code>.</p>
+<p>If you&#39;re like me, you&#39;re now stuck with more questions than before. What on earth is a &#39;decentralized virtual machine&#39;? What is a blockchain? How does it <em>look</em> like, and why is it secure? </p>
+<p>And most of all, why should I care?</p>
+<p>I decided to delve into books and papers on Ethereum to explain - in plain English - how Ethereum <em>really</em> works. </p>
+<p>Let&#39;s start with the <em>why</em> question. Why does Ethereum matter?</p>
+<h3>The Big Picture</h3>
+<p>There is a lot of hype around digital currencies like Bitcoin and Ethereum. This is in no small part because of the insane price rises over the last few years. In 2010, a Bitcoin enthusiast used 10,000 bitcoins to buy two pizzas. Seven years later, those pizzas are worth over <em>forty million dollars</em>. $40,000,000! (You can check the current pizza price <a href='https://twitter.com/bitcoin_pizza'>here</a>.)</p>
+<p>[img of pizza]</p>
+<p>The Ethereum currency, called Ether (and shortened to ETH) has also risen dramatically. So on the one hand, you have a bunch of speculators cheering this new technology on, hoping that it will continue to rise spectacularly. They don&#39;t need to understand how it works as long as the price continues to go up.</p>
+<p>But on the other hand, you have people who believe that Ethereum could just be <strong><em>the biggest innovation in economics since the invention of money</em></strong>. </p>
+<p>And yes, this has to do with all the buzzwords I mentioned. What makes Ethereum unlike anything before is that it is designed as a global, programmable computer with programmable money. It&#39;s not just a digital way to store value like Bitcoin is. </p>
+<p>This global computer consists of thousands of individual computers connected to each other. All information is stored in what&#39;s called a blockchain. Each of those indivual computers has a copy of all the information, so if one computer fails it&#39;s not a big deal. </p>
+<p>[img of global node network]</p>
+<p>This global computer - called the Ethereum Virtual Machine - can be used to write agreements about anything of value, between anyone on the planet, in a transparent and secure way. It can be used to write apps that anyone can access and interact with. And it&#39;s not just limited to people - <em>computers</em> can interact with the Ethereum Virtual Machine as well. </p>
+<p>These exchanges of value cannot be controlled by any individual, organization or government. Once something is on the blockchain it can&#39;t be changed on a whim. </p>
+<p><strong><em>Ethereum can give everyone the power to exchange value, much like the Internet has given everyone the power to communicate.</em></strong> </p>
+<p>Note the word &#39;can&#39; and &#39;could&#39;. Although Ethereum in its current state can do an awful lot already, development is ongoing and learning curves are remarkably steep. </p>
+<p>With that in mind, what is Ethereum made of that makes this all possible? </p>
+<p></p>
+<h3>Part One: Information</h3>
+<p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re gonna start there. What happens when you transfer money to someone? Well, your account is reduced by some amount of money, and another account is increased by the exact same amount of money.</p>
+<p>Regular banks keep a record of all transactions and use that to determine how much you have. Your balance is simply all money that went in minus all money that went out. To keep track of everyone&#39;s money, banks create a large, time-ordered list of transactions. Such a record of all transactions like that is called a <em>ledger</em> :</p>
+<p></p>
+<table>
+<thead>
+<tr><th></th><th>From</th><th>To</th><th>Value</th></tr></thead>
+<tbody><tr><td>0001</td><td>Alice</td><td>Bob</td><td>2 Coins</td></tr><tr><td>0002</td><td>Carol</td><td>Dave</td><td>6 Coins</td></tr><tr><td>0003</td><td>...</td><td>...</td><td>...</td></tr></tbody>
+</table>
+<p></p>
+<p>The blockchain is basically a digital ledger. A block is nothing more than a few dozen transactions with some information about the block itself. Really, <a href='https://etherchain.org/block/4252446'>see for yourself</a>. The information about itself is called the <em>header</em> of the block, and contains information like the block&#39;s number and who created it. </p>
+<p>[img of block]</p>
+<p></p>
+<p>Each block must say which block came before it - this is the <em>chain</em> part of blockchain. In other words, there is a chain of blocks from the first block (aptly called the &#39;genesis block&#39;) to the current block. </p>
+<p>[img of blockchain]</p>
+<p>Every computer in the network store a copy of this blockchain locally. When a new block is successfully added to the chain, every computer updates their version of the blockchain with peer-to-peer filesharing. <br/></p>
+<p>The above is true for both Bitcoin and Ethereum (and a bunch of other blockchains), but this is also where the differences begin. Ethereum stores not just transactions, but also <em>states</em>. A state is simply something that an object has and that can be changed. The <code>color</code> state of a traffic light might be <code>green</code>, but it might also be <code>red</code>. <code>color = green</code> and <code>color = red</code> are two different states. </p>
+<p>Ethereum can store all kinds of states describing all kinds of real things, from monetary value and data files to your pet&#39;s name. If you have an Ethereum wallet, its balance is stored as a state (literally as <code>balance = ...</code>). This information is not stored in the blockchain, but in a separate state database. As you might expect, you use a transaction to reduce your balance and increase someone else&#39;s balance by the same amount. </p>
+<p>But how do you create a state for your pet&#39;s name, and how do you change it? Here&#39;s the key: Ethereum transactions don&#39;t just change account balances. In Ethereum, a transaction can change <em>any</em> kind of state. If you - for some reason - have stored <code>petname =  Mr. Fluffalopolous</code> , you use a transaction to change that state to <code>petname = Mr. Fluffalopolous the Third</code>. </p>
+<p>Note that you can&#39;t just change someone else&#39;s states - this isn&#39;t Wikipedia. There are rules about what you can and can&#39;t do with transactions. This is what people mean when they talk about the Ethereum <em>protocol.</em> A protocol is simply a bunch of rules about what is and isn&#39;t allowed. </p>
+<p>Some things are never allowed by the protocol. You can&#39;t send more money than you have, for example. You also can&#39;t just create money out of thin air, or make it disappear. The Ethereum ledger balances itself because the protocol doesn&#39;t allow unbalanced transactions. </p>
+<p>It&#39;s not always so restrictive. The protocol leaves it up to you to decide who can and cannot change your pet&#39;s name. This is one of the freedoms you have when programming with Ethereum. </p>
+<p>So if someone asks you what Ethereum <em>is</em>, you can now give them a good answer. Ethereum is a global <a href='https://en.wikipedia.org/wiki/Mainframe_computer'>mainframe computer</a>.  This computer runs on three main ingredients:</p>
+<ol start='' ><li>
+States, which can be changed by...</li>
+<li>
+Transactions, which are governed by...</li>
+<li>
+The Ethereum Protocol</li>
+</ol>
+<p>Having a global computer is nice and all, but how do I know it&#39;s safe? How can I <em>trust</em> this computer to handle anything valuable? </p>
+<h3>Part 2. Decentralized Security</h3>
+<p></p>
+<p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does. The &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols to allow communication without anyone reading or tampering with it. </p>
+<p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This algorithm takes any kind of data as an input and changes that data in a specific way. For example, if I hash <code>veenspace</code> with the SHA-1 algorithm, the output is the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code>. (&#39;Hash&#39; is both a verb and a noun.)</p>
+<p>The algorithm has a bunch of important features. It&#39;s a one way algorithm: you can&#39;t retrieve the original words from the mess of letters and numbers that it outputs. It is deterministic: when you give it a specific input, it will always produce the same output. If <em>you</em> put <code>veenspace</code>  through SHA-1, for example <a href='http://www.sha1-online.com/'>here</a>, it will <em>always</em> give you <code>e4a192365543903d6015465069f262b7d707e5b6</code> . </p>
+<p>The output is also completely unique. Even the smallest change to the input will create an entirely different output. </p>
+<p>Imagine I gave you nothing more than a hash, and I instructed you to figure out what the original word is. How would you do that? As it turns out, the only way to do that is to guess. A <em>lot</em>. If you were to make ten million guessues each second on Ethereum&#39;s hashing algorithm, it would take on average 1,600 days or about 4,5 years to find the correct answer. </p>
+<p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. This guessing game is what&#39;s called <em>mining</em>, and it&#39;s a big part of what makes Ethereum so secure. As a reward, the computer that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain. </p>
+<p></p>
+<p>So why is this useful? Well, it allows you check if two things are the same with amazing speed. In Ethereum, hashes are </p>
+<p>Say you have the entire <a href='https://www.gutenberg.org/cache/epub/1661/pg1661.txt'>Adventures of Sherlock ebook</a> and hash it. The result is the &#39;hash&#39; <code>85ce3d0483d114fe67ee304c0d7522a31fa4e8a6</code>. I changed one word in there, hashed it again and it gave me the hash <code>08f0ee20fcffe7028787ee5232b9ae80de016857</code>. It doesn&#39;t take long to realize that those two hashes are not the same. However, if I gave you two copies of a book and asked you to check if every word and letter was exactly the same, you&#39;d spend the better part of a week checking and double-checking. </p>
+<p>Cool party trick, said no one ever. </p>
+<p></p>
+<ul><li>
+Consensus</li>
+<li>
+Cryptography</li>
+<li>
+Hashing -&gt; Validation</li>
+<li>
+Mining Algorithm</li>
+</ul>
+<p></p>
+<h2>Notes</h2>
+<p></p>
+<ul><li>
+<p>What makes a blockchain cool</p>
+<ul><li>
+P2P</li>
+<li>
+Asymmetric Cryptography</li>
+<li>
+Crypto Hashing</li>
+</ul>
+</li>
+<li>
+<p>​</p>
+</li>
+</ul>
+<p>Ether allows you to build an economic system in software. That&#39;s the promise. For whatever you like, and run it on the EVM. Ether is Turing complete and is based on states. </p>
+<p>Those states make it different from regular web apps, who need to be constantly running and allowing connections. Once a state is in the blockchain, every node will know about said state change and querying is trivial. No cc, no payment API, accounts required. You can move money around faster than you can email someone. </p>
+<p>Microtransactions are thus feasible. </p>
+<p>Blocks can store dictionaries, so you can also store files, licenses, royalties, and what more. </p>
+<p>Ether is more a cryprocommodity than a currency. You can use ETH to run programs in the EVM and pay for transactions, so it has intrinsic value and is not just a store of value like BTC.</p>
+<p>No individual can create more Ether out of thin air, unlike central banks. </p>
+<p></p>
+<p>Decentralized; Secure; Generalized; Transaction Ledger</p>
+<ul><li>
+A ledger is a method of keeping track of who has what. </li>
+<li>
+It needs to be in balance. With regular banking systems, millions of dollars are required to keep this in balance; if not, you could create money out of thin air. </li>
+<li>
+The Ethereum protocol disallows unbalances. It can rapidly check balances and validate transactions. </li>
+<li>
+The blockchain is a bunch of data objects pointing to earlier data objects (genesis block being the first)</li>
+<li>
+Eth is a network of computers</li>
+<li>
+Each computer keeps a copy of the blockchain and runs any program that happens in there.</li>
+<li>
+This is why it can be trusted. And it makes querying trivial</li>
+<li>
+&quot;In Ethereum, it is fast and inexpensive (if not yet easy) to develop and deploy
 unalterable, always-up, uncensorable applications that move real value over arbitrary
-distances.&quot;</li></ul><p>Yellow Paper:</p><ul><li><p>Ethereum provides the general technology to power transaction-based state machines</p></li><li><p>Why?</p><ul><li>To facilitate transactions that are not bound by geography, interface difficulty, incompatibility, incompetency, uncertainty, inconvenience or trust</li><li>It allows an incorruptible judgement to be made over things: &#39;the algorithmic enforcement of agreements&#39;</li><li>It allows complete transparancy and deterministic behaviour</li></ul></li><li><p>Blockchain, saywhaaat?</p><ul><li>Ethereum is a transaction-based state machine</li><li>Anything that can be represented by a computer can be put in the blockchain</li><li>Transactions are valid arcs between two states (emphasis on valid)</li><li>The Ethereum state transition function <em>is</em> the protocol. </li><li>Each block contains a header, a bunch of transactions and ommers (headers of blocks with the same parent). It does not contain all of the rest of the blockchain; instead, it hashes its parents header, which allows a tree of transactions to be figured out. </li></ul></li><li><p>States</p><ul><li>World State: this maps addresses (0x....) to account states (nonce, balance, storageRoot, codeHash. </li><li>Structure is a Merkle-Patricia trie. Its root depends on all internal data, so hashing the root means you have a unique result. This makes it safe and quick to validate. </li><li>The Merkle tree is a binary tree, meaning every branching node has 2 children. Its label is the hash of its two children, meaning that the root is a hash of everything that&#39;s in the entire tree. </li></ul></li><li><p>Consensus</p><ul><li>Reached by whichever block has the highest total heaviness, which is just [parent total difficulty] + [block difficulty]. For each block, the difficulty is calculated. So the heaviest block in this branch is the correct one. </li></ul></li></ul></div></body>
+distances.&quot;</li>
+</ul>
+<p>Yellow Paper:</p>
+<ul><li>
+<p>Ethereum provides the general technology to power transaction-based state machines</p>
+</li>
+<li>
+<p>Why?</p>
+<ul><li>
+To facilitate transactions that are not bound by geography, interface difficulty, incompatibility, incompetency, uncertainty, inconvenience or trust</li>
+<li>
+It allows an incorruptible judgement to be made over things: &#39;the algorithmic enforcement of agreements&#39;</li>
+<li>
+It allows complete transparancy and deterministic behaviour</li>
+</ul>
+</li>
+<li>
+<p>Blockchain, saywhaaat?</p>
+<ul><li>
+Ethereum is a transaction-based state machine</li>
+<li>
+Anything that can be represented by a computer can be put in the blockchain</li>
+<li>
+Transactions are valid arcs between two states (emphasis on valid)</li>
+<li>
+The Ethereum state transition function <em>is</em> the protocol. </li>
+<li>
+Each block contains a header, a bunch of transactions and ommers (headers of blocks with the same parent). It does not contain all of the rest of the blockchain; instead, it hashes its parents header, which allows a tree of transactions to be figured out. </li>
+</ul>
+</li>
+<li>
+<p>States</p>
+<ul><li>
+World State: this maps addresses (0x....) to account states (nonce, balance, storageRoot, codeHash. </li>
+<li>
+Structure is a Merkle-Patricia trie. Its root depends on all internal data, so hashing the root means you have a unique result. This makes it safe and quick to validate. </li>
+<li>
+The Merkle tree is a binary tree, meaning every branching node has 2 children. Its label is the hash of its two children, meaning that the root is a hash of everything that&#39;s in the entire tree. </li>
+</ul>
+</li>
+<li>
+<p>Consensus</p>
+<ul><li>
+Reached by whichever block has the highest total heaviness, which is just [parent total difficulty] + [block difficulty]. For each block, the difficulty is calculated. So the heaviest block in this branch is the correct one. </li>
+</ul>
+</li>
+</ul>
+</body>
 </html>
