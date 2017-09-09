@@ -1,1258 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 
 <head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width initial-scale=1'>
-  <title>Ethereum A Visual Explanation.md</title>
-  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext'
-    rel='stylesheet' type='text/css' />
-  <style type='text/css'>
-    html {
-      overflow-x: initial !important;
-    }
-
-    html {
-      font-size: 14px;
-      background-color: rgb(255, 255, 255);
-      color: rgb(51, 51, 51);
-    }
-
-    body {
-      margin: 0px;
-      padding: 0px;
-      height: auto;
-      bottom: 0px;
-      top: 0px;
-      left: 0px;
-      right: 0px;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      font-size: 1rem;
-      line-height: 1.42857;
-      overflow-x: hidden;
-      background: inherit;
-    }
-
-    a:active,
-    a:hover {
-      outline: 0px;
-    }
-
-    .in-text-selection,
-     ::selection {
-      background: rgb(181, 214, 252);
-      text-shadow: none;
-    }
-
-    #write {
-      margin: 0px auto;
-      height: auto;
-      width: inherit;
-      word-break: normal;
-      word-wrap: break-word;
-      position: relative;
-      padding-bottom: 70px;
-      white-space: pre-wrap;
-      overflow-x: visible;
-    }
-
-    .for-image #write {
-      padding-left: 8px;
-      padding-right: 8px;
-    }
-
-    body.typora-export {
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-
-    @media screen and (max-width: 500px) {
-      body.typora-export {
-        padding-left: 0px;
-        padding-right: 0px;
-      }
-      .CodeMirror-sizer {
-        margin-left: 0px !important;
-      }
-      .CodeMirror-gutters {
-        display: none !important;
-      }
-    }
-
-    .typora-export #write {
-      margin: 0px auto;
-    }
-
-    #write>p:first-child,
-    #write>ul:first-child,
-    #write>ol:first-child,
-    #write>pre:first-child,
-    #write>blockquote:first-child,
-    #write>div:first-child,
-    #write>table:first-child {
-      margin-top: 30px;
-    }
-
-    #write li>table:first-child {
-      margin-top: -20px;
-    }
-
-    img {
-      max-width: 100%;
-      vertical-align: middle;
-    }
-
-    input,
-    button,
-    select,
-    textarea {
-      color: inherit;
-      font-style: inherit;
-      font-variant: inherit;
-      font-weight: inherit;
-      font-stretch: inherit;
-      font-size: inherit;
-      line-height: inherit;
-      font-family: inherit;
-    }
-
-    input[type="checkbox"],
-    input[type="radio"] {
-      line-height: normal;
-      padding: 0px;
-    }
-
-    ::before,
-     ::after,
-    * {
-      box-sizing: border-box;
-    }
-
-    #write p,
-    #write h1,
-    #write h2,
-    #write h3,
-    #write h4,
-    #write h5,
-    #write h6,
-    #write div,
-    #write pre {
-      width: inherit;
-    }
-
-    #write p,
-    #write h1,
-    #write h2,
-    #write h3,
-    #write h4,
-    #write h5,
-    #write h6 {
-      position: relative;
-    }
-
-    h1 {
-      font-size: 2rem;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-    }
-
-    h3 {
-      font-size: 1.6rem;
-    }
-
-    h4 {
-      font-size: 1.4rem;
-    }
-
-    h5 {
-      font-size: 1.2rem;
-    }
-
-    h6 {
-      font-size: 1rem;
-    }
-
-    p {
-      -webkit-margin-before: 1rem;
-      -webkit-margin-after: 1rem;
-      -webkit-margin-start: 0px;
-      -webkit-margin-end: 0px;
-    }
-
-    .mathjax-block {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      -webkit-margin-before: 0rem;
-      -webkit-margin-after: 0rem;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .md-blockmeta {
-      color: rgb(204, 204, 204);
-      font-weight: bold;
-      font-style: italic;
-    }
-
-    a {
-      cursor: pointer;
-    }
-
-    sup.md-footnote {
-      padding: 2px 4px;
-      background-color: rgba(238, 238, 238, 0.701961);
-      color: rgb(85, 85, 85);
-      border-radius: 4px;
-    }
-
-    #write input[type="checkbox"] {
-      cursor: pointer;
-      width: inherit;
-      height: inherit;
-      margin: 4px 0px 0px;
-    }
-
-    tr {
-      break-inside: avoid;
-      break-after: auto;
-    }
-
-    thead {
-      display: table-header-group;
-    }
-
-    table {
-      border-collapse: collapse;
-      border-spacing: 0px;
-      width: 100%;
-      overflow: auto;
-      break-inside: auto;
-      text-align: left;
-    }
-
-    table.md-table td {
-      min-width: 80px;
-    }
-
-    .CodeMirror-gutters {
-      border-right: 0px;
-      background-color: inherit;
-    }
-
-    .CodeMirror {
-      text-align: left;
-    }
-
-    .CodeMirror-placeholder {
-      opacity: 0.3;
-    }
-
-    .CodeMirror pre {
-      padding: 0px 4px;
-    }
-
-    .CodeMirror-lines {
-      padding: 0px;
-    }
-
-    div.hr:focus {
-      cursor: none;
-    }
-
-    pre {
-      white-space: pre-wrap;
-    }
-
-    .CodeMirror-gutters {
-      margin-right: 4px;
-    }
-
-    .md-fences {
-      font-size: 0.9rem;
-      display: block;
-      break-inside: avoid;
-      text-align: left;
-      overflow: visible;
-      white-space: pre;
-      background: inherit;
-      position: relative !important;
-    }
-
-    .md-diagram-panel {
-      width: 100%;
-      margin-top: 10px;
-      text-align: center;
-      padding-top: 0px;
-      padding-bottom: 8px;
-      overflow-x: auto;
-    }
-
-    .md-fences .CodeMirror.CodeMirror-wrap {
-      top: -1.6em;
-      margin-bottom: -1.6em;
-    }
-
-    .md-fences.mock-cm {
-      white-space: pre-wrap;
-    }
-
-    .show-fences-line-number .md-fences {
-      padding-left: 0px;
-    }
-
-    .show-fences-line-number .md-fences.mock-cm {
-      padding-left: 40px;
-    }
-
-    .footnotes {
-      opacity: 0.8;
-      font-size: 0.9rem;
-      padding-top: 1em;
-      padding-bottom: 1em;
-    }
-
-    .footnotes+.footnotes {
-      margin-top: -1em;
-    }
-
-    .md-reset {
-      margin: 0px;
-      padding: 0px;
-      border: 0px;
-      outline: 0px;
-      vertical-align: top;
-      background: transparent;
-      text-decoration: none;
-      text-shadow: none;
-      float: none;
-      position: static;
-      width: auto;
-      height: auto;
-      white-space: nowrap;
-      cursor: inherit;
-      -webkit-tap-highlight-color: transparent;
-      line-height: normal;
-      font-weight: normal;
-      text-align: left;
-      box-sizing: content-box;
-      direction: ltr;
-    }
-
-    li div {
-      padding-top: 0px;
-    }
-
-    blockquote {
-      margin: 1rem 0px;
-    }
-
-    li p,
-    li .mathjax-block {
-      margin: 0.5rem 0px;
-    }
-
-    li {
-      margin: 0px;
-      position: relative;
-    }
-
-    blockquote> :last-child {
-      margin-bottom: 0px;
-    }
-
-    blockquote> :first-child {
-      margin-top: 0px;
-    }
-
-    .footnotes-area {
-      color: rgb(136, 136, 136);
-      margin-top: 0.714rem;
-      padding-bottom: 0.143rem;
-    }
-
-    @media print {
-      html,
-      body {
-        height: 100%;
-      }
-      .typora-export * {
-        -webkit-print-color-adjust: exact;
-      }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5,
-      h6 {
-        break-after: avoid-page;
-        orphans: 2;
-      }
-      p {
-        orphans: 4;
-      }
-      html.blink-to-pdf {
-        font-size: 13px;
-      }
-      .typora-export #write {
-        padding-left: 1cm;
-        padding-right: 1cm;
-      }
-      .typora-export #write::after {
-        height: 0px;
-      }
-      @page {
-        margin: 20mm 0mm;
-      }
-    }
-
-    .footnote-line {
-      margin-top: 0.714em;
-      font-size: 0.7em;
-    }
-
-    a img,
-    img a {
-      cursor: pointer;
-    }
-
-    pre.md-meta-block {
-      font-size: 0.8rem;
-      min-height: 2.86rem;
-      white-space: pre-wrap;
-      background: rgb(204, 204, 204);
-      display: block;
-      overflow-x: hidden;
-    }
-
-    p .md-image:only-child {
-      display: inline-block;
-      width: 100%;
-      text-align: center;
-    }
-
-    #write .MathJax_Display {
-      margin: 0.8em 0px 0px;
-    }
-
-    .mathjax-block {
-      white-space: pre;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    p+.mathjax-block {
-      margin-top: -1.143rem;
-    }
-
-    .mathjax-block:not(:empty)::after {
-      display: none;
-    }
-
-    [contenteditable="true"]:active,
-    [contenteditable="true"]:focus {
-      outline: none;
-      box-shadow: none;
-    }
-
-    .task-list {
-      list-style-type: none;
-    }
-
-    .task-list-item {
-      position: relative;
-      padding-left: 1em;
-    }
-
-    .task-list-item input {
-      position: absolute;
-      top: 0px;
-      left: 0px;
-    }
-
-    .math {
-      font-size: 1rem;
-    }
-
-    .md-toc {
-      min-height: 3.58rem;
-      position: relative;
-      font-size: 0.9rem;
-      border-radius: 10px;
-    }
-
-    .md-toc-content {
-      position: relative;
-      margin-left: 0px;
-    }
-
-    .md-toc::after,
-    .md-toc-content::after {
-      display: none;
-    }
-
-    .md-toc-item {
-      display: block;
-      color: rgb(65, 131, 196);
-      text-decoration: none;
-    }
-
-    .md-toc-inner:hover {}
-
-    .md-toc-inner {
-      display: inline-block;
-      cursor: pointer;
-    }
-
-    .md-toc-h1 .md-toc-inner {
-      margin-left: 0px;
-      font-weight: bold;
-    }
-
-    .md-toc-h2 .md-toc-inner {
-      margin-left: 2em;
-    }
-
-    .md-toc-h3 .md-toc-inner {
-      margin-left: 4em;
-    }
-
-    .md-toc-h4 .md-toc-inner {
-      margin-left: 6em;
-    }
-
-    .md-toc-h5 .md-toc-inner {
-      margin-left: 8em;
-    }
-
-    .md-toc-h6 .md-toc-inner {
-      margin-left: 10em;
-    }
-
-    @media screen and (max-width: 48em) {
-      .md-toc-h3 .md-toc-inner {
-        margin-left: 3.5em;
-      }
-      .md-toc-h4 .md-toc-inner {
-        margin-left: 5em;
-      }
-      .md-toc-h5 .md-toc-inner {
-        margin-left: 6.5em;
-      }
-      .md-toc-h6 .md-toc-inner {
-        margin-left: 8em;
-      }
-    }
-
-    a.md-toc-inner {
-      font-size: inherit;
-      font-style: inherit;
-      font-weight: inherit;
-      line-height: inherit;
-    }
-
-    .footnote-line a:not(.reversefootnote) {
-      color: inherit;
-    }
-
-    .md-attr {
-      display: none;
-    }
-
-    .md-fn-count::after {
-      content: ".";
-    }
-
-    .md-tag {
-      opacity: 0.5;
-    }
-
-    .md-comment {
-      color: rgb(162, 127, 3);
-      opacity: 0.8;
-      font-family: monospace;
-    }
-
-    code {
-      text-align: left;
-    }
-
-    h1 .md-tag,
-    h2 .md-tag,
-    h3 .md-tag,
-    h4 .md-tag,
-    h5 .md-tag,
-    h6 .md-tag {
-      font-weight: initial;
-      opacity: 0.35;
-    }
-
-    a.md-print-anchor {
-      border-width: initial !important;
-      border-style: none !important;
-      border-color: initial !important;
-      display: inline-block !important;
-      position: absolute !important;
-      width: 1px !important;
-      right: 0px !important;
-      outline: none !important;
-      background: transparent !important;
-      text-decoration: initial !important;
-      text-shadow: initial !important;
-    }
-
-    .md-inline-math .MathJax_SVG .noError {
-      display: none !important;
-    }
-
-    .mathjax-block .MathJax_SVG_Display {
-      text-align: center;
-      margin: 1em 0em;
-      position: relative;
-      text-indent: 0px;
-      max-width: none;
-      max-height: none;
-      min-height: 0px;
-      min-width: 100%;
-      width: auto;
-      display: block !important;
-    }
-
-    .MathJax_SVG_Display,
-    .md-inline-math .MathJax_SVG_Display {
-      width: auto;
-      margin: inherit;
-      display: inline-block !important;
-    }
-
-    .MathJax_SVG .MJX-monospace {
-      font-family: monospace;
-    }
-
-    .MathJax_SVG .MJX-sans-serif {
-      font-family: sans-serif;
-    }
-
-    .MathJax_SVG {
-      display: inline;
-      font-style: normal;
-      font-weight: normal;
-      line-height: normal;
-      zoom: 90%;
-      text-indent: 0px;
-      text-align: left;
-      text-transform: none;
-      letter-spacing: normal;
-      word-spacing: normal;
-      word-wrap: normal;
-      white-space: nowrap;
-      float: none;
-      direction: ltr;
-      max-width: none;
-      max-height: none;
-      min-width: 0px;
-      min-height: 0px;
-      border: 0px;
-      padding: 0px;
-      margin: 0px;
-    }
-
-    .MathJax_SVG * {
-      transition: none;
-    }
-
-
-    @font-face {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: normal;
-      src: local("Open Sans Regular"), url("./github/400.woff") format("woff");
-    }
-
-    @font-face {
-      font-family: "Open Sans";
-      font-style: italic;
-      font-weight: normal;
-      src: local("Open Sans Italic"), url("./github/400i.woff") format("woff");
-    }
-
-    @font-face {
-      font-family: "Open Sans";
-      font-style: normal;
-      font-weight: bold;
-      src: local("Open Sans Bold"), url("./github/700.woff") format("woff");
-    }
-
-    @font-face {
-      font-family: "Open Sans";
-      font-style: italic;
-      font-weight: bold;
-      src: local("Open Sans Bold Italic"), url("./github/700i.woff") format("woff");
-    }
-
-    html {
-      font-size: 16px;
-    }
-
-    body {
-      font-family: "Open Sans", "Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-      color: rgb(51, 51, 51);
-      line-height: 1.6;
-    }
-
-    #write {
-      max-width: 860px;
-      margin: 0px auto;
-      padding: 20px 30px 100px;
-    }
-
-    #write>ul:first-child,
-    #write>ol:first-child {
-      margin-top: 30px;
-    }
-
-    body> :first-child {
-      margin-top: 0px !important;
-    }
-
-    body> :last-child {
-      margin-bottom: 0px !important;
-    }
-
-    a {
-      color: rgb(65, 131, 196);
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      position: relative;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      font-weight: bold;
-      line-height: 1.4;
-      cursor: text;
-    }
-
-    h1:hover a.anchor,
-    h2:hover a.anchor,
-    h3:hover a.anchor,
-    h4:hover a.anchor,
-    h5:hover a.anchor,
-    h6:hover a.anchor {
-      text-decoration: none;
-    }
-
-    h1 tt,
-    h1 code {
-      font-size: inherit;
-    }
-
-    h2 tt,
-    h2 code {
-      font-size: inherit;
-    }
-
-    h3 tt,
-    h3 code {
-      font-size: inherit;
-    }
-
-    h4 tt,
-    h4 code {
-      font-size: inherit;
-    }
-
-    h5 tt,
-    h5 code {
-      font-size: inherit;
-    }
-
-    h6 tt,
-    h6 code {
-      font-size: inherit;
-    }
-
-    h1 {
-      padding-bottom: 0.3em;
-      font-size: 2.25em;
-      line-height: 1.2;
-      border-bottom: 1px solid rgb(238, 238, 238);
-    }
-
-    h2 {
-      padding-bottom: 0.3em;
-      font-size: 1.75em;
-      line-height: 1.225;
-      border-bottom: 1px solid rgb(238, 238, 238);
-    }
-
-    h3 {
-      font-size: 1.5em;
-      line-height: 1.43;
-    }
-
-    h4 {
-      font-size: 1.25em;
-    }
-
-    h5 {
-      font-size: 1em;
-    }
-
-    h6 {
-      font-size: 1em;
-      color: rgb(119, 119, 119);
-    }
-
-    p,
-    blockquote,
-    ul,
-    ol,
-    dl,
-    table {
-      margin: 0.8em 0px;
-    }
-
-    li>ol,
-    li>ul {
-      margin: 0px;
-    }
-
-    hr {
-      height: 4px;
-      padding: 0px;
-      margin: 16px 0px;
-      background-color: rgb(231, 231, 231);
-      border-width: 0px 0px 1px;
-      border-style: none none solid;
-      border-top-color: initial;
-      border-right-color: initial;
-      border-left-color: initial;
-      border-image: initial;
-      overflow: hidden;
-      box-sizing: content-box;
-      border-bottom-color: rgb(221, 221, 221);
-    }
-
-    body>h2:first-child {
-      margin-top: 0px;
-      padding-top: 0px;
-    }
-
-    body>h1:first-child {
-      margin-top: 0px;
-      padding-top: 0px;
-    }
-
-    body>h1:first-child+h2 {
-      margin-top: 0px;
-      padding-top: 0px;
-    }
-
-    body>h3:first-child,
-    body>h4:first-child,
-    body>h5:first-child,
-    body>h6:first-child {
-      margin-top: 0px;
-      padding-top: 0px;
-    }
-
-    a:first-child h1,
-    a:first-child h2,
-    a:first-child h3,
-    a:first-child h4,
-    a:first-child h5,
-    a:first-child h6 {
-      margin-top: 0px;
-      padding-top: 0px;
-    }
-
-    h1 p,
-    h2 p,
-    h3 p,
-    h4 p,
-    h5 p,
-    h6 p {
-      margin-top: 0px;
-    }
-
-    li p.first {
-      display: inline-block;
-    }
-
-    ul,
-    ol {
-      padding-left: 30px;
-    }
-
-    ul:first-child,
-    ol:first-child {
-      margin-top: 0px;
-    }
-
-    ul:last-child,
-    ol:last-child {
-      margin-bottom: 0px;
-    }
-
-    blockquote {
-      border-left: 4px solid rgb(221, 221, 221);
-      padding: 0px 15px;
-      color: rgb(119, 119, 119);
-    }
-
-    blockquote blockquote {
-      padding-right: 0px;
-    }
-
-    table {
-      padding: 0px;
-      word-break: initial;
-    }
-
-    table tr {
-      border-top: 1px solid rgb(204, 204, 204);
-      background-color: white;
-      margin: 0px;
-      padding: 0px;
-    }
-
-    table tr:nth-child(2n) {
-      background-color: rgb(248, 248, 248);
-    }
-
-    table tr th {
-      font-weight: bold;
-      border: 1px solid rgb(204, 204, 204);
-      text-align: left;
-      margin: 0px;
-      padding: 6px 13px;
-    }
-
-    table tr td {
-      border: 1px solid rgb(204, 204, 204);
-      text-align: left;
-      margin: 0px;
-      padding: 6px 13px;
-    }
-
-    table tr th:first-child,
-    table tr td:first-child {
-      margin-top: 0px;
-    }
-
-    table tr th:last-child,
-    table tr td:last-child {
-      margin-bottom: 0px;
-    }
-
-    .CodeMirror-gutters {
-      border-right: 1px solid rgb(221, 221, 221);
-    }
-
-    .md-fences,
-    code,
-    tt {
-      border: 1px solid rgb(221, 221, 221);
-      background-color: rgb(248, 248, 248);
-      border-radius: 3px;
-      font-family: Consolas, "Liberation Mono", Courier, monospace;
-      padding: 2px 4px 0px;
-      font-size: 0.9em;
-    }
-
-    .md-fences {
-      margin-bottom: 15px;
-      margin-top: 15px;
-      padding: 8px 1em 6px;
-    }
-
-    .task-list {
-      padding-left: 0px;
-    }
-
-    .task-list-item {
-      padding-left: 32px;
-    }
-
-    .task-list-item input {
-      top: 3px;
-      left: 8px;
-    }
-
-    @media screen and (min-width: 914px) {}
-
-    @media print {
-      html {
-        font-size: 13px;
-      }
-      table,
-      pre {
-        break-inside: avoid;
-      }
-      pre {
-        word-wrap: break-word;
-      }
-    }
-
-    .md-fences {
-      background-color: rgb(248, 248, 248);
-    }
-
-    #write pre.md-meta-block {
-      padding: 1rem;
-      font-size: 85%;
-      line-height: 1.45;
-      background-color: rgb(247, 247, 247);
-      border: 0px;
-      border-radius: 3px;
-      color: rgb(119, 119, 119);
-      margin-top: 0px !important;
-    }
-
-    .mathjax-block>.code-tooltip {
-      bottom: 0.375rem;
-    }
-
-    #write>h3.md-focus::before {
-      left: -1.5625rem;
-      top: 0.375rem;
-    }
-
-    #write>h4.md-focus::before {
-      left: -1.5625rem;
-      top: 0.285714rem;
-    }
-
-    #write>h5.md-focus::before {
-      left: -1.5625rem;
-      top: 0.285714rem;
-    }
-
-    #write>h6.md-focus::before {
-      left: -1.5625rem;
-      top: 0.285714rem;
-    }
-
-    .md-image>.md-meta {
-      border: 1px solid rgb(221, 221, 221);
-      border-radius: 3px;
-      font-family: Consolas, "Liberation Mono", Courier, monospace;
-      padding: 2px 4px 0px;
-      font-size: 0.9em;
-      color: inherit;
-    }
-
-    .md-tag {
-      color: inherit;
-    }
-
-    .md-toc {
-      margin-top: 20px;
-      padding-bottom: 20px;
-    }
-
-    #typora-quick-open {
-      border: 1px solid rgb(221, 221, 221);
-      background-color: rgb(248, 248, 248);
-    }
-
-    #typora-quick-open-item {
-      background-color: rgb(250, 250, 250);
-      border-color: rgb(254, 254, 254) rgb(229, 229, 229) rgb(229, 229, 229) rgb(238, 238, 238);
-      border-style: solid;
-      border-width: 1px;
-    }
-
-    #md-notification::before {
-      top: 10px;
-    }
-
-    .on-focus-mode blockquote {
-      border-left-color: rgba(85, 85, 85, 0.117647);
-    }
-
-    header,
-    .context-menu,
-    .megamenu-content,
-    footer {
-      font-family: "Segoe UI", Arial, sans-serif;
-    }
-  </style>
+  <!-- link to main stylesheet -->
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="css/main2.css">
+  <link href="https://fonts.googleapis.com/css?family=Lusitana:400,700|Roboto+Slab" rel="stylesheet">
 </head>
 
-<body class='typora-export'>
-  <div id='write' class='is-node'>
-    <p><img src='assets/Artboard%207.svg' alt='Artboard 7' /></p>
-<h1>Ethereum: A Visual Explanation</h1>
-<h3>What is Ethereum?</h3>
-<p>When you try to find out what Ethereum really is, it doesn&#39;t take long to get lost in jargon and buzzwords.  It&#39;s uncensorable. It&#39;s decentralized. It&#39;s a blockchain. It&#39;s unregulated. It&#39;s secure. When you string all of those together, you could say that Ethereum is <code>a generalised protocol for decentralized, secure transaction-based state-changing virtual machines</code>.</p>
-<p>If you&#39;re like me, you&#39;re now stuck with more questions than before. What on earth is a &#39;decentralized virtual machine&#39;? What is a blockchain? How does it <em>look</em> like, and why is it secure? </p>
-<p>And most of all, why should I care?</p>
-<p>I decided to delve into books and papers on Ethereum to explain - in plain English - how Ethereum <em>really</em> works. </p>
-<p>Let&#39;s start with the <em>why</em> question. Why does Ethereum matter?</p>
-<h3>The Big Picture</h3>
-<p>There is a lot of hype around digital currencies like Bitcoin and Ethereum. This is in no small part because of the insane price rises over the last few years. In 2010, a Bitcoin enthusiast used 10,000 bitcoins to buy two pizzas. Seven years later, those pizzas are worth over <em>forty million dollars</em>. $40,000,000! (You can check the current pizza price <a href='https://twitter.com/bitcoin_pizza'>here</a>.)</p>
-<p>[img of pizza]</p>
-<p>The Ethereum currency, called Ether (and shortened to ETH) has also risen dramatically. So on the one hand, you have a bunch of speculators cheering this new technology on, hoping that it will continue to rise spectacularly. They don&#39;t need to understand how it works as long as the price continues to go up.</p>
-<p>But on the other hand, you have people who believe that Ethereum could just be <strong><em>the biggest innovation in economics since the invention of money</em></strong>. </p>
-<p>And yes, this has to do with all the buzzwords I mentioned. What makes Ethereum unlike anything before is that it is designed as a global, programmable computer with programmable money. It&#39;s not just a digital way to store value like Bitcoin is. </p>
-<p>This global computer consists of thousands of individual computers connected to each other. All information is stored in what&#39;s called a blockchain. Each of those indivual computers has a copy of all the information, so if one computer fails it&#39;s not a big deal. </p>
-<p>[img of global node network]</p>
-<p>This global computer - called the Ethereum Virtual Machine - can be used to write agreements about anything of value, between anyone on the planet, in a transparent and secure way. It can be used to write apps that anyone can access and interact with. And it&#39;s not just limited to people - <em>computers</em> can interact with the Ethereum Virtual Machine as well. </p>
-<p>These exchanges of value cannot be controlled by any individual, organization or government. Once something is on the blockchain it can&#39;t be changed on a whim. </p>
-<p><strong><em>Ethereum can give everyone the power to exchange value, much like the Internet has given everyone the power to communicate.</em></strong> </p>
-<p>Note the word &#39;can&#39; and &#39;could&#39;. Although Ethereum in its current state can do an awful lot already, development is ongoing and learning curves are remarkably steep. </p>
-<p>With that in mind, what is Ethereum made of that makes this all possible? </p>
-<p></p>
-<h3>Part One: Information</h3>
-<p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re gonna start there. What happens when you transfer money to someone? Well, your account is reduced by some amount of money, and another account is increased by the exact same amount of money.</p>
-<p>Regular banks keep a record of all transactions and use that to determine how much you have. Your balance is simply all money that went in minus all money that went out. To keep track of everyone&#39;s money, banks create a large, time-ordered list of transactions. Such a record of all transactions like that is called a <em>ledger</em> :</p>
-<p></p>
-<table>
-<thead>
-<tr><th></th><th>From</th><th>To</th><th>Value</th></tr></thead>
-<tbody><tr><td>0001</td><td>Alice</td><td>Bob</td><td>2 Coins</td></tr><tr><td>0002</td><td>Carol</td><td>Dave</td><td>6 Coins</td></tr><tr><td>0003</td><td>...</td><td>...</td><td>...</td></tr></tbody>
-</table>
-<p></p>
-<p>The blockchain is basically a digital ledger. A block is nothing more than a few dozen transactions with some information about the block itself. Really, <a href='https://etherchain.org/block/4252446'>see for yourself</a>. The information about itself is called the <em>header</em> of the block, and contains information like the block&#39;s number and who created it. </p>
-<p>[img of block]</p>
-<p></p>
-<p>Each block must say which block came before it - this is the <em>chain</em> part of blockchain. In other words, there is a chain of blocks from the first block (aptly called the &#39;genesis block&#39;) to the current block. </p>
-<p>[img of blockchain]</p>
-<p>Every computer in the network store a copy of this blockchain locally. When a new block is successfully added to the chain, every computer updates their version of the blockchain with peer-to-peer filesharing. <br/></p>
-<p>The above is true for both Bitcoin and Ethereum (and a bunch of other blockchains), but this is also where the differences begin. Ethereum stores not just transactions, but also <em>states</em>. A state is simply something that an object has and that can be changed. The <code>color</code> state of a traffic light might be <code>green</code>, but it might also be <code>red</code>. <code>color = green</code> and <code>color = red</code> are two different states. </p>
-<p>Ethereum can store all kinds of states describing all kinds of real things, from monetary value and data files to your pet&#39;s name. If you have an Ethereum wallet, its balance is stored as a state (literally as <code>balance = ...</code>). This information is not stored in the blockchain, but in a separate state database. As you might expect, you use a transaction to reduce your balance and increase someone else&#39;s balance by the same amount. </p>
-<p>But how do you create a state for your pet&#39;s name, and how do you change it? Here&#39;s the key: Ethereum transactions don&#39;t just change account balances. In Ethereum, a transaction can change <em>any</em> kind of state. If you - for some reason - have stored <code>petname =  Mr. Fluffalopolous</code> , you use a transaction to change that state to <code>petname = Mr. Fluffalopolous the Third</code>. </p>
-<p>Note that you can&#39;t just change someone else&#39;s states - this isn&#39;t Wikipedia. There are rules about what you can and can&#39;t do with transactions. This is what people mean when they talk about the Ethereum <em>protocol.</em> A protocol is simply a bunch of rules about what is and isn&#39;t allowed. </p>
-<p>Some things are never allowed by the protocol. You can&#39;t send more money than you have, for example. You also can&#39;t just create money out of thin air, or make it disappear. The Ethereum ledger balances itself because the protocol doesn&#39;t allow unbalanced transactions. </p>
-<p>It&#39;s not always so restrictive. The protocol leaves it up to you to decide who can and cannot change your pet&#39;s name. This is one of the freedoms you have when programming with Ethereum. </p>
-<p>So if someone asks you what Ethereum <em>is</em>, you can now give them a good answer. Ethereum is a global <a href='https://en.wikipedia.org/wiki/Mainframe_computer'>mainframe computer</a>.  This computer runs on three main ingredients:</p>
-<ol start='' ><li>
-States, which can be changed by...</li>
-<li>
-Transactions, which are governed by...</li>
-<li>
-The Ethereum Protocol</li>
-</ol>
-<p>Having a global computer is nice and all, but how do I know it&#39;s safe? How can I <em>trust</em> this computer to handle anything valuable? </p>
-<h3>Part 2. Decentralized Security</h3>
-<p></p>
-<p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does. The &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols to allow communication without anyone reading or tampering with it. </p>
-<p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This algorithm takes any kind of data as an input and changes that data in a specific way. For example, if I hash <code>veenspace</code> with the SHA-1 algorithm, the output is the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code>. (&#39;Hash&#39; is both a verb and a noun.)</p>
-<p>The algorithm has a bunch of important features. It&#39;s a one way algorithm: you can&#39;t retrieve the original words from the mess of letters and numbers that it outputs. It is deterministic: when you give it a specific input, it will always produce the same output. If <em>you</em> put <code>veenspace</code>  through SHA-1, for example <a href='http://www.sha1-online.com/'>here</a>, it will <em>always</em> give you <code>e4a192365543903d6015465069f262b7d707e5b6</code> . </p>
-<p>The output is also completely unique. Even the smallest change to the input will create an entirely different output. </p>
-<p>Imagine I gave you nothing more than a hash, and I instructed you to figure out what the original word is. How would you do that? As it turns out, the only way to do that is to guess. A <em>lot</em>. If you were to make ten million guessues each second on Ethereum&#39;s hashing algorithm, it would take on average 1,600 days or about 4,5 years to find the correct answer. </p>
-<p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. This guessing game is what&#39;s called <em>mining</em>, and it&#39;s a big part of what makes Ethereum so secure. As a reward, the computer that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain. </p>
-<p></p>
-<p>So why is this useful? Well, it allows you check if two things are the same with amazing speed. In Ethereum, hashes are </p>
-<p>Say you have the entire <a href='https://www.gutenberg.org/cache/epub/1661/pg1661.txt'>Adventures of Sherlock ebook</a> and hash it. The result is the &#39;hash&#39; <code>85ce3d0483d114fe67ee304c0d7522a31fa4e8a6</code>. I changed one word in there, hashed it again and it gave me the hash <code>08f0ee20fcffe7028787ee5232b9ae80de016857</code>. It doesn&#39;t take long to realize that those two hashes are not the same. However, if I gave you two copies of a book and asked you to check if every word and letter was exactly the same, you&#39;d spend the better part of a week checking and double-checking. </p>
-<p>Cool party trick, said no one ever. </p>
-<p></p>
-<ul><li>
-Consensus</li>
-<li>
-Cryptography</li>
-<li>
-Hashing -&gt; Validation</li>
-<li>
-Mining Algorithm</li>
-</ul>
-<p></p>
-<h2>Notes</h2>
-<p></p>
-<ul><li>
-<p>What makes a blockchain cool</p>
-<ul><li>
-P2P</li>
-<li>
-Asymmetric Cryptography</li>
-<li>
-Crypto Hashing</li>
-</ul>
-</li>
-<li>
-<p>​</p>
-</li>
-</ul>
-<p>Ether allows you to build an economic system in software. That&#39;s the promise. For whatever you like, and run it on the EVM. Ether is Turing complete and is based on states. </p>
-<p>Those states make it different from regular web apps, who need to be constantly running and allowing connections. Once a state is in the blockchain, every node will know about said state change and querying is trivial. No cc, no payment API, accounts required. You can move money around faster than you can email someone. </p>
-<p>Microtransactions are thus feasible. </p>
-<p>Blocks can store dictionaries, so you can also store files, licenses, royalties, and what more. </p>
-<p>Ether is more a cryprocommodity than a currency. You can use ETH to run programs in the EVM and pay for transactions, so it has intrinsic value and is not just a store of value like BTC.</p>
-<p>No individual can create more Ether out of thin air, unlike central banks. </p>
-<p></p>
-<p>Decentralized; Secure; Generalized; Transaction Ledger</p>
-<ul><li>
-A ledger is a method of keeping track of who has what. </li>
-<li>
-It needs to be in balance. With regular banking systems, millions of dollars are required to keep this in balance; if not, you could create money out of thin air. </li>
-<li>
-The Ethereum protocol disallows unbalances. It can rapidly check balances and validate transactions. </li>
-<li>
-The blockchain is a bunch of data objects pointing to earlier data objects (genesis block being the first)</li>
-<li>
-Eth is a network of computers</li>
-<li>
-Each computer keeps a copy of the blockchain and runs any program that happens in there.</li>
-<li>
-This is why it can be trusted. And it makes querying trivial</li>
-<li>
-&quot;In Ethereum, it is fast and inexpensive (if not yet easy) to develop and deploy
-unalterable, always-up, uncensorable applications that move real value over arbitrary
-distances.&quot;</li>
-</ul>
-<p>Yellow Paper:</p>
-<ul><li>
-<p>Ethereum provides the general technology to power transaction-based state machines</p>
-</li>
-<li>
-<p>Why?</p>
-<ul><li>
-To facilitate transactions that are not bound by geography, interface difficulty, incompatibility, incompetency, uncertainty, inconvenience or trust</li>
-<li>
-It allows an incorruptible judgement to be made over things: &#39;the algorithmic enforcement of agreements&#39;</li>
-<li>
-It allows complete transparancy and deterministic behaviour</li>
-</ul>
-</li>
-<li>
-<p>Blockchain, saywhaaat?</p>
-<ul><li>
-Ethereum is a transaction-based state machine</li>
-<li>
-Anything that can be represented by a computer can be put in the blockchain</li>
-<li>
-Transactions are valid arcs between two states (emphasis on valid)</li>
-<li>
-The Ethereum state transition function <em>is</em> the protocol. </li>
-<li>
-Each block contains a header, a bunch of transactions and ommers (headers of blocks with the same parent). It does not contain all of the rest of the blockchain; instead, it hashes its parents header, which allows a tree of transactions to be figured out. </li>
-</ul>
-</li>
-<li>
-<p>States</p>
-<ul><li>
-World State: this maps addresses (0x....) to account states (nonce, balance, storageRoot, codeHash. </li>
-<li>
-Structure is a Merkle-Patricia trie. Its root depends on all internal data, so hashing the root means you have a unique result. This makes it safe and quick to validate. </li>
-<li>
-The Merkle tree is a binary tree, meaning every branching node has 2 children. Its label is the hash of its two children, meaning that the root is a hash of everything that&#39;s in the entire tree. </li>
-</ul>
-</li>
-<li>
-<p>Consensus</p>
-<ul><li>
-Reached by whichever block has the highest total heaviness, which is just [parent total difficulty] + [block difficulty]. For each block, the difficulty is calculated. So the heaviest block in this branch is the correct one. </li>
-</ul>
-</li>
-</ul>
+<body>
+  <div class="container">
+    <div class="row" style="margin-top: 5%; text-align:center">
+      <img src="assets/veenspace.svg" style="max-width: 150px"></img>
+      <hr></hr>
+    </div>
+
+
+    <div class="row" style="text-align:center">
+      <img src="assets/ethvisuallogo.svg" style="max-width: 50%"></img>
+    </div>
+
+    <div class="row" style="margin-top: 5%; text-align:center">
+      <h1 class="ethtitle">Ethereum: A Visual Explanation</h1>
+    </div>
+
+    <div class="row">
+      <p>It doesn&#39;t take long to get lost in technical jargon and buzzwords when you try to find out what Ethereum really
+        is. It&#39;s uncensorable. It&#39;s decentralized. It&#39;s a blockchain. It&#39;s unregulated. It&#39;s secure.
+        If you string all of those together, you could say that Ethereum is "a generalised protocol for decentralized, secure
+        transaction-based state-changing virtual machines."</p>
+
+      <p>If you&#39;re like me, you&#39;re now stuck with more questions than before. What on earth is a &#39;decentralized
+        virtual machine&#39;? What is a blockchain? How does it <em>look</em> like, and why is it secure? </p>
+
+      <p>And most of all, why should I care?</p>
+
+      <p>I decided to delve into books and papers on Ethereum to explain - in plain English - how Ethereum <em>really</em> works.
+        Let&#39;s start with the <em>why</em> question. Why does Ethereum matter?</p>
+
+      <hr> </hr>
+      <h3 class="ethtitle">The Big Picture</h3>
+
+      <p>There is a lot of hype around digital currencies like Bitcoin and Ethereum. This is in no small part because of the
+        insane price rises over the last few years. In 2010, a Bitcoin enthusiast used 10,000 bitcoins to buy two pizzas.
+        Seven years later, those pizzas are worth over <em>forty million dollars</em>. </p>
+    </div>
+
+    <div class="row" style="text-align:center">
+      <img src="assets/ethregret.svg" style="max-width: 80%"></img>
+      <h6><em>You can check the current pizza price <a href='https://twitter.com/bitcoin_pizza'>here</a>.</em></h6>
+    </div>
+
+    <div class="row" style="margin-top: 5%">
+      <p>The Ethereum currency, called Ether (and shortened to ETH or &#926; ) has also risen dramatically, from under a dollar
+        in early 2015 to more than $300 as of writing. So on the one hand, you have a bunch of speculators cheering this
+        new technology on, hoping that it will continue to rise spectacularly. They don&#39;t need to understand how it works
+        as long as the price continues to go up.</p>
+      <p>But on the other hand, you have people who believe that Ethereum could just be <strong><em>the biggest innovation in economics since the invention of money</em></strong>.
+      </p>
+      <p>And yes, this has to do with all the buzzwords I mentioned. What makes Ethereum unlike anything before is that it is
+        designed as a global, programmable computer with programmable money. It&#39;s not just a digital way to store value
+        like Bitcoin is. </p>
+      <p>This global computer consists of thousands of individual computers connected to each other. These computers work together
+        as if they&#39;re one single, robust machine. Every computer has a copy of all the information so if one computer
+        fails it&#39;s not a big deal. </p>
+      <p>[img of global node network]</p>
+      <p>This global computer - called the Ethereum Virtual Machine - can be used to write agreements about anything of value,
+        between anyone on the planet, in a transparent and secure way. It can be used to write apps that anyone can access
+        and interact with. And it&#39;s not just limited to people - <em>computers</em> can interact with the Ethereum Virtual
+        Machine as well. </p>
+      <p>These exchanges of value cannot be controlled by any individual, organization or government. Once something is on the
+        blockchain it can&#39;t be changed on a whim. </p>
+      <p><strong><em>Ethereum can give everyone the power to exchange value, much like the Internet has given everyone the power to communicate.</em></strong>        </p>
+      <p>Note the word &#39;can&#39; and &#39;could&#39;. Although Ethereum in its current state can do an awful lot already,
+        development is ongoing and learning curves are remarkably steep. </p>
+      <p>With that in mind, what is Ethereum made of that makes this all possible? </p>
+      <p></p>
+      <h3><a name='header-n36' class='md-header-anchor '></a>Part One: Information</h3>
+      <p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re gonna start there. What happens
+        when you transfer money to someone? Well, your account is reduced by some amount of money, and another account is
+        increased by the exact same amount of money.</p>
+      <p>Regular banks keep a record of all transactions and use that to determine how much you have. Your balance is simply
+        all money that went in minus all money that went out. To keep track of everyone&#39;s money, banks create a large,
+        time-ordered list of transactions. Such a record of all transactions like that is called a <em>ledger</em> :</p>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>From</th>
+          <th>To</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0001</td>
+          <td>Alice</td>
+          <td>Bob</td>
+          <td>2 Coins</td>
+        </tr>
+        <tr>
+          <td>0002</td>
+          <td>Carol</td>
+          <td>Dave</td>
+          <td>6 Coins</td>
+        </tr>
+        <tr>
+          <td>0003</td>
+          <td>...</td>
+          <td>...</td>
+          <td>...</td>
+        </tr>
+      </tbody>
+    </table>
+    <p></p>
+    <p>The blockchain is basically a digital ledger. A block is nothing more than a few dozen transactions with some information
+      about the block itself. Really, <a href='https://etherchain.org/block/4252446'>see for yourself</a>. The information
+      about itself is called the <em>header</em> of the block, and contains information like the block&#39;s number and who
+      created it. </p>
+    <p>[img of block]</p>
+    <p></p>
+    <p>Each block must say which block came before it - this is the <em>chain</em> part of blockchain. In other words, there
+      is a chain of blocks from the first block (aptly called the &#39;genesis block&#39;) to the current block. </p>
+    <p>[img of blockchain]</p>
+    <p>Every computer in the network store a copy of this blockchain locally. When a new block is successfully added to the
+      chain, every computer updates their version of the blockchain with peer-to-peer filesharing. <br/></p>
+    <p>The above is true for both Bitcoin and Ethereum (and a bunch of other blockchains), but this is also where the differences
+      begin. Ethereum stores not just transactions, but also <em>states</em>. A state is simply something that an object
+      has and that can be changed. The <code>color</code> state of a traffic light might be <code>green</code>, but it might
+      also be <code>red</code>. <code>color = green</code> and <code>color = red</code> are two different states. </p>
+    <p>Ethereum can store all kinds of states describing all kinds of real things, from monetary value and data files to your
+      pet&#39;s name. If you have an Ethereum wallet, its balance is stored as a state (literally as <code>balance = ...</code>).
+      This information is not stored in the blockchain, but in a separate state database. As you might expect, you use a
+      transaction to reduce your balance and increase someone else&#39;s balance by the same amount. </p>
+    <p>But how do you create a state for your pet&#39;s name, and how do you change it? Here&#39;s the key: Ethereum transactions
+      don&#39;t just change account balances. In Ethereum, a transaction can change <em>any</em> kind of state. If you -
+      for some reason - have stored <code>petname =  Mr. Fluffalopolous</code> , you use a transaction to change that state
+      to <code>petname = Mr. Fluffalopolous the Third</code>. </p>
+    <p>Note that you can&#39;t just change someone else&#39;s states - this isn&#39;t Wikipedia. There are rules about what
+      you can and can&#39;t do with transactions. This is what people mean when they talk about the Ethereum <em>protocol.</em>      A protocol is simply a bunch of rules about what is and isn&#39;t allowed. </p>
+    <p>Some things are never allowed by the protocol. You can&#39;t send more money than you have, for example. You also can&#39;t
+      just create money out of thin air, or make it disappear. The Ethereum ledger balances itself because the protocol doesn&#39;t
+      allow unbalanced transactions. </p>
+    <p>It&#39;s not always so restrictive. The protocol leaves it up to you to decide who can and cannot change your pet&#39;s
+      name. This is one of the freedoms you have when programming with Ethereum. </p>
+    <p>So if someone asks you what Ethereum <em>is</em>, you can now give them a good answer. <strong>Ethereum is a global <a href='https://en.wikipedia.org/wiki/Mainframe_computer'>mainframe</a> computer.</strong>      This computer runs on three main ingredients:</p>
+    <ol start=''>
+      <li>States, which can be changed by...</li>
+      <li>Transactions, which are governed by...</li>
+      <li>The Ethereum Protocol</li>
+    </ol>
+    <p>Having a global computer is nice and all, but how do I know it&#39;s safe? What makes Ethereum so secure?</p>
+    <p></p>
+    <h3><a name='header-n95' class='md-header-anchor '></a>Part 2. Decentralized Security</h3>
+    <p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does. The
+      &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols
+      to allow communication without anyone reading or tampering with it. </p>
+    <p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This algorithm
+      takes any kind of data as an input and changes that data in a specific way. For example, if I hash
+      <code>veenspace</code> with the SHA-1 algorithm, the output is the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code>.
+      (&#39;Hash&#39; is both a verb and a noun.) </p>
+    <p>You can picture hashing as a cryptographic blender. Put any kind of data in, blend it for a fixed amount of time and
+      the result is a blended - &#39;hashed&#39; - bunch of letters and numbers. </p>
+    <p>It&#39;s not just any blender though. It blends one way only: you can&#39;t retrieve the original words from the mess
+      of letters and numbers. The blender always blends the same way: when you give it a specific input, it will always produce
+      the same output. If you put <code>veenspace</code> through SHA-1, which you can do <a href='http://www.sha1-online.com/'>here</a>,
+      it will <em>always</em> give you the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code> . </p>
+    <p>Most importantly, even the smallest change to the input will create a different output. Take, for example, the entire
+      <a href='https://www.gutenberg.org/cache/epub/1661/pg1661.txt'>Adventures of Sherlock</a>. If you hash the entire book,
+      the result is <code>85ce3d0483d114fe67ee304c0d7522a31fa4e8a6</code>. Now I changed one word in there, hashed the entire
+      book agian and the result is <code>08f0ee20fcffe7028787ee5232b9ae80de016857</code>. Note how pretty much every part
+      of this second hash is a completely different letter or number than the first. </p>
+    <p>You might think that&#39;s the lamest party trick ever (and you wouldn&#39;t be wrong) but it&#39;s the key to Ethereum&#39;s
+      security. Each block in the blockchain contains a hash of all previous states and all previous transactions. So if
+      some supervillain wanted to &#39;rewrite history&#39; in the blockchain, changing just a single digit somewhere would
+      be instantly noticable <em>because the hashes would be completely different</em>.<br/></p>
+    <p></p>
+    <hr />
+    <p></p>
+    <p>I said that there was no way to reverse the blender, which is not <em>entirely</em> true. You can try and guess what
+      the original input was, and see if the hash you end up is the same. How many guesses? More than you think. If you were
+      to make ten million guesses each second on Ethereum&#39;s hashing algorithm, it would still take - on average - 1,600
+      days or about 4,5 years to find the correct answer. </p>
+    <p>How hard is it? Well, imagine picking a random Canadian, and having them pick another random Canadian. Now guess which
+      pair of people are the correct ones by asking all 36,000,000 Canadians about all 36,000,000 other Canadians, one by
+      one. That&#39;s roughly how hard it is to guess. </p>
+    <p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. <em>This guessing game is what&#39;s called mining</em>.
+      Because all computers in the network are guessing at random the winner is also random. As a reward, the computer that
+      is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain. This computer
+      - the &#39;miner&#39; - is also awarded 5 ETH for their hard work. </p>
+    <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in the
+      network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain, they also
+      validate each transaction in the block and validate your guess. </p>
+    <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it should
+      spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when all you have
+      is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally be done in less than
+      0.1 seconds. </p>
+    <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly is
+      your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore the protocol
+      and create Ether out of thin air, you would need to have the majority of the network in your own hands. Such an attack
+      - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable at all. </p>
+
+  </div>
+
+
+
+  <hr></hr>
+  <footer>
+    <ul>
+      <li>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></li>
+    </ul>
+  </footer>
+  </div>
+
+
 </body>
+
 </html>

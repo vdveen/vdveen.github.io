@@ -1,0 +1,13 @@
+
+h1, h2, h3, h4 {font-family: 'Lusitana', serif; }
+
+.ethtitle { color: #0E5F99;  text-align:center;}
+.hometitle { font-family: 'Lusitana', serif;}
+
+a {
+    text-decoration: none;
+    color: #49668D;
+}
+a:hover {
+    text-decoration: underline;
+}   
