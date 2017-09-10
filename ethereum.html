@@ -293,9 +293,12 @@
           a reasonable timeframe if they download the most recent block.</p>
 
         <p>If you don&#39;t mine on the most recent block, it will take hundreds of thousands of years to guess the entire input.
-          But if you do, it should take a single computer only 4,5 years to guess correctly. As more computers join the network
-          the difficulty of this guessing game goes up to keep the winners 15 seconds apart (on average). This gives everyone
-          the time to download and validate the latest block. </p>
+          But if you do, you know most of the input already and solving it can be done in months, not millennia. And when
+          you have 25,000 nodes, the guess time becomes 15 seconds on average. </p>
+
+        <p>That 15 second time - also called the 'block time' - is intentional. As more computers join the network, the <code>some number</code>          
+          part is made longer to keep the winners 15 seconds apart . This gives everyone the time to download and validate
+          the latest block. </p>
 
         <p>Because all computers in the network are guessing at random the winner is also random. As a reward, the computer
           that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain.
