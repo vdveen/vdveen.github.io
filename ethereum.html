@@ -117,9 +117,10 @@
       <div class="six columns">
         <p>Regular banks keep a record of all transactions and use that to determine how much you have. Your balance is simply
           all money that went in minus all money that went out.</p>
+
         <p>Such a record of all transactions orderd chronologically is called a <em>ledger</em>. The blockchain is basically
-          a digital ledger. Each block in the chain is nothing more than a few dozen transactions with some information about the block itself.
-            Really, <a href='https://etherchain.org/block/4252446'>see for yourself</a>.</p>
+          a digital ledger. Each block in the chain is nothing more than a few dozen transactions with some information about
+          the block itself. Really, <a href='https://etherchain.org/block/4252446'>see for yourself</a>.</p>
       </div>
 
       <div class="one columns">
@@ -171,6 +172,7 @@
       <p> The information about itself is called the <em>header</em> of the block, and contains information like the block&#39;s
         number and who created it. It also contains technical stuff like the difficulty, hashes (more on that later) and
         the gas limit.</p>
+
       <p>Each block must say which block came before it - this is the <em>chain</em> part of blockchain. There is a chain of
         blocks from the first block (aptly called the &#39;genesis block&#39;) to the current block. </p>
     </div>
@@ -180,17 +182,19 @@
     <div class="row" style="margin-top: 5%">
       <div class="twelve columns">
         <p>Every computer in the network store a copy of this blockchain locally. When a new block is successfully added to
-          the chain, every computer updates their version of the blockchain with peer-to-peer filesharing. <br/></p>
+          the chain, every computer updates their version of the blockchain with peer-to-peer filesharing.</p>
+
         <p>The above is true for both Bitcoin and Ethereum (and a bunch of other blockchains), but this is also where similarities
           end and differences begin. Ethereum stores not just transactions, but also <em>states</em>. A state is simply something
           that an object has and that can be changed. The <code>color</code> state of a traffic light might be <code>green</code>,
           but it might also be <code>red</code>. <code>color = green</code> and <code>color = red</code> are two different
-          states of one object.
-        </p>
+          states of one object.</p>
+
         <p>Ethereum can store all kinds of states describing all kinds of real things, from monetary value and data files to
           your pet&#39;s name. If you have an Ethereum wallet, its balance is stored as a state (literally as <code>balance = ...</code>).
           This information is not stored in the blockchain, but in a separate state database. As you might expect, you use
           a transaction to reduce your balance and increase someone else&#39;s balance by the same amount. </p>
+
         <p>But how do you create a state for your pet&#39;s name, and how do you change it? Here&#39;s the key: Ethereum transactions
           don&#39;t just change account balances. In Ethereum, a transaction can change <em>any</em> kind of state. If you
           - for some reason - have stored <code>petname =  Mr. Fluffalopolous</code> , you use a transaction to change that
@@ -200,9 +204,9 @@
     </div>
     <div class="row" style="text-align:center">
       <img src="assets/ethcat.svg" style="max-width: 80%"></img>
-      <h6><em>Schrödinger's Block is when your cat simultaneously does and doesn't have value.</em></h6>
-      
+      <h6><em>Schrödinger&#39;s Block is when your cat is and isn&#39;t worthless simultaneously.</em></h6>
     </div>
+
     <div class="row">
       <div class="twelve columns">
         <p>Note that you can&#39;t just change someone else&#39;s states - this isn&#39;t Wikipedia. There are rules about what
@@ -219,69 +223,90 @@
           <li>The Ethereum Protocol</li>
         </ol>
         <p>Having a global computer is nice and all, but how do I know it&#39;s safe? What makes Ethereum so secure?</p>
+
+        <hr> </hr>
+        <h3 class="ethtitle">The Ethereum Blender</h3>
+
+        <p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does.
+          The &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols
+          to allow communication without anyone reading or tampering with it. </p>
+
+        <p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This
+          algorithm takes any kind of data as an input and changes that data in a specific way. For example, if I hash
+          <code>veenspace</code> with the SHA-1 algorithm, the output is the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code>.
+          (&#39;Hash&#39; is both a verb and a noun.) </p>
       </div>
     </div>
-    <p></p>
-    <h3><a name='header-n95' class='md-header-anchor '></a>Part 2. Decentralized Security</h3>
-    <p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does. The
-      &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols
-      to allow communication without anyone reading or tampering with it. </p>
-    <p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This algorithm
-      takes any kind of data as an input and changes that data in a specific way. For example, if I hash
-      <code>veenspace</code> with the SHA-1 algorithm, the output is the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code>.
-      (&#39;Hash&#39; is both a verb and a noun.) </p>
-    <p>You can picture hashing as a cryptographic blender. Put any kind of data in, blend it for a fixed amount of time and
-      the result is a blended - &#39;hashed&#39; - bunch of letters and numbers. </p>
-    <p>It&#39;s not just any blender though. It blends one way only: you can&#39;t retrieve the original words from the mess
-      of letters and numbers. The blender always blends the same way: when you give it a specific input, it will always produce
-      the same output. If you put <code>veenspace</code> through SHA-1, which you can do <a href='http://www.sha1-online.com/'>here</a>,
-      it will <em>always</em> give you the hash <code>e4a192365543903d6015465069f262b7d707e5b6</code> . </p>
-    <p>Most importantly, even the smallest change to the input will create a different output. Take, for example, the entire
-      <a href='https://www.gutenberg.org/cache/epub/1661/pg1661.txt'>Adventures of Sherlock</a>. If you hash the entire book,
-      the result is <code>85ce3d0483d114fe67ee304c0d7522a31fa4e8a6</code>. Now I changed one word in there, hashed the entire
-      book agian and the result is <code>08f0ee20fcffe7028787ee5232b9ae80de016857</code>. Note how pretty much every part
-      of this second hash is a completely different letter or number than the first. </p>
-    <p>You might think that&#39;s the lamest party trick ever (and you wouldn&#39;t be wrong) but it&#39;s the key to Ethereum&#39;s
-      security. Each block in the blockchain contains a hash of all previous states and all previous transactions. So if
-      some supervillain wanted to &#39;rewrite history&#39; in the blockchain, changing just a single digit somewhere would
-      be instantly noticable <em>because the hashes would be completely different</em>.<br/></p>
-    <p></p>
-    <hr />
-    <p></p>
-    <p>I said that there was no way to reverse the blender, which is not <em>entirely</em> true. You can try and guess what
-      the original input was, and see if the hash you end up is the same. How many guesses? More than you think. If you were
-      to make ten million guesses each second on Ethereum&#39;s hashing algorithm, it would still take - on average - 1,600
-      days or about 4,5 years to find the correct answer. </p>
-    <p>How hard is it? Well, imagine picking a random Canadian, and having them pick another random Canadian. Now guess which
-      pair of people are the correct ones by asking all 36,000,000 Canadians about all 36,000,000 other Canadians, one by
-      one. That&#39;s roughly how hard it is to guess. </p>
-    <p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. <em>This guessing game is what&#39;s called mining</em>.
-      Because all computers in the network are guessing at random the winner is also random. As a reward, the computer that
-      is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain. This computer
-      - the &#39;miner&#39; - is also awarded 5 ETH for their hard work. </p>
-    <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in the
-      network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain, they also
-      validate each transaction in the block and validate your guess. </p>
-    <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it should
-      spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when all you have
-      is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally be done in less than
-      0.1 seconds. </p>
-    <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly is
-      your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore the protocol
-      and create Ether out of thin air, you would need to have the majority of the network in your own hands. Such an attack
-      - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable at all. </p>
+    <div class="row">
+      <div class="four columns" style="text-align: center">
+        <img src="assets/ethblender.svg" style="max-width: 80%"></img>
+        <h6><em>Will it blend? Yes!</em></h6>
+      </div>
+      <div class="eight columns">
+        <p>You can picture hashing as a cryptographic blender. Put any kind of data in, blend it for a fixed amount of time
+          and the result is a blended - &#39;hashed&#39; - bunch of letters and numbers. Like every blender, it blends one
+          way only: you can&#39;t retrieve the original words from the mess of letters and numbers. </p>
 
-  </div>
+        <p>It&#39;s not just any blender though. The blender always blends the same way: when you give it a specific input,
+          it will always produce the same output. If you put <code>veenspace</code> through the SHA-1 blender, which you
+          can do <a href='http://www.sha1-online.com/'>here</a>, it will <em>always</em> give you the hash
+          <code>e4a192365543903d6015465069f262b7d707e5b6</code>. </p>
+
+        <p>Most importantly, even the smallest change to the input will create a completely different output. Take, for example, the entire
+          <a href='https://www.gutenberg.org/cache/epub/1661/pg1661.txt'>Adventures of Sherlock</a>. If you hash the entire
+          book, the resulting hash is <code>85ce3d0483d114fe67ee304c0d7522a31fa4e8a6</code>.</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="twelve columns">
+
+        <p>I changed just <em>one</em> word in there. Hashing it again gives me <code>08f0ee20fcffe7028787ee5232b9ae80de016857</code>.
+          Note how pretty much every part of this second hash is a completely different letter or number than the first.
+          </p>
+
+        <p>You might think that&#39;s the lamest party trick ever (and you wouldn&#39;t be wrong) but it&#39;s the key to Ethereum&#39;s
+          security. Each block in the blockchain contains a hash of all previous states and all previous transactions. So
+          if some supervillain wanted to &#39;rewrite history&#39; in the blockchain, changing just a single digit somewhere
+          would be instantly noticable <em>because the hashes would be completely different</em>.</p>
+        <p></p>
+        <hr />
+        <p></p>
+        <p>I said that there was no way to reverse the blender, which is not <em>entirely</em> true. You can try and guess what
+          the original input was, and see if the hash you end up is the same. How many guesses? More than you think. If you
+          were to make ten million guesses each second on Ethereum&#39;s hashing algorithm, it would still take - on average
+          - 1,600 days or about 4,5 years to find the correct answer. </p>
+        <p>How hard is it? Well, imagine picking a random Canadian, and having them pick another random Canadian. Now guess
+          which pair of people are the correct ones by asking all 36,000,000 Canadians about all 36,000,000 other Canadians,
+          one by one. That&#39;s roughly how hard it is to guess. </p>
+        <p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. <em>This guessing game is what&#39;s called mining</em>.
+          Because all computers in the network are guessing at random the winner is also random. As a reward, the computer
+          that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain.
+          This computer - the &#39;miner&#39; - is also awarded 5 ETH for their hard work. </p>
+        <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in
+          the network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain,
+          they also validate each transaction in the block and validate your guess. </p>
+        <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it should
+          spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when all you
+          have is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally be done
+          in less than 0.1 seconds. </p>
+        <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly
+          is your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore
+          the protocol and create Ether out of thin air, you would need to have the majority of the network in your own hands.
+          Such an attack - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable
+          at all. </p>
+
+      </div>
 
 
 
-  <hr></hr>
-  <footer>
-    <ul>
-      <li>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></li>
-    </ul>
-  </footer>
-  </div>
+      <hr></hr>
+      <footer>
+        <ul>
+          <li>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></li>
+        </ul>
+      </footer>
+    </div>
 
 
 </body>
