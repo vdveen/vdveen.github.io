@@ -204,7 +204,7 @@
     </div>
     <div class="row" style="text-align:center">
       <img src="assets/ethcat.svg" style="max-width: 80%"></img>
-      <h6><em>Schrödinger&#39;s Block is when your cat is and isn&#39;t worthless simultaneously.</em></h6>
+      <h6><em>Schrödinger&#39;s Block is when your cat is and isn&#39;t worthless at the same time.</em></h6>
     </div>
 
     <div class="row">
@@ -293,38 +293,46 @@
           a reasonable timeframe if they download the most recent block.</p>
 
         <p>If you don&#39;t mine on the most recent block, it will take hundreds of thousands of years to guess the entire input.
-          But if you do, you know most of the input already and solving it can be done in months, not millennia. And when
-          you have 25,000 nodes, the guess time becomes 15 seconds on average. </p>
+          But if you do, you know most of the input already so solving can be done in months, not millennia. And when you
+          have 25,000 computers all guessing at the same time, you get a winner every 15 seconds on average. </p>
 
-        <p>That 15 second time - also called the 'block time' - is intentional. As more computers join the network, the <code>some number</code>          
-          part is made longer to keep the winners 15 seconds apart . This gives everyone the time to download and validate
+        <p>That 15 second time - also called the 'block time' - is intentional. As more computers join the network, the <code>some number</code>          part is made longer to keep the winners 15 seconds apart . This gives everyone the time to download and validate
           the latest block. </p>
 
-        <p>Because all computers in the network are guessing at random the winner is also random. As a reward, the computer
-          that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain.
-          This computer is also awarded 5 ETH for their hard work. </p>
+        <p>Because all computers in the network are guessing at random the winner is also random. The winning computer gets
+          to add a new block to the blockchain. They're also awarded 5 ETH for their hard work. </p>
 
-        <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in
-          the network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain,
-          they also validate each transaction in the block and validate your guess. </p>
+        <div style="text-align:center">
+          <img src="assets/ethflowchart.svg" style="max-width:80%"></img>
+          <h6><em>Mining in a nutshell. This loop happens millions upon millions of times a second, all over the globe.</em></h6>
+        </div>
 
-        <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it should
-          spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when all you
-          have is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally be done
-          in less than 0.1 seconds. </p>
+        <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every single computer in
+          the network needs to double-check if you've done the work. Only when the majority of the network agrees that your
+          guess was correct and that you changed the states correctly is your block valid and thus considered &#39;true&#39;.
+          This whole system of making lots of calculations is often called <em>Proof of Work</em>. Ethereum's security thus
+          comes from this proof of work and the validation that happens afterwards.
+        </p>
 
-        <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly
-          is your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore
-          the protocol and create Ether out of thin air, you would need to have the majority of the network in your own hands.
-          Such an attack - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable
-          at all. </p>
+        <p>Validating the guess is easy: all you need to do is input the guessed number and last block's hash into the Ethereum
+          hashing algorithm, and it should spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess
+          <code>veenspace</code> when all you have is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other
+          way around can literally be done in less than 0.1 seconds. </p>
 
+        <p>Finally, if you happen to be a supervillain who wants to ignore the protocol and create Ether out of thin air, the
+          only real way of doing that is to have the majority of the network in your own hands. Such an attack - called a
+          &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable at all.</p>
+
+        <hr></hr>
+
+        <p>I hope you liked my explanation! What should I explain next? Metropolis? ZK Snarks? <a href="https://twitter.com/veenspace">Tweet your suggestions!</a><br>
+          <b>If you learned something from my explanation, consider a tip at </b> <code>0x1fe2C0B66007F6C1BaDF18b0Feea4c2Dc1d68353</code>. </p>
       </div>
 
 
 
-      <hr></hr>
       <footer>
+          <hr></hr>
         <p>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></p>
 
       </footer>
