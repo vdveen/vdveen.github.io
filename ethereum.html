@@ -271,45 +271,50 @@
           if some supervillain wanted to &#39;rewrite history&#39; in the blockchain, changing just a single digit somewhere
           would be instantly noticable <em>because the hashes would be completely different</em>.</p>
 
-        <hr></hr>
-
         <p>I said that there was no way to reverse the blender, which is not <em>entirely</em> true. You can try and guess what
           the original input was, and see if the hash you end up is the same. If the input can be anything, it will around
-          2^511 guesses. That&#39;s a 1 with 154 zeroes behind it, in case you were wondering.
+          2
+          <sup>511</sup> guesses. That&#39;s a 1 with 154 zeroes behind it, in case you were wondering.</p>
 
-          <p>Despite this difficulty, the Ethereum network of computers makes a correct guess every 15 seconds. This guessing
-            game is what&#39;s called <em>mining</em>. The reason why this guessing game doesn&#39;t take forever is that the
-            input isn&#39;t entirely random. If I give you a copy of the Adventures of Sherlock and tell you that a hash is exactly
-            the same with only one word altered, it&#39;s suddenly much easier to guess. All you have to do is change one English
-            word into another.</p>
+        <img src="assets/ethbajillion.svg"></img>
 
-          <p>This is why each block stores a hash of all previous states and transactions. The input the miners are guessing
-            is <code>[hash of everything until now] + [some number]</code>. Miners can thus only make correct current guess
-            in a reasonable timeframe if they download the most recent block.</p>
+        <p style="margin-top:5%">Despite this difficulty, a computer the Ethereum network of computers makes a correct guess every 15 seconds.</p>
 
-          <p>If you don&#39;t mine on the most recent block, it will take hundreds of thousands of years to guess the entire input.
-            But if you do, it should take a single computer only 4,5 years to guess correctly. As more computers join the
-            network the difficulty of this guessing game goes up to keep the winners 15 seconds apart (on average). This
-            gives everyone the time to download the latest block. </p>
+        <img src="assets/eth15.svg"></img>
+        <h6 style="text-align:center"><em><sup>Maybe this number thing isn&#39;t always helpful...</sup></em></h6>
 
-          <p>Because all computers in the network are guessing at random the winner is also random. As a reward, the computer
-            that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain.
-            This computer is also awarded 5 ETH for their hard work. </p>
+        <p>This guessing game is what&#39;s called <em>mining</em>. The reason why this guessing game doesn&#39;t take forever
+          is that the input isn&#39;t entirely random. If I give you a copy of the Adventures of Sherlock and tell you that
+          a hash is exactly the same with only one word altered, it&#39;s suddenly much easier to guess. All you have to
+          do is change one English word into another. <em>You have 99% of the input already, so guessing becomes much easier.</em></p>
 
-          <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in
-            the network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain,
-            they also validate each transaction in the block and validate your guess. </p>
+        <p>This is why each block stores a hash of all previous states and transactions. What the miners are guessing is
+          <code>[hash of everything until now] + [some number]</code>. Miners can thus only make correct current guess in
+          a reasonable timeframe if they download the most recent block.</p>
 
-          <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it
-            should spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when
-            all you have is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally
-            be done in less than 0.1 seconds. </p>
+        <p>If you don&#39;t mine on the most recent block, it will take hundreds of thousands of years to guess the entire input.
+          But if you do, it should take a single computer only 4,5 years to guess correctly. As more computers join the network
+          the difficulty of this guessing game goes up to keep the winners 15 seconds apart (on average). This gives everyone
+          the time to download and validate the latest block. </p>
 
-          <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly
-            is your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore
-            the protocol and create Ether out of thin air, you would need to have the majority of the network in your own
-            hands. Such an attack - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so
-            not profitable at all. </p>
+        <p>Because all computers in the network are guessing at random the winner is also random. As a reward, the computer
+          that is the first to guess correctly (so, to find the original word) gets to add a new block to the blockchain.
+          This computer is also awarded 5 ETH for their hard work. </p>
+
+        <p>Simply winning the guessing game isn&#39;t enough to add your block to the chain though. Every other computer in
+          the network needs to double-check your block. Not only do they check if you haven&#39;t altered the blockchain,
+          they also validate each transaction in the block and validate your guess. </p>
+
+        <p>Validating the guess is easy: all you need to do is input the guess into the Ethereum hashing algorithm, and it should
+          spit out the hash that everyone&#39;s been working on. It&#39;s hard to guess <code>veenspace</code> when all you
+          have is <code>e4a192365543903d6015465069f262b7d707e5b6</code> , but the other way around can literally be done
+          in less than 0.1 seconds. </p>
+
+        <p>Only when the majority of the network agrees that your guess was correct and that you changed the states correctly
+          is your block valid and thus considered &#39;true&#39;. If you happen to be a supervillain who wants to ignore
+          the protocol and create Ether out of thin air, you would need to have the majority of the network in your own hands.
+          Such an attack - called a &#39;51% Attack&#39; - is unreasonably expensive and very easy to notice, so not profitable
+          at all. </p>
 
       </div>
 
@@ -317,7 +322,7 @@
 
       <hr></hr>
       <footer>
-      <p>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></p>
+        <p>find me on <a href="https://twitter.com/veenspace">twitter</a>, <a href="http://hubski.com/user/veen">hubski</a></p>
 
       </footer>
     </div>
