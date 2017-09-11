@@ -105,7 +105,7 @@
         <p>You can write an app for every financial service you can think of. Banking, loaning, buying, selling, crowdfunding,
           trading, bartering, gambling, royalties, you name it. It&#39;s not just limited to people - computers can interact
           with the Ethereum Virtual Machine as well. The Ethereum Virtual Machine makes microtransactions feasible, so your
-          phone could start paying services for you. In Germany, your electric car can already <a href="https://www.reddit.com/r/ethereum/comments/68n6lq/">pay the cost of 
+          phone could start paying for services for you. In Germany, your electric car can already <a href="https://www.reddit.com/r/ethereum/comments/68n6lq/">pay the cost of 
           charging</a> at a charging station for you because of Ethereum.</p>
 
 
@@ -114,10 +114,10 @@
 
         <p><strong><em>Ethereum can give everyone the power to exchange value, much like the Internet has given everyone the power to communicate.</em></strong></p>
 
-        <p>Note the word &#39;can&#39; and &#39;could&#39;. Although Ethereum in its current state can do a lot already, development
+        <p>Note the word &#39;can&#39;. Although Ethereum in its current state can do a lot already, development
           is ongoing. Learning curves are remarkably steep. And honestly, it's not remotely fast enough or big enough at the moment to
           replace real banks and financial services. For example, the Ethereum network handles more than 500,000 transactions per day, while 
-          Visa alone handles that amount every twenty seconds. </p>
+          Visa alone handles that number of transactions every twenty seconds. </p>
         
         <p>Still, it's an amazing first attempt and I think it warrants at least a closer look.</p>
 
@@ -126,7 +126,7 @@
         <hr></hr>
         <h3 class="ethtitle">Information & Protocols</h3>
 
-        <p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re gonna start there. What happens
+        <p>Because exchanging value is arguably the most important thing Ethereum does, we&#39;re going to start there. What happens
           when you transfer money to someone? Well, your account is reduced by some amount of money, and another account
           is increased by the exact same amount of money.</p>
 
@@ -196,7 +196,7 @@
         number and who created it. It also contains technical stuff like the difficulty, hashes (more on that later) and
         the gas limit.</p>
 
-      <p>Each block must say which block came before it and what&#39;s in that block - this is the <em>chain</em> part of blockchain.
+      <p>Each block must say which block came before it and what&#39;s in the block - this is the <em>chain</em> part of blockchain.
         There is a chain of blocks from the first block (aptly called the &#39;genesis block&#39;) to the current block.</p>
 
     </div>
@@ -266,7 +266,7 @@
 
         <p>Ethereum is often called a cryptocurrency. This is not just because it sounds cool - although it obviously does.
           The &#39;crypto&#39; part refers to the science of <em>cryptography</em>. Cryptography aims to define secure protocols
-          to allow communication without anyone reading or tampering with it. </p>
+          to allow communication without anyone reading or tampering with the contents. </p>
 
         <p>One of the cryptographic tools that Ethereum uses a lot is called a <em>secure hashing algorithm</em>, or SHA. This
           algorithm takes any kind of data as an input and changes that data in a specific way. For example, if I hash
@@ -318,11 +318,11 @@
         <p>I said that there was no way to reverse the blender, which is not <em>entirely</em> true. You can try and guess what
           the original input was, and see if the hash you end up is the same. If the input can be anything, it will around
           2
-          <sup>511</sup> guesses. That&#39;s a 1 with 154 zeroes behind it, in case you were wondering.</p>
+          <sup>511</sup> guesses. That&#39;s around a 1 with 154 zeroes behind it, in case you were wondering.</p>
 
         <img src="assets/ethbajillion.svg"></img>
 
-        <p style="margin-top:5%">Despite this difficulty, a computer the Ethereum network of computers makes a correct guess every 15 seconds.</p>
+        <p style="margin-top:5%">Despite this difficulty, a computer in the Ethereum network of computers makes a correct guess every 15 seconds.</p>
 
         <img src="assets/eth15.svg"></img>
         <h6 style="text-align:center"><em><sup>Maybe this number thing isn&#39;t always helpful...</sup></em></h6>
@@ -333,7 +333,7 @@
           do to guess is change a random word and leave the rest untouched. <em>You have 99% of the input already, so guessing becomes much easier.</em></p>
 
         <p>This is why each block stores a hash of all previous states and transactions. What the miners are guessing is
-          <code>[hash of everything until now] + [some number]</code>. Miners can thus only make correct current guess in
+          <code>[hash of everything until now] + [some number]</code>. Miners can thus only make a correct guess in
           a reasonable timeframe if they download the most recent block.</p>
 
         <p> The result is that all miners always work on the latest block and can't make a single change to older blocks. If
@@ -373,7 +373,7 @@
 
         <p>That's enough explanations for now. I hope you liked it! What should I explain next? Metropolis? ZK Snarks? <a href="https://twitter.com/veenspace">Tweet your suggestions!</a><br></p>
 
-        <p><b><em>If you learned something from my explanation, consider a tip at </em></b> <code>0x1fe2C0B66007F6C1BaDF18b0Feea4c2Dc1d68353</code>. 
+        <p class="ethtitle"><b><em>If you learned something from my explanation, consider a tip at </em></b> <code>0x1fe2C0B66007F6C1BaDF18b0Feea4c2Dc1d68353</code>. 
         </p>
 
         <p>For further reading, I reccommend <a href="http://www.apress.com/us/book/9781484225349">Chris Dannen&#39;s "Introducing Ethereum and Solidity" from Apress.</a>
