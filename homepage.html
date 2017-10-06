@@ -18,33 +18,87 @@
 </head>
 
 <body>
+  <style>/* Single-direction drop shadow */
+
+    h4, hr {
+      margin: 0;
+    }
+  </style> 
+
   <div class="container">
+    
     <div class="row" style="margin-top: 5%; text-align:center">
-      <div class="twelve columns">
-        <h1 id="fuzzyclock"></h1>
-        <hr></hr>
-      </div>
+      <h1 id="fuzzyclock"></h1>
+      <hr>
     </div>
+    <div class="row" style="margin-top: 3%; text-align:center">
+      <div class="twelve columns">
+        <h4 id="y2" style="color: #333">...</h4>
+        <hr id="y">
+        
+        <h4 id="mn2" style="color: #4d4d4d">...</h4>
+        <hr id="mn">
+        
+        <h4 id="dt2" style="color: #666">...</h4>
+        <hr id="dt">
+        
+        <h4 id="h2" style="color: #808080">...</h4>
+        <hr id="h">
+        
+        <h4 id="m2" style="color: #999">...</h4>
+        <hr id="m">
+
+        <h4 id="s2" style="color: #b3b3b3">...</h4>
+        <hr id="s">
+      </div>        
+    </div>
+  </div>
 
 
     <script>
+      /*Get fuzzy text: http://snipplr.com/view/23974/fuzzy-clock/ */
       function fuzz(d) {
         d = (d) ? d : new Date();
-        var t = [, "it's", "right after", "about", "o'clock", "quarter", "to", "past", "half", "sharp", "a"],
-          h = ["twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"],
+        var t = [, "het is", "iets na", "ongeveer", "uur", "kwart", "voor", "over", "half", "precies", ""],
+          h = ["twaalf", "één", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen", "tien", "elf"],
           m = [0, d.getMinutes(), d.getHours()], s = []; m[0] = m[1] % 7.5; s[0] = t[1];
         s.push((m[0] == 0) ? t[0] : (m[0] == parseInt(m[0])) ? t[2] : t[3]);
         s.push((m[1] > 53) ? [h[(m[2] + 1) % 12], t[4]] :
-          (m[1] > 37) ? [t[10], t[5], t[6], h[(m[2] + 1) % 12]] :
-            (m[1] > 23) ? [t[8], h[m[2] % 12]] :
-              (m[1] > 7) ? [t[10], t[5], t[7], h[m[2] % 12]] :
-                (m[1] > 0) ? [h[m[2] % 12], t[4]] :
-                  [h[m[2] % 12], t[4], t[9]]);
+               (m[1] > 37) ? [t[10], t[5], t[6], h[(m[2] + 1) % 12]] :
+               (m[1] > 23) ? [t[8], h[m[2] % 12]] :
+               (m[1] > 7) ? [t[10], t[5], t[7], h[m[2] % 12]] :
+               (m[1] > 0) ? [h[m[2] % 12], t[4]] :
+               [h[m[2] % 12], t[4], t[9]]);
         return s.toString().replace(/,/gi, " ");
       }
+
+      /*Time bars*/
+      function balkies(d) {
+        d = (d) ? d : new Date();
+        var s = d.getSeconds(),
+            m = d.getMinutes(), 
+            h = d.getHours(),  
+            dt = d.getDate(), 
+            mn = d.getMonth(),
+            y = (d.getYear()-110);
+
+        $('#s').width((s*1.667)+'%');
+        $('#s2').text(s);
+        $('#m').width((m*1.667)+'%');
+        $('#m2').text(m);
+        $('#h').width((h*4.167)+'%');
+        $('#h2').text(h);
+        $('#dt').width((dt*3.225)+'%');
+        $('#dt2').text('0'+dt);
+        $('#mn').width((mn*8.334)+'%');
+        $('#mn2').text('0'+mn);
+        $('#y').width((y*10)+'%');
+        $('#y2').text(2010+(y));
+      }
       
-      console.log('bananas')
-      console.log(fuzz())
-      var time = fuzz()
-      $("#fuzzyclock").text(time)
+      window.setInterval(balkies, 1000)
+
+      $("#fuzzyclock").text(fuzz())
     </script>
+
+ 
