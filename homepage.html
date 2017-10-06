@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- link to main stylesheet -->
+  <link rel="stylesheet" type="text/css" href="css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="css/main2.css">
+  <link href="https://fonts.googleapis.com/css?family=Lusitana|Roboto+Slab" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Meta tags. Responsiveness courtesy of Bahk Dohmalak on Slack -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta property="og:image" content="assets/ethvisuallogo.PNG">
+  <meta name="theme-color" content="#0E5F99">
+
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="row" style="margin-top: 5%; text-align:center">
+      <div class="twelve columns">
+        <h1 id="fuzzyclock"></h1>
+        <hr></hr>
+      </div>
+    </div>
+
+
+    <script>
+      function fuzz(d) {
+        d = (d) ? d : new Date();
+        var t = [, "it's", "right after", "about", "o'clock", "quarter", "to", "past", "half", "sharp", "a"],
+          h = ["twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"],
+          m = [0, d.getMinutes(), d.getHours()], s = []; m[0] = m[1] % 7.5; s[0] = t[1];
+        s.push((m[0] == 0) ? t[0] : (m[0] == parseInt(m[0])) ? t[2] : t[3]);
+        s.push((m[1] > 53) ? [h[(m[2] + 1) % 12], t[4]] :
+          (m[1] > 37) ? [t[10], t[5], t[6], h[(m[2] + 1) % 12]] :
+            (m[1] > 23) ? [t[8], h[m[2] % 12]] :
+              (m[1] > 7) ? [t[10], t[5], t[7], h[m[2] % 12]] :
+                (m[1] > 0) ? [h[m[2] % 12], t[4]] :
+                  [h[m[2] % 12], t[4], t[9]]);
+        return s.toString().replace(/,/gi, " ");
+      }
+      
+      console.log('bananas')
+      console.log(fuzz())
+      var time = fuzz()
+      $("#fuzzyclock").text(time)
+    </script>
