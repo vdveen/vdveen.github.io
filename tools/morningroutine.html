@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Morning Routine Calculator</title>
+    <style>
+        /* Solarized Dark Color Palette */
+        :root {
+            --base03: #002b36;  /* Background */
+            --base02: #073642;  /* Background highlights */
+            --base01: #586e75;  /* Comments / secondary content */
+            --base00: #657b83;  /* Body text (light mode) */
+            --base0: #839496;   /* Body text (dark mode) */
+            --base1: #93a1a1;   /* Optional emphasized content */
+            --base2: #eee8d5;   /* Background (light mode) */
+            --base3: #fdf6e3;   /* Background highlights (light mode) */
+            --yellow: #b58900;
+            --orange: #cb4b16;
+            --red: #dc322f;
+            --magenta: #d33682;
+            --violet: #6c71c4;
+            --blue: #268bd2;
+            --cyan: #2aa198;
+            --green: #859900;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
+            background: var(--base03);
+            min-height: 100vh;
+            padding: 16px;
+            color: var(--base0);
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--yellow);
+            font-weight: normal;
+        }
+
+        .section {
+            background: var(--base02);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--base01);
+        }
+
+        .section-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--base01);
+            margin-bottom: 8px;
+        }
+
+        .picker-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .picker-btn {
+            flex: 1;
+            padding: 10px 4px;
+            border: 1px solid var(--base01);
+            background: var(--base03);
+            color: var(--base0);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+
+        .picker-btn:hover {
+            border-color: var(--base0);
+            background: var(--base02);
+        }
+
+        .picker-btn.active {
+            background: var(--blue);
+            border-color: var(--blue);
+            color: var(--base03);
+            font-weight: 600;
+        }
+
+        .picker-btn small {
+            display: block;
+            font-size: 0.6rem;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--base01);
+            background: var(--base03);
+            color: var(--base0);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--blue);
+        }
+
+        select option {
+            background: var(--base02);
+            color: var(--base0);
+        }
+
+        .schedule {
+            background: var(--base02);
+            border: 1px solid var(--cyan);
+            border-radius: 6px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .schedule-title {
+            font-size: 0.65rem;
+            color: var(--cyan);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            padding: 5px 0;
+            border-bottom: 1px solid var(--base03);
+        }
+
+        .schedule-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-time {
+            font-size: 0.9rem;
+            font-weight: 700;
+            width: 50px;
+            color: var(--base1);
+        }
+
+        .schedule-activity {
+            font-size: 0.75rem;
+            color: var(--base0);
+            flex: 1;
+        }
+
+        .schedule-duration {
+            font-size: 0.6rem;
+            color: var(--base01);
+            background: var(--base03);
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid var(--base01);
+        }
+
+        .alarm-highlight {
+            background: var(--base03);
+            margin: -7px -14px 7px -14px;
+            padding: 12px 14px;
+            border-radius: 6px 6px 0 0;
+            border-bottom: 1px solid var(--yellow);
+        }
+
+        .alarm-highlight .schedule-time {
+            color: var(--yellow);
+            font-size: 1.3rem;
+        }
+
+        .alarm-highlight .schedule-activity {
+            color: var(--yellow);
+        }
+
+        .schedule-item.skipped .schedule-activity,
+        .schedule-item.skipped .schedule-time {
+            color: var(--base01);
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .schedule-item.skipped .schedule-duration {
+            align-self: center;
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>// Morning Routine Calculator</h1>
+
+        <div class="section">
+            <div class="section-label">Arrive at Work</div>
+            <select id="arrivalTime">
+                <option value="510">08:30</option>
+                <option value="540">09:00</option>
+                <option value="570">09:30</option>
+                <option value="600" selected>10:00</option>
+                <option value="630">10:30</option>
+                <option value="660">11:00</option>
+                <option value="690">11:30</option>
+                <option value="720">12:00</option>
+                <option value="750">12:30</option>
+                <option value="780">13:00</option>
+            </select>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Travel Buffer</div>
+            <div class="picker-row">
+                <button class="picker-btn" data-group="buffer" data-value="tight">Tight<small>−1h04m</small></button>
+                <button class="picker-btn active" data-group="buffer" data-value="relaxed">Relaxed<small>−1h19m</small></button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-label">To Train Station</div>
+            <div class="picker-row">
+                <button class="picker-btn active" data-group="travel" data-value="bicycle">🚲 Bike<small>28 min</small></button>
+                <button class="picker-btn" data-group="travel" data-value="bus">🚌 Bus<small>35 min</small></button>
+                <button class="picker-btn" data-group="travel" data-value="earlybus">🚌 Early<small>45 min</small></button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Breakfast</div>
+            <div class="picker-row">
+                <button class="picker-btn" data-group="breakfast" data-value="quick">Quick<small>25 min</small></button>
+                <button class="picker-btn active" data-group="breakfast" data-value="relaxed">Relaxed<small>35 min</small></button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Shower</div>
+            <div class="picker-row">
+                <button class="picker-btn active" data-group="shower" data-value="none">None<small>0 min</small></button>
+                <button class="picker-btn" data-group="shower" data-value="quick">Quick<small>17 min</small></button>
+                <button class="picker-btn" data-group="shower" data-value="normal">Normal<small>22 min</small></button>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-label">Meditation</div>
+            <div class="picker-row">
+                <button class="picker-btn" data-group="meditation" data-value="long">Long<small>35 min</small></button>
+                <button class="picker-btn active" data-group="meditation" data-value="medium">Medium<small>25 min</small></button>
+                <button class="picker-btn" data-group="meditation" data-value="short">Short<small>20 min</small></button>
+            </div>
+        </div>
+
+        <div class="schedule">
+            <div class="schedule-title">» Schedule Output</div>
+            <div id="scheduleOutput"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // CONFIGURABLE DURATIONS (in minutes)
+        // ============================================
+        const BUFFER_TIGHT = 64;        // 1 hour 4 minutes
+        const BUFFER_RELAXED = 79;      // 1 hour 19 minutes
+
+        const TRAVEL_BICYCLE = 28;
+        const TRAVEL_BUS = 35;
+        const TRAVEL_EARLY_BUS = 45;
+
+        const BREAKFAST_QUICK = 25;
+        const BREAKFAST_RELAXED = 35;
+
+        const SHOWER_NONE = 0;
+        const SHOWER_QUICK = 17;
+        const SHOWER_NORMAL = 22;
+
+        const MEDITATION_LONG = 35;
+        const MEDITATION_MEDIUM = 25;
+        const MEDITATION_SHORT = 20;
+
+        const WAKE_UP_BUFFER = 7;       // Time from alarm to meditation
+        // ============================================
+
+        const state = {
+            arrival: 600,
+            buffer: 'relaxed',
+            travel: 'bicycle',
+            breakfast: 'relaxed',
+            shower: 'none',
+            meditation: 'medium'
+        };
+
+        function formatTime(minutes) {
+            const h = Math.floor(minutes / 60);
+            const m = minutes % 60;
+            return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        }
+
+        function getBufferMinutes() {
+            return state.buffer === 'tight' ? BUFFER_TIGHT : BUFFER_RELAXED;
+        }
+
+        function getTravelMinutes() {
+            switch(state.travel) {
+                case 'bicycle': return TRAVEL_BICYCLE;
+                case 'bus': return TRAVEL_BUS;
+                case 'earlybus': return TRAVEL_EARLY_BUS;
+            }
+        }
+
+        function getBreakfastMinutes() {
+            return state.breakfast === 'quick' ? BREAKFAST_QUICK : BREAKFAST_RELAXED;
+        }
+
+        function getShowerMinutes() {
+            switch(state.shower) {
+                case 'none': return SHOWER_NONE;
+                case 'quick': return SHOWER_QUICK;
+                case 'normal': return SHOWER_NORMAL;
+            }
+        }
+
+        function getMeditationMinutes() {
+            switch(state.meditation) {
+                case 'long': return MEDITATION_LONG;
+                case 'medium': return MEDITATION_MEDIUM;
+                case 'short': return MEDITATION_SHORT;
+            }
+        }
+
+        function getTravelLabel() {
+            switch(state.travel) {
+                case 'bicycle': return '🚲 Cycle to station';
+                case 'bus': return '🚌 Bus to station';
+                case 'earlybus': return '🚌 Early bus to station';
+            }
+        }
+
+        function getShowerLabel() {
+            switch(state.shower) {
+                case 'none': return '🚿 Shower (skipped)';
+                case 'quick': return '🚿 Quick shower';
+                case 'normal': return '🚿 Shower';
+            }
+        }
+
+        function calculate() {
+            const arrival = state.arrival;
+            const trainDeparture = arrival - getBufferMinutes();
+            const leaveHome = trainDeparture - getTravelMinutes();
+            const startBreakfast = leaveHome - getBreakfastMinutes();
+            const startShower = startBreakfast - getShowerMinutes();
+            const startMeditation = startShower - getMeditationMinutes();
+            const alarmTime = startMeditation - WAKE_UP_BUFFER;
+
+            const showerMinutes = getShowerMinutes();
+            const showerSkipped = showerMinutes === 0;
+
+            const schedule = [
+                { time: alarmTime, activity: '⏰ Alarm', duration: `${WAKE_UP_BUFFER} min`, highlight: true },
+                { time: startMeditation, activity: '🧘 Meditation', duration: `${getMeditationMinutes()} min` },
+                { time: startShower, activity: getShowerLabel(), duration: showerSkipped ? '—' : `${showerMinutes} min`, skipped: showerSkipped },
+                { time: startBreakfast, activity: '🍳 Breakfast', duration: `${getBreakfastMinutes()} min` },
+                { time: leaveHome, activity: getTravelLabel(), duration: `${getTravelMinutes()} min` },
+                { time: trainDeparture, activity: '🚆 Train departs', duration: `${getBufferMinutes()} min` },
+                { time: arrival, activity: '🏢 Arrive at work', duration: '' }
+            ];
+
+            const output = document.getElementById('scheduleOutput');
+            output.innerHTML = schedule.map(item => `
+                <div class="schedule-item ${item.highlight ? 'alarm-highlight' : ''} ${item.skipped ? 'skipped' : ''}">
+                    <div class="schedule-time">${formatTime(item.time)}</div>
+                    <div class="schedule-activity">${item.activity}</div>
+                    ${item.duration ? `<div class="schedule-duration">${item.duration}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // Event listeners
+        document.getElementById('arrivalTime').addEventListener('change', (e) => {
+            state.arrival = parseInt(e.target.value);
+            calculate();
+        });
+
+        document.querySelectorAll('.picker-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const group = btn.dataset.group;
+                const value = btn.dataset.value;
+
+                document.querySelectorAll(`[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                state[group] = value;
+                calculate();
+            });
+        });
+
+        // Initial calculation
+        calculate();
+    </script>
+</body>
+</html>
