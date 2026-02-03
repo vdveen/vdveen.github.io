@@ -819,7 +819,12 @@
            Configuration
            ========================================================================== */
         const CONFIG = {
-            // Default CORS proxy (user's Cloudflare Worker)
+            // CORS proxies (tried in order)
+            corsProxies: [
+                { name: 'Custom', url: 'https://odd-mouse-d090.asvdveen.workers.dev', format: (u) => `${u}/?url=${encodeURIComponent(u.target)}` },
+                { name: 'corsproxy.io', url: 'https://corsproxy.io', format: (target) => `https://corsproxy.io/?${encodeURIComponent(target)}` },
+                { name: 'allorigins', url: 'https://api.allorigins.win', format: (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}` }
+            ],
             defaultProxy: 'https://odd-mouse-d090.asvdveen.workers.dev',
 
             // API endpoints
@@ -1391,12 +1396,37 @@
 
                 // Get current map bounds to limit request
                 const bounds = state.map.getBounds();
-                const url = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
+                const targetUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
 
-                // Use CORS proxy
-                const proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(url)}`;
-                const response = await fetch(proxyUrl);
-                const data = await response.json();
+                // Try proxies in order until one works
+                let data = null;
+                let lastError = null;
+
+                // First try custom proxy if set
+                const proxiesToTry = [
+                    { name: 'Custom', format: (t) => `${state.settings.proxyUrl}/?url=${encodeURIComponent(t)}` },
+                    { name: 'corsproxy.io', format: (t) => `https://corsproxy.io/?${encodeURIComponent(t)}` },
+                    { name: 'allorigins', format: (t) => `https://api.allorigins.win/raw?url=${encodeURIComponent(t)}` }
+                ];
+
+                for (const proxy of proxiesToTry) {
+                    try {
+                        const proxyUrl = proxy.format(targetUrl);
+                        console.log(`Trying ${proxy.name} proxy...`);
+                        const response = await fetch(proxyUrl);
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        data = await response.json();
+                        console.log(`${proxy.name} proxy succeeded`);
+                        break;
+                    } catch (e) {
+                        console.warn(`${proxy.name} proxy failed:`, e.message);
+                        lastError = e;
+                    }
+                }
+
+                if (!data) {
+                    throw lastError || new Error('All proxies failed');
+                }
 
                 if (!state.layers.aircraft) return;
                 state.layers.aircraft.clearLayers();
