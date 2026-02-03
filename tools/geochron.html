@@ -687,6 +687,13 @@
                 <!-- Weather -->
                 <div class="layer-group">
                     <div class="layer-group-title">Weather</div>
+                    <label class="layer-toggle" id="toggle-radar">
+                        <input type="checkbox" id="layer-radar">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">📡</span> Radar (free)
+                        </span>
+                    </label>
                     <label class="layer-toggle" id="toggle-clouds">
                         <input type="checkbox" id="layer-clouds">
                         <span class="toggle-switch"></span>
@@ -781,8 +788,10 @@
                     <label for="apiKeyOpenWeather">OpenWeatherMap API Key</label>
                     <input type="password" id="apiKeyOpenWeather" placeholder="Enter your API key">
                     <p class="form-hint">
-                        Required for weather layers.
-                        <a href="https://openweathermap.org/api" target="_blank">Get a free key</a>
+                        Required for clouds, temp, wind, pressure layers.
+                        Note: Weather Maps 2.0 may require a paid subscription.
+                        <a href="https://openweathermap.org/price" target="_blank">Check pricing</a>.
+                        Use "Radar (free)" for precipitation without an API key.
                     </p>
                 </div>
                 <div class="form-group">
@@ -834,12 +843,7 @@
            Configuration
            ========================================================================== */
         const CONFIG = {
-            // CORS proxies (tried in order)
-            corsProxies: [
-                { name: 'Custom', url: 'https://odd-mouse-d090.asvdveen.workers.dev', format: (u) => `${u}/?url=${encodeURIComponent(u.target)}` },
-                { name: 'corsproxy.io', url: 'https://corsproxy.io', format: (target) => `https://corsproxy.io/?${encodeURIComponent(target)}` },
-                { name: 'allorigins', url: 'https://api.allorigins.win', format: (target) => `https://api.allorigins.win/raw?url=${encodeURIComponent(target)}` }
-            ],
+            // Default CORS proxy for aircraft data
             defaultProxy: 'https://odd-mouse-d090.asvdveen.workers.dev',
 
             // API endpoints
@@ -848,7 +852,8 @@
                 issAlt: 'https://api.wheretheiss.at/v1/satellites/25544',
                 opensky: 'https://opensky-network.org/api/states/all',
                 celestrak: 'https://celestrak.org/NORAD/elements/gp.php',
-                openweather: 'https://tile.openweathermap.org/map'
+                openweather: 'https://tile.openweathermap.org/map',
+                rainviewer: 'https://tilecache.rainviewer.com/v2/radar'
             },
 
             // Update intervals (ms)
@@ -894,6 +899,7 @@
                 satellites: null,
                 aircraft: null,
                 weather: {
+                    radar: null,
                     clouds: null,
                     precipitation: null,
                     temp: null,
@@ -1430,53 +1436,21 @@
                 // Check if we have OpenSky credentials
                 const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
 
-                let data = null;
-                let lastError = null;
-
+                // Build proxy URL with optional auth
+                let proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(baseUrl)}`;
                 if (hasAuth) {
-                    // Use authenticated request through custom proxy
-                    // Pass credentials as query params for the proxy to use
-                    const proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(baseUrl)}&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
-
-                    try {
-                        console.log('Trying authenticated OpenSky request...');
-                        const response = await fetch(proxyUrl);
-                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        data = await response.json();
-                        console.log('Authenticated request succeeded');
-                    } catch (e) {
-                        console.warn('Authenticated request failed:', e.message);
-                        lastError = e;
-                    }
+                    proxyUrl += `&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
                 }
 
-                // If no auth or auth failed, try public proxies
-                if (!data) {
-                    const proxiesToTry = [
-                        { name: 'Custom (no auth)', format: (t) => `${state.settings.proxyUrl}/?url=${encodeURIComponent(t)}` },
-                        { name: 'corsproxy.io', format: (t) => `https://corsproxy.io/?${encodeURIComponent(t)}` },
-                        { name: 'allorigins', format: (t) => `https://api.allorigins.win/raw?url=${encodeURIComponent(t)}` }
-                    ];
+                console.log(`Fetching aircraft ${hasAuth ? 'with' : 'without'} auth...`);
+                const response = await fetch(proxyUrl);
 
-                    for (const proxy of proxiesToTry) {
-                        try {
-                            const proxyUrl = proxy.format(baseUrl);
-                            console.log(`Trying ${proxy.name} proxy...`);
-                            const response = await fetch(proxyUrl);
-                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                            data = await response.json();
-                            console.log(`${proxy.name} proxy succeeded`);
-                            break;
-                        } catch (e) {
-                            console.warn(`${proxy.name} proxy failed:`, e.message);
-                            lastError = e;
-                        }
-                    }
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
-                if (!data) {
-                    throw lastError || new Error('All proxies failed');
-                }
+                const data = await response.json();
+                console.log('Aircraft fetch succeeded');
 
                 if (!state.layers.aircraft) return;
                 state.layers.aircraft.clearLayers();
@@ -1550,6 +1524,45 @@
         /* ==========================================================================
            Weather Layers
            ========================================================================== */
+
+        // RainViewer - Free radar layer (no API key required)
+        async function initRadarLayer() {
+            try {
+                // Get the latest radar timestamp from RainViewer API
+                const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                const data = await response.json();
+
+                if (data.radar && data.radar.past && data.radar.past.length > 0) {
+                    // Get the most recent radar frame
+                    const latestFrame = data.radar.past[data.radar.past.length - 1];
+                    const radarPath = latestFrame.path;
+
+                    state.layers.weather.radar = L.tileLayer(
+                        `https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`,
+                        {
+                            opacity: 0.7,
+                            attribution: '&copy; <a href="https://rainviewer.com">RainViewer</a>',
+                            crossOrigin: 'anonymous'
+                        }
+                    ).addTo(state.map);
+
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('RainViewer init error:', error);
+                return false;
+            }
+        }
+
+        function stopRadarLayer() {
+            if (state.layers.weather.radar) {
+                state.map.removeLayer(state.layers.weather.radar);
+                state.layers.weather.radar = null;
+            }
+        }
+
+        // OpenWeatherMap layers (requires API key)
         function initWeatherLayer(layerType) {
             if (!state.settings.openweatherKey) {
                 alert('Please add your OpenWeatherMap API key in Settings first.');
@@ -1633,7 +1646,20 @@
                 }
             });
 
-            // Weather layers
+            // RainViewer radar (free, no API key)
+            document.getElementById('layer-radar').addEventListener('change', async (e) => {
+                if (e.target.checked) {
+                    const success = await initRadarLayer();
+                    if (!success) {
+                        e.target.checked = false;
+                        alert('Failed to load radar data. Please try again.');
+                    }
+                } else {
+                    stopRadarLayer();
+                }
+            });
+
+            // OpenWeatherMap layers (requires API key)
             ['clouds', 'precipitation', 'temp', 'wind', 'pressure'].forEach(type => {
                 document.getElementById(`layer-${type}`).addEventListener('change', (e) => {
                     if (e.target.checked) {
