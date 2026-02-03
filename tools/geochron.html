@@ -798,7 +798,22 @@
                     <label for="proxyUrl">CORS Proxy URL</label>
                     <input type="text" id="proxyUrl" placeholder="https://your-proxy.workers.dev">
                     <p class="form-hint">
-                        Required for aircraft tracking. Default proxy handles OpenSky authentication automatically.
+                        Required for aircraft tracking. Default proxy is pre-configured.
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="openskyUsername">OpenSky Network Username</label>
+                    <input type="text" id="openskyUsername" placeholder="Enter your OpenSky username">
+                    <p class="form-hint">
+                        Optional but recommended for aircraft tracking (higher rate limits).
+                        <a href="https://opensky-network.org/index.php?option=com_users&view=registration" target="_blank">Create free account</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="openskyPassword">OpenSky Network Password</label>
+                    <input type="password" id="openskyPassword" placeholder="Enter your OpenSky password">
+                    <p class="form-hint">
+                        Stored locally in your browser only. Passed securely to proxy.
                     </p>
                 </div>
                 <div class="form-group">
@@ -864,7 +879,9 @@
                 proxyUrl: 'geochron_proxy_url',
                 refreshInterval: 'geochron_refresh_interval',
                 tleCache: 'geochron_tle_cache',
-                settings: 'geochron_settings'
+                settings: 'geochron_settings',
+                openskyUsername: 'geochron_opensky_username',
+                openskyPassword: 'geochron_opensky_password'
             }
         };
 
@@ -910,7 +927,9 @@
             settings: {
                 openweatherKey: '',
                 proxyUrl: '',
-                refreshInterval: 60
+                refreshInterval: 60,
+                openskyUsername: '',
+                openskyPassword: ''
             }
         };
 
@@ -945,6 +964,8 @@
             state.settings.openweatherKey = localStorage.getItem(CONFIG.storage.openweatherKey) || '';
             state.settings.proxyUrl = localStorage.getItem(CONFIG.storage.proxyUrl) || CONFIG.defaultProxy;
             state.settings.refreshInterval = parseInt(localStorage.getItem(CONFIG.storage.refreshInterval)) || 60;
+            state.settings.openskyUsername = localStorage.getItem(CONFIG.storage.openskyUsername) || '';
+            state.settings.openskyPassword = localStorage.getItem(CONFIG.storage.openskyPassword) || '';
 
             // Update config intervals based on settings
             CONFIG.intervals.aircraft = state.settings.refreshInterval * 1000;
@@ -954,14 +975,20 @@
             const openweatherKey = document.getElementById('apiKeyOpenWeather').value.trim();
             const proxyUrl = document.getElementById('proxyUrl').value.trim() || CONFIG.defaultProxy;
             const refreshInterval = parseInt(document.getElementById('refreshInterval').value) || 60;
+            const openskyUsername = document.getElementById('openskyUsername').value.trim();
+            const openskyPassword = document.getElementById('openskyPassword').value;
 
             localStorage.setItem(CONFIG.storage.openweatherKey, openweatherKey);
             localStorage.setItem(CONFIG.storage.proxyUrl, proxyUrl);
             localStorage.setItem(CONFIG.storage.refreshInterval, refreshInterval.toString());
+            localStorage.setItem(CONFIG.storage.openskyUsername, openskyUsername);
+            localStorage.setItem(CONFIG.storage.openskyPassword, openskyPassword);
 
             state.settings.openweatherKey = openweatherKey;
             state.settings.proxyUrl = proxyUrl;
             state.settings.refreshInterval = refreshInterval;
+            state.settings.openskyUsername = openskyUsername;
+            state.settings.openskyPassword = openskyPassword;
             CONFIG.intervals.aircraft = refreshInterval * 1000;
 
             // Update weather layer availability
@@ -975,6 +1002,8 @@
             document.getElementById('apiKeyOpenWeather').value = state.settings.openweatherKey;
             document.getElementById('proxyUrl').value = state.settings.proxyUrl;
             document.getElementById('refreshInterval').value = state.settings.refreshInterval;
+            document.getElementById('openskyUsername').value = state.settings.openskyUsername;
+            document.getElementById('openskyPassword').value = state.settings.openskyPassword;
             document.getElementById('settingsModal').classList.add('active');
         }
 
@@ -1404,10 +1433,16 @@
                 const bounds = state.map.getBounds();
                 const openskyUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
 
-                // Build proxy URL - the worker handles OAuth2 authentication internally
-                const proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(openskyUrl)}`;
+                // Check if we have OpenSky credentials
+                const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
 
-                console.log('Fetching aircraft via proxy...');
+                // Build proxy URL with optional auth (Basic auth credentials)
+                let proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(openskyUrl)}`;
+                if (hasAuth) {
+                    proxyUrl += `&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
+                }
+
+                console.log(`Fetching aircraft ${hasAuth ? 'with' : 'without'} auth...`);
                 const response = await fetch(proxyUrl);
 
                 if (!response.ok) {
