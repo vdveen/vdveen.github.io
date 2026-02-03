@@ -793,6 +793,21 @@
                     </p>
                 </div>
                 <div class="form-group">
+                    <label for="openskyUsername">OpenSky Network Username</label>
+                    <input type="text" id="openskyUsername" placeholder="Enter your OpenSky username">
+                    <p class="form-hint">
+                        Optional but recommended for aircraft tracking.
+                        <a href="https://opensky-network.org/index.php?option=com_users&view=registration" target="_blank">Create free account</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="openskyPassword">OpenSky Network Password</label>
+                    <input type="password" id="openskyPassword" placeholder="Enter your OpenSky password">
+                    <p class="form-hint">
+                        Stored locally in your browser only.
+                    </p>
+                </div>
+                <div class="form-group">
                     <label for="refreshInterval">Refresh Interval (seconds)</label>
                     <input type="text" id="refreshInterval" placeholder="60">
                     <p class="form-hint">
@@ -859,7 +874,9 @@
                 proxyUrl: 'geochron_proxy_url',
                 refreshInterval: 'geochron_refresh_interval',
                 tleCache: 'geochron_tle_cache',
-                settings: 'geochron_settings'
+                settings: 'geochron_settings',
+                openskyUsername: 'geochron_opensky_username',
+                openskyPassword: 'geochron_opensky_password'
             }
         };
 
@@ -904,7 +921,9 @@
             settings: {
                 openweatherKey: '',
                 proxyUrl: '',
-                refreshInterval: 60
+                refreshInterval: 60,
+                openskyUsername: '',
+                openskyPassword: ''
             }
         };
 
@@ -939,6 +958,8 @@
             state.settings.openweatherKey = localStorage.getItem(CONFIG.storage.openweatherKey) || '';
             state.settings.proxyUrl = localStorage.getItem(CONFIG.storage.proxyUrl) || CONFIG.defaultProxy;
             state.settings.refreshInterval = parseInt(localStorage.getItem(CONFIG.storage.refreshInterval)) || 60;
+            state.settings.openskyUsername = localStorage.getItem(CONFIG.storage.openskyUsername) || '';
+            state.settings.openskyPassword = localStorage.getItem(CONFIG.storage.openskyPassword) || '';
 
             // Update config intervals based on settings
             CONFIG.intervals.aircraft = state.settings.refreshInterval * 1000;
@@ -948,14 +969,20 @@
             const openweatherKey = document.getElementById('apiKeyOpenWeather').value.trim();
             const proxyUrl = document.getElementById('proxyUrl').value.trim() || CONFIG.defaultProxy;
             const refreshInterval = parseInt(document.getElementById('refreshInterval').value) || 60;
+            const openskyUsername = document.getElementById('openskyUsername').value.trim();
+            const openskyPassword = document.getElementById('openskyPassword').value;
 
             localStorage.setItem(CONFIG.storage.openweatherKey, openweatherKey);
             localStorage.setItem(CONFIG.storage.proxyUrl, proxyUrl);
             localStorage.setItem(CONFIG.storage.refreshInterval, refreshInterval.toString());
+            localStorage.setItem(CONFIG.storage.openskyUsername, openskyUsername);
+            localStorage.setItem(CONFIG.storage.openskyPassword, openskyPassword);
 
             state.settings.openweatherKey = openweatherKey;
             state.settings.proxyUrl = proxyUrl;
             state.settings.refreshInterval = refreshInterval;
+            state.settings.openskyUsername = openskyUsername;
+            state.settings.openskyPassword = openskyPassword;
             CONFIG.intervals.aircraft = refreshInterval * 1000;
 
             // Update weather layer availability
@@ -969,6 +996,8 @@
             document.getElementById('apiKeyOpenWeather').value = state.settings.openweatherKey;
             document.getElementById('proxyUrl').value = state.settings.proxyUrl;
             document.getElementById('refreshInterval').value = state.settings.refreshInterval;
+            document.getElementById('openskyUsername').value = state.settings.openskyUsername;
+            document.getElementById('openskyPassword').value = state.settings.openskyPassword;
             document.getElementById('settingsModal').classList.add('active');
         }
 
@@ -1396,31 +1425,52 @@
 
                 // Get current map bounds to limit request
                 const bounds = state.map.getBounds();
-                const targetUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
+                const baseUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
 
-                // Try proxies in order until one works
+                // Check if we have OpenSky credentials
+                const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
+
                 let data = null;
                 let lastError = null;
 
-                // First try custom proxy if set
-                const proxiesToTry = [
-                    { name: 'Custom', format: (t) => `${state.settings.proxyUrl}/?url=${encodeURIComponent(t)}` },
-                    { name: 'corsproxy.io', format: (t) => `https://corsproxy.io/?${encodeURIComponent(t)}` },
-                    { name: 'allorigins', format: (t) => `https://api.allorigins.win/raw?url=${encodeURIComponent(t)}` }
-                ];
+                if (hasAuth) {
+                    // Use authenticated request through custom proxy
+                    // Pass credentials as query params for the proxy to use
+                    const proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(baseUrl)}&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
 
-                for (const proxy of proxiesToTry) {
                     try {
-                        const proxyUrl = proxy.format(targetUrl);
-                        console.log(`Trying ${proxy.name} proxy...`);
+                        console.log('Trying authenticated OpenSky request...');
                         const response = await fetch(proxyUrl);
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
                         data = await response.json();
-                        console.log(`${proxy.name} proxy succeeded`);
-                        break;
+                        console.log('Authenticated request succeeded');
                     } catch (e) {
-                        console.warn(`${proxy.name} proxy failed:`, e.message);
+                        console.warn('Authenticated request failed:', e.message);
                         lastError = e;
+                    }
+                }
+
+                // If no auth or auth failed, try public proxies
+                if (!data) {
+                    const proxiesToTry = [
+                        { name: 'Custom (no auth)', format: (t) => `${state.settings.proxyUrl}/?url=${encodeURIComponent(t)}` },
+                        { name: 'corsproxy.io', format: (t) => `https://corsproxy.io/?${encodeURIComponent(t)}` },
+                        { name: 'allorigins', format: (t) => `https://api.allorigins.win/raw?url=${encodeURIComponent(t)}` }
+                    ];
+
+                    for (const proxy of proxiesToTry) {
+                        try {
+                            const proxyUrl = proxy.format(baseUrl);
+                            console.log(`Trying ${proxy.name} proxy...`);
+                            const response = await fetch(proxyUrl);
+                            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                            data = await response.json();
+                            console.log(`${proxy.name} proxy succeeded`);
+                            break;
+                        } catch (e) {
+                            console.warn(`${proxy.name} proxy failed:`, e.message);
+                            lastError = e;
+                        }
                     }
                 }
 
@@ -1521,7 +1571,8 @@
                 `${CONFIG.apis.openweather}/${owmLayer}/{z}/{x}/{y}.png?appid=${state.settings.openweatherKey}`,
                 {
                     opacity: 0.6,
-                    attribution: '&copy; <a href="https://openweathermap.org">OpenWeatherMap</a>'
+                    attribution: '&copy; <a href="https://openweathermap.org">OpenWeatherMap</a>',
+                    crossOrigin: 'anonymous'
                 }
             ).addTo(state.map);
 
