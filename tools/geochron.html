@@ -1436,8 +1436,10 @@
                 // Check if we have OpenSky credentials
                 const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
 
-                // Build proxy URL with optional auth (Basic auth credentials)
-                let proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(openskyUrl)}`;
+                // Build proxy URL with optional auth (OAuth2 client credentials)
+                const proxyBase = state.settings.proxyUrl.replace(/\/+$/, ''); // Remove trailing slashes
+                let proxyUrl = `${proxyBase}?url=${encodeURIComponent(openskyUrl)}`;
+                
                 if (hasAuth) {
                     proxyUrl += `&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
                 }
