@@ -1571,7 +1571,8 @@
                 `${CONFIG.apis.openweather}/${owmLayer}/{z}/{x}/{y}.png?appid=${state.settings.openweatherKey}`,
                 {
                     opacity: 0.6,
-                    attribution: '&copy; <a href="https://openweathermap.org">OpenWeatherMap</a>'
+                    attribution: '&copy; <a href="https://openweathermap.org">OpenWeatherMap</a>',
+                    crossOrigin: 'anonymous'
                 }
             ).addTo(state.map);
 
