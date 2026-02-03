@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geochron - Live Earth Visualization</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <style>
+        /* ==========================================================================
+           CSS Variables & Base Styles
+           ========================================================================== */
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-tertiary: #0f3460;
+            --text-primary: #eaeaea;
+            --text-secondary: #a0a0a0;
+            --accent: #e94560;
+            --accent-hover: #ff6b6b;
+            --success: #4ecca3;
+            --warning: #ffc107;
+            --border: #2a2a4a;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ==========================================================================
+           Layout
+           ========================================================================== */
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Timezone Bar (Top) */
+        .timezone-bar {
+            height: 32px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .timezone-bar .tz-label {
+            flex: 1;
+            text-align: center;
+            padding: 2px 4px;
+            border-right: 1px solid var(--border);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .timezone-bar .tz-label:last-child {
+            border-right: none;
+        }
+
+        .timezone-bar .tz-label.current {
+            background: var(--accent);
+            color: white;
+            font-weight: bold;
+        }
+
+        .timezone-bar .tz-label .tz-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+            display: block;
+        }
+
+        .timezone-bar .tz-label.current .tz-time {
+            color: white;
+        }
+
+        /* Map Container */
+        #map {
+            flex: 1;
+            width: 100%;
+            background: var(--bg-primary);
+        }
+
+        /* ==========================================================================
+           Control Panel
+           ========================================================================== */
+        .control-panel {
+            position: absolute;
+            top: 44px;
+            right: 10px;
+            z-index: 1000;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow);
+            border: 1px solid var(--border);
+            min-width: 220px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .control-panel-header {
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .control-panel-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-panel-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 4px;
+        }
+
+        .control-panel-content {
+            padding: 8px 0;
+        }
+
+        .control-panel.collapsed .control-panel-content {
+            display: none;
+        }
+
+        /* Layer Groups */
+        .layer-group {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .layer-group:last-child {
+            border-bottom: none;
+        }
+
+        .layer-group-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Layer Toggle */
+        .layer-toggle {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .layer-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .layer-toggle.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .layer-toggle input[type="checkbox"] {
+            display: none;
+        }
+
+        .layer-toggle .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background: var(--border);
+            border-radius: 10px;
+            position: relative;
+            margin-right: 10px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .layer-toggle .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .layer-toggle input:checked + .toggle-switch {
+            background: var(--accent);
+        }
+
+        .layer-toggle input:checked + .toggle-switch::after {
+            transform: translateX(16px);
+            background: white;
+        }
+
+        .layer-toggle .toggle-label {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .layer-toggle .toggle-icon {
+            font-size: 16px;
+        }
+
+        .layer-toggle .api-required {
+            font-size: 9px;
+            background: var(--warning);
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+
+        /* Settings Button */
+        .settings-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: none;
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .settings-btn:hover {
+            background: var(--accent);
+        }
+
+        /* ==========================================================================
+           Status Bar
+           ========================================================================== */
+        .status-bar {
+            height: 28px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-item .status-icon {
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .status-dot.loading {
+            background: var(--warning);
+            animation: pulse 1s infinite;
+        }
+
+        .status-dot.error {
+            background: var(--accent);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* ==========================================================================
+           Modal
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            background: var(--bg-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+
+        .modal-close:hover {
+            color: var(--accent);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(80vh - 60px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 6px;
+        }
+
+        .form-group .form-hint {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .form-group .form-hint a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .form-group .form-hint a:hover {
+            text-decoration: underline;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* ==========================================================================
+           Map Custom Styles
+           ========================================================================== */
+        .leaflet-container {
+            background: var(--bg-primary);
+        }
+
+        /* Sun marker */
+        .sun-marker {
+            font-size: 24px;
+            text-shadow: 0 0 20px #ffeb3b, 0 0 40px #ff9800;
+        }
+
+        /* ISS marker */
+        .iss-marker {
+            font-size: 20px;
+            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+        }
+
+        /* Satellite markers */
+        .satellite-marker {
+            font-size: 10px;
+            color: #4fc3f7;
+            text-shadow: 0 0 4px #4fc3f7;
+        }
+
+        /* Aircraft markers */
+        .aircraft-marker {
+            font-size: 14px;
+            color: #ffeb3b;
+            transition: transform 0.5s ease;
+        }
+
+        /* Timezone lines */
+        .timezone-line {
+            stroke: rgba(255, 255, 255, 0.15);
+            stroke-width: 1;
+            stroke-dasharray: 4, 4;
+        }
+
+        /* Custom popup */
+        .leaflet-popup-content-wrapper {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .leaflet-popup-tip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .leaflet-popup-content {
+            margin: 12px;
+            font-size: 13px;
+        }
+
+        .popup-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .popup-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .popup-row:last-child {
+            border-bottom: none;
+        }
+
+        .popup-label {
+            color: var(--text-secondary);
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 46, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            transition: opacity 0.5s;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ==========================================================================
+           Responsive
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .timezone-bar {
+                font-size: 9px;
+                height: 28px;
+            }
+
+            .timezone-bar .tz-label .tz-time {
+                display: none;
+            }
+
+            .control-panel {
+                right: 5px;
+                min-width: 200px;
+            }
+
+            .status-bar {
+                font-size: 10px;
+                padding: 0 8px;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .timezone-bar .tz-label {
+                padding: 2px;
+                font-size: 8px;
+            }
+
+            .control-panel {
+                min-width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading Geochron...</div>
+    </div>
+
+    <div class="app-container">
+        <!-- Timezone Bar -->
+        <div class="timezone-bar" id="timezoneBar">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Map -->
+        <div id="map"></div>
+
+        <!-- Control Panel -->
+        <div class="control-panel" id="controlPanel">
+            <div class="control-panel-header" onclick="toggleControlPanel()">
+                <h3><span>🌍</span> Layers</h3>
+                <button class="control-panel-toggle" id="panelToggle">−</button>
+            </div>
+            <div class="control-panel-content">
+                <!-- Core Layers -->
+                <div class="layer-group">
+                    <div class="layer-group-title">Core</div>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-terminator" checked>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">🌓</span> Day/Night
+                        </span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-sun" checked>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">☀️</span> Sun Position
+                        </span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-timezones" checked>
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">🕐</span> Timezone Lines
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Space -->
+                <div class="layer-group">
+                    <div class="layer-group-title">Space</div>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-iss">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">🛸</span> ISS
+                        </span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-satellites">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">📡</span> Satellites
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Weather -->
+                <div class="layer-group">
+                    <div class="layer-group-title">Weather</div>
+                    <label class="layer-toggle" id="toggle-radar">
+                        <input type="checkbox" id="layer-radar">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">📡</span> Radar (free)
+                        </span>
+                    </label>
+                    <label class="layer-toggle" id="toggle-clouds">
+                        <input type="checkbox" id="layer-clouds">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">☁️</span> Clouds
+                            <span class="api-required">API</span>
+                        </span>
+                    </label>
+                    <label class="layer-toggle" id="toggle-precipitation">
+                        <input type="checkbox" id="layer-precipitation">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">🌧️</span> Precipitation
+                            <span class="api-required">API</span>
+                        </span>
+                    </label>
+                    <label class="layer-toggle" id="toggle-temp">
+                        <input type="checkbox" id="layer-temp">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">🌡️</span> Temperature
+                            <span class="api-required">API</span>
+                        </span>
+                    </label>
+                    <label class="layer-toggle" id="toggle-wind">
+                        <input type="checkbox" id="layer-wind">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">💨</span> Wind
+                            <span class="api-required">API</span>
+                        </span>
+                    </label>
+                    <label class="layer-toggle" id="toggle-pressure">
+                        <input type="checkbox" id="layer-pressure">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">📊</span> Pressure
+                            <span class="api-required">API</span>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Aviation -->
+                <div class="layer-group">
+                    <div class="layer-group-title">Aviation</div>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-aircraft">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">✈️</span> Aircraft
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Settings Button -->
+                <button class="settings-btn" onclick="openSettings()">
+                    <span>⚙️</span> Settings & API Keys
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Ready</span>
+            </div>
+            <div class="status-item">
+                <span class="status-icon">🌍</span>
+                <span id="sunInfo">Loading...</span>
+            </div>
+            <div class="status-item" id="issStatus" style="display: none;">
+                <span class="status-icon">🛸</span>
+                <span id="issInfo">--</span>
+            </div>
+            <div class="status-item" id="aircraftStatus" style="display: none;">
+                <span class="status-icon">✈️</span>
+                <span id="aircraftInfo">--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>⚙️ Settings</h2>
+                <button class="modal-close" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="apiKeyOpenWeather">OpenWeatherMap API Key</label>
+                    <input type="password" id="apiKeyOpenWeather" placeholder="Enter your API key">
+                    <p class="form-hint">
+                        Required for clouds, temp, wind, pressure layers.
+                        Note: Weather Maps 2.0 may require a paid subscription.
+                        <a href="https://openweathermap.org/price" target="_blank">Check pricing</a>.
+                        Use "Radar (free)" for precipitation without an API key.
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="proxyUrl">CORS Proxy URL</label>
+                    <input type="text" id="proxyUrl" placeholder="https://your-proxy.workers.dev">
+                    <p class="form-hint">
+                        Required for aircraft tracking. Default proxy is pre-configured.
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="openskyUsername">OpenSky API Client ID</label>
+                    <input type="text" id="openskyUsername" placeholder="Enter your API client ID">
+                    <p class="form-hint">
+                        Optional but recommended for higher rate limits.
+                        <a href="https://opensky-network.org/account" target="_blank">Create API client</a>
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="openskyPassword">OpenSky API Client Secret</label>
+                    <input type="password" id="openskyPassword" placeholder="Enter your API client secret">
+                    <p class="form-hint">
+                        Stored locally in your browser only. Used for OAuth2 authentication.
+                    </p>
+                </div>
+                <div class="form-group">
+                    <label for="refreshInterval">Refresh Interval (seconds)</label>
+                    <input type="text" id="refreshInterval" placeholder="60">
+                    <p class="form-hint">
+                        How often to update live data (ISS, aircraft). Default: 60s
+                    </p>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveSettings()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet.Terminator - https://github.com/joergdietrich/Leaflet.Terminator -->
+    <script src="https://unpkg.com/@joergdietrich/leaflet.terminator"></script>
+    <!-- satellite.js for satellite position calculations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/5.0.0/satellite.min.js"></script>
+
+    <script>
+        /* ==========================================================================
+           Configuration
+           ========================================================================== */
+        const CONFIG = {
+            // Default CORS proxy for aircraft data
+            defaultProxy: 'https://odd-mouse-d090.asvdveen.workers.dev',
+
+            // API endpoints
+            apis: {
+                iss: 'http://api.open-notify.org/iss-now.json',
+                issAlt: 'https://api.wheretheiss.at/v1/satellites/25544',
+                opensky: 'https://opensky-network.org/api/states/all',
+                celestrak: 'https://celestrak.org/NORAD/elements/gp.php',
+                openweather: 'https://tile.openweathermap.org/map',
+                rainviewer: 'https://tilecache.rainviewer.com/v2/radar'
+            },
+
+            // Update intervals (ms)
+            intervals: {
+                terminator: 60000,      // 1 minute
+                iss: 5000,              // 5 seconds
+                aircraft: 15000,        // 15 seconds (OpenSky rate limit)
+                satellites: 30000,      // 30 seconds
+                timezone: 1000          // 1 second
+            },
+
+            // Map settings
+            map: {
+                center: [20, 0],
+                zoom: 2,
+                minZoom: 1,
+                maxZoom: 18
+            },
+
+            // Storage keys
+            storage: {
+                openweatherKey: 'geochron_openweather_key',
+                proxyUrl: 'geochron_proxy_url',
+                refreshInterval: 'geochron_refresh_interval',
+                tleCache: 'geochron_tle_cache',
+                settings: 'geochron_settings',
+                openskyUsername: 'geochron_opensky_username',
+                openskyPassword: 'geochron_opensky_password'
+            }
+        };
+
+        /* ==========================================================================
+           State
+           ========================================================================== */
+        const state = {
+            map: null,
+            layers: {
+                terminator: null,
+                sun: null,
+                timezones: null,
+                iss: null,
+                issOrbit: null,
+                satellites: null,
+                aircraft: null,
+                weather: {
+                    radar: null,
+                    clouds: null,
+                    precipitation: null,
+                    temp: null,
+                    wind: null,
+                    pressure: null
+                }
+            },
+            markers: {
+                sun: null,
+                iss: null,
+                aircraft: [],
+                satellites: []
+            },
+            intervals: {
+                terminator: null,
+                iss: null,
+                aircraft: null,
+                satellites: null,
+                timezone: null
+            },
+            data: {
+                tle: null,
+                aircraft: []
+            },
+            settings: {
+                openweatherKey: '',
+                proxyUrl: '',
+                refreshInterval: 60,
+                openskyUsername: '',
+                openskyPassword: ''
+            }
+        };
+
+        /* ==========================================================================
+           Initialization
+           ========================================================================== */
+        document.addEventListener('DOMContentLoaded', init);
+
+        async function init() {
+            loadSettings();
+            initMap();
+            initTimezoneBar();
+            initLayerToggles();
+
+            // Initialize default layers
+            await initTerminator();
+            initSunPosition();
+            initTimezoneLines();
+
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+            }, 500);
+
+            updateStatus('Ready', 'success');
+        }
+
+        /* ==========================================================================
+           Settings Management
+           ========================================================================== */
+        function loadSettings() {
+            state.settings.openweatherKey = localStorage.getItem(CONFIG.storage.openweatherKey) || '';
+            state.settings.proxyUrl = localStorage.getItem(CONFIG.storage.proxyUrl) || CONFIG.defaultProxy;
+            state.settings.refreshInterval = parseInt(localStorage.getItem(CONFIG.storage.refreshInterval)) || 60;
+            state.settings.openskyUsername = localStorage.getItem(CONFIG.storage.openskyUsername) || '';
+            state.settings.openskyPassword = localStorage.getItem(CONFIG.storage.openskyPassword) || '';
+
+            // Update config intervals based on settings
+            CONFIG.intervals.aircraft = state.settings.refreshInterval * 1000;
+        }
+
+        function saveSettings() {
+            const openweatherKey = document.getElementById('apiKeyOpenWeather').value.trim();
+            const proxyUrl = document.getElementById('proxyUrl').value.trim() || CONFIG.defaultProxy;
+            const refreshInterval = parseInt(document.getElementById('refreshInterval').value) || 60;
+            const openskyUsername = document.getElementById('openskyUsername').value.trim();
+            const openskyPassword = document.getElementById('openskyPassword').value;
+
+            localStorage.setItem(CONFIG.storage.openweatherKey, openweatherKey);
+            localStorage.setItem(CONFIG.storage.proxyUrl, proxyUrl);
+            localStorage.setItem(CONFIG.storage.refreshInterval, refreshInterval.toString());
+            localStorage.setItem(CONFIG.storage.openskyUsername, openskyUsername);
+            localStorage.setItem(CONFIG.storage.openskyPassword, openskyPassword);
+
+            state.settings.openweatherKey = openweatherKey;
+            state.settings.proxyUrl = proxyUrl;
+            state.settings.refreshInterval = refreshInterval;
+            state.settings.openskyUsername = openskyUsername;
+            state.settings.openskyPassword = openskyPassword;
+            CONFIG.intervals.aircraft = refreshInterval * 1000;
+
+            // Update weather layer availability
+            updateWeatherLayerStatus();
+
+            closeSettings();
+            updateStatus('Settings saved', 'success');
+        }
+
+        function openSettings() {
+            document.getElementById('apiKeyOpenWeather').value = state.settings.openweatherKey;
+            document.getElementById('proxyUrl').value = state.settings.proxyUrl;
+            document.getElementById('refreshInterval').value = state.settings.refreshInterval;
+            document.getElementById('openskyUsername').value = state.settings.openskyUsername;
+            document.getElementById('openskyPassword').value = state.settings.openskyPassword;
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function updateWeatherLayerStatus() {
+            const hasKey = !!state.settings.openweatherKey;
+            const weatherToggles = ['toggle-clouds', 'toggle-precipitation', 'toggle-temp', 'toggle-wind', 'toggle-pressure'];
+
+            weatherToggles.forEach(id => {
+                const toggle = document.getElementById(id);
+                if (toggle) {
+                    if (hasKey) {
+                        toggle.classList.remove('disabled');
+                        toggle.title = '';
+                    } else {
+                        toggle.classList.add('disabled');
+                        toggle.title = 'API key required - click Settings';
+                    }
+                }
+            });
+        }
+
+        /* ==========================================================================
+           Map Initialization
+           ========================================================================== */
+        function initMap() {
+            state.map = L.map('map', {
+                center: CONFIG.map.center,
+                zoom: CONFIG.map.zoom,
+                minZoom: CONFIG.map.minZoom,
+                maxZoom: CONFIG.map.maxZoom,
+                worldCopyJump: true,
+                zoomControl: true
+            });
+
+            // Dark tile layer (CartoDB Dark Matter)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(state.map);
+
+            // Move zoom control to bottom left
+            state.map.zoomControl.setPosition('bottomleft');
+        }
+
+        /* ==========================================================================
+           Timezone Bar
+           ========================================================================== */
+        function initTimezoneBar() {
+            updateTimezoneBar();
+            state.intervals.timezone = setInterval(updateTimezoneBar, CONFIG.intervals.timezone);
+        }
+
+        function updateTimezoneBar() {
+            const bar = document.getElementById('timezoneBar');
+            const now = new Date();
+            const currentUtcHour = now.getUTCHours();
+
+            // Generate timezone labels from -12 to +12
+            let html = '';
+            for (let offset = -12; offset <= 12; offset++) {
+                const hour = (currentUtcHour + offset + 24) % 24;
+                const label = offset === 0 ? 'UTC' : (offset > 0 ? `+${offset}` : `${offset}`);
+                const time = `${hour.toString().padStart(2, '0')}:${now.getUTCMinutes().toString().padStart(2, '0')}`;
+
+                // Highlight current user timezone
+                const userOffset = -now.getTimezoneOffset() / 60;
+                const isCurrent = Math.round(userOffset) === offset;
+
+                html += `
+                    <div class="tz-label ${isCurrent ? 'current' : ''}">
+                        ${label}
+                        <span class="tz-time">${time}</span>
+                    </div>
+                `;
+            }
+
+            bar.innerHTML = html;
+        }
+
+        /* ==========================================================================
+           Day/Night Terminator
+           ========================================================================== */
+        async function initTerminator() {
+            state.layers.terminator = L.terminator({
+                resolution: 2,
+                fillColor: '#000',
+                fillOpacity: 0.4,
+                stroke: true,
+                color: '#ff6b6b',
+                weight: 1
+            }).addTo(state.map);
+
+            // Update terminator position periodically
+            state.intervals.terminator = setInterval(() => {
+                if (state.layers.terminator) {
+                    state.layers.terminator.setTime();
+                }
+            }, CONFIG.intervals.terminator);
+        }
+
+        /* ==========================================================================
+           Sun Position
+           ========================================================================== */
+        function initSunPosition() {
+            updateSunPosition();
+
+            // Update with terminator
+            setInterval(updateSunPosition, CONFIG.intervals.terminator);
+        }
+
+        function updateSunPosition() {
+            const sunPos = getSunPosition(new Date());
+
+            if (state.markers.sun) {
+                state.markers.sun.setLatLng([sunPos.lat, sunPos.lng]);
+            } else {
+                state.markers.sun = L.marker([sunPos.lat, sunPos.lng], {
+                    icon: L.divIcon({
+                        className: 'sun-marker',
+                        html: '☀️',
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    })
+                }).addTo(state.map);
+
+                state.markers.sun.bindPopup(`
+                    <div class="popup-title">☀️ Sun (Subsolar Point)</div>
+                    <div class="popup-row">
+                        <span class="popup-label">Latitude</span>
+                        <span>${sunPos.lat.toFixed(2)}°</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Longitude</span>
+                        <span>${sunPos.lng.toFixed(2)}°</span>
+                    </div>
+                `);
+            }
+
+            // Update status
+            document.getElementById('sunInfo').textContent =
+                `Sun: ${sunPos.lat.toFixed(1)}°, ${sunPos.lng.toFixed(1)}°`;
+        }
+
+        function getSunPosition(date) {
+            // Calculate subsolar point (where sun is directly overhead)
+            const JD = getJulianDate(date);
+            const D = JD - 2451545.0; // Days since J2000.0
+
+            // Mean longitude of the Sun
+            const g = (357.529 + 0.98560028 * D) * Math.PI / 180;
+            const q = 280.459 + 0.98564736 * D;
+            const L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * Math.PI / 180;
+
+            // Obliquity of the ecliptic
+            const e = (23.439 - 0.00000036 * D) * Math.PI / 180;
+
+            // Right ascension and declination
+            const sinL = Math.sin(L);
+            const cosL = Math.cos(L);
+            const sinE = Math.sin(e);
+            const cosE = Math.cos(e);
+
+            const RA = Math.atan2(cosE * sinL, cosL);
+            const dec = Math.asin(sinE * sinL);
+
+            // Greenwich Mean Sidereal Time
+            const GMST = (18.697374558 + 24.06570982441908 * D) % 24;
+            const GMSTrad = GMST * 15 * Math.PI / 180;
+
+            // Subsolar longitude
+            let lng = (RA - GMSTrad) * 180 / Math.PI;
+            while (lng > 180) lng -= 360;
+            while (lng < -180) lng += 360;
+
+            return {
+                lat: dec * 180 / Math.PI,
+                lng: lng
+            };
+        }
+
+        function getJulianDate(date) {
+            return date.getTime() / 86400000 + 2440587.5;
+        }
+
+        /* ==========================================================================
+           Timezone Lines
+           ========================================================================== */
+        function initTimezoneLines() {
+            state.layers.timezones = L.layerGroup().addTo(state.map);
+
+            // Draw timezone meridians every 15 degrees
+            for (let lng = -180; lng <= 180; lng += 15) {
+                const line = L.polyline([[-90, lng], [90, lng]], {
+                    color: 'rgba(255, 255, 255, 0.15)',
+                    weight: 1,
+                    dashArray: '4, 4',
+                    interactive: false
+                });
+                state.layers.timezones.addLayer(line);
+            }
+        }
+
+        /* ==========================================================================
+           ISS Tracking
+           ========================================================================== */
+        async function initISS() {
+            await updateISSPosition();
+            state.intervals.iss = setInterval(updateISSPosition, CONFIG.intervals.iss);
+            document.getElementById('issStatus').style.display = 'flex';
+        }
+
+        async function stopISS() {
+            if (state.intervals.iss) {
+                clearInterval(state.intervals.iss);
+                state.intervals.iss = null;
+            }
+            if (state.markers.iss) {
+                state.map.removeLayer(state.markers.iss);
+                state.markers.iss = null;
+            }
+            if (state.layers.issOrbit) {
+                state.map.removeLayer(state.layers.issOrbit);
+                state.layers.issOrbit = null;
+            }
+            document.getElementById('issStatus').style.display = 'none';
+        }
+
+        async function updateISSPosition() {
+            try {
+                // Use wheretheiss.at API (better CORS support)
+                const response = await fetch(CONFIG.apis.issAlt);
+                const data = await response.json();
+
+                const lat = data.latitude;
+                const lng = data.longitude;
+                const alt = data.altitude;
+                const velocity = data.velocity;
+
+                if (state.markers.iss) {
+                    state.markers.iss.setLatLng([lat, lng]);
+                } else {
+                    state.markers.iss = L.marker([lat, lng], {
+                        icon: L.divIcon({
+                            className: 'iss-marker',
+                            html: '🛸',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        })
+                    }).addTo(state.map);
+                }
+
+                state.markers.iss.bindPopup(`
+                    <div class="popup-title">🛸 International Space Station</div>
+                    <div class="popup-row">
+                        <span class="popup-label">Latitude</span>
+                        <span>${lat.toFixed(4)}°</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Longitude</span>
+                        <span>${lng.toFixed(4)}°</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Altitude</span>
+                        <span>${alt.toFixed(1)} km</span>
+                    </div>
+                    <div class="popup-row">
+                        <span class="popup-label">Velocity</span>
+                        <span>${velocity.toFixed(1)} km/h</span>
+                    </div>
+                `);
+
+                document.getElementById('issInfo').textContent =
+                    `${lat.toFixed(1)}°, ${lng.toFixed(1)}° @ ${alt.toFixed(0)}km`;
+
+            } catch (error) {
+                console.error('ISS fetch error:', error);
+                document.getElementById('issInfo').textContent = 'Error';
+            }
+        }
+
+        /* ==========================================================================
+           Satellite Tracking
+           ========================================================================== */
+        async function initSatellites() {
+            updateStatus('Loading satellites...', 'loading');
+
+            try {
+                // Fetch TLE data from CelesTrak (active satellites)
+                const response = await fetch(
+                    `${CONFIG.apis.celestrak}?GROUP=active&FORMAT=tle`
+                );
+                const tleText = await response.text();
+                state.data.tle = parseTLE(tleText);
+
+                // Limit to first 200 satellites for performance
+                const satellites = state.data.tle.slice(0, 200);
+
+                state.layers.satellites = L.layerGroup().addTo(state.map);
+
+                updateSatellitePositions(satellites);
+                state.intervals.satellites = setInterval(
+                    () => updateSatellitePositions(satellites),
+                    CONFIG.intervals.satellites
+                );
+
+                updateStatus(`${satellites.length} satellites loaded`, 'success');
+            } catch (error) {
+                console.error('Satellite fetch error:', error);
+                updateStatus('Failed to load satellites', 'error');
+            }
+        }
+
+        async function stopSatellites() {
+            if (state.intervals.satellites) {
+                clearInterval(state.intervals.satellites);
+                state.intervals.satellites = null;
+            }
+            if (state.layers.satellites) {
+                state.map.removeLayer(state.layers.satellites);
+                state.layers.satellites = null;
+            }
+            state.markers.satellites = [];
+        }
+
+        function parseTLE(tleText) {
+            const lines = tleText.trim().split('\n');
+            const satellites = [];
+
+            for (let i = 0; i < lines.length - 2; i += 3) {
+                const name = lines[i].trim();
+                const line1 = lines[i + 1];
+                const line2 = lines[i + 2];
+
+                if (line1 && line2 && line1.startsWith('1 ') && line2.startsWith('2 ')) {
+                    satellites.push({ name, line1, line2 });
+                }
+            }
+
+            return satellites;
+        }
+
+        function updateSatellitePositions(satellites) {
+            if (!state.layers.satellites) return;
+
+            state.layers.satellites.clearLayers();
+            const now = new Date();
+
+            satellites.forEach(sat => {
+                try {
+                    const satrec = satellite.twoline2satrec(sat.line1, sat.line2);
+                    const positionAndVelocity = satellite.propagate(satrec, now);
+
+                    if (positionAndVelocity.position) {
+                        const gmst = satellite.gstime(now);
+                        const position = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+
+                        const lat = satellite.degreesLat(position.latitude);
+                        const lng = satellite.degreesLong(position.longitude);
+                        const alt = position.height;
+
+                        const marker = L.marker([lat, lng], {
+                            icon: L.divIcon({
+                                className: 'satellite-marker',
+                                html: '•',
+                                iconSize: [10, 10],
+                                iconAnchor: [5, 5]
+                            })
+                        });
+
+                        marker.bindPopup(`
+                            <div class="popup-title">📡 ${sat.name}</div>
+                            <div class="popup-row">
+                                <span class="popup-label">Latitude</span>
+                                <span>${lat.toFixed(2)}°</span>
+                            </div>
+                            <div class="popup-row">
+                                <span class="popup-label">Longitude</span>
+                                <span>${lng.toFixed(2)}°</span>
+                            </div>
+                            <div class="popup-row">
+                                <span class="popup-label">Altitude</span>
+                                <span>${alt.toFixed(0)} km</span>
+                            </div>
+                        `);
+
+                        state.layers.satellites.addLayer(marker);
+                    }
+                } catch (e) {
+                    // Skip satellites with invalid TLE
+                }
+            });
+        }
+
+        /* ==========================================================================
+           Aircraft Tracking
+           ========================================================================== */
+        async function initAircraft() {
+            document.getElementById('aircraftStatus').style.display = 'flex';
+            state.layers.aircraft = L.layerGroup().addTo(state.map);
+
+            await updateAircraftPositions();
+            state.intervals.aircraft = setInterval(updateAircraftPositions, CONFIG.intervals.aircraft);
+        }
+
+        async function stopAircraft() {
+            if (state.intervals.aircraft) {
+                clearInterval(state.intervals.aircraft);
+                state.intervals.aircraft = null;
+            }
+            if (state.layers.aircraft) {
+                state.map.removeLayer(state.layers.aircraft);
+                state.layers.aircraft = null;
+            }
+            document.getElementById('aircraftStatus').style.display = 'none';
+        }
+
+        async function updateAircraftPositions() {
+            try {
+                updateStatus('Fetching aircraft...', 'loading');
+
+                // Get current map bounds to limit request
+                const bounds = state.map.getBounds();
+                const openskyUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
+
+                // Check if we have OpenSky credentials
+                const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
+
+                // Build proxy URL with optional auth (OAuth2 client credentials)
+                const proxyBase = state.settings.proxyUrl.replace(/\/+$/, ''); // Remove trailing slashes
+                let proxyUrl = `${proxyBase}?url=${encodeURIComponent(openskyUrl)}`;
+                
+                if (hasAuth) {
+                    proxyUrl += `&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
+                }
+
+                console.log(`Fetching aircraft ${hasAuth ? 'with' : 'without'} auth...`);
+                const response = await fetch(proxyUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Aircraft fetch succeeded');
+
+                if (!state.layers.aircraft) return;
+                state.layers.aircraft.clearLayers();
+
+                if (data.states) {
+                    // Limit to 500 aircraft for performance
+                    const aircraft = data.states.slice(0, 500);
+
+                    aircraft.forEach(ac => {
+                        const [
+                            icao24, callsign, originCountry, timePosition, lastContact,
+                            longitude, latitude, baroAltitude, onGround, velocity,
+                            trueTrack, verticalRate, sensors, geoAltitude, squawk,
+                            spi, positionSource
+                        ] = ac;
+
+                        if (latitude && longitude) {
+                            const rotation = trueTrack || 0;
+
+                            const marker = L.marker([latitude, longitude], {
+                                icon: L.divIcon({
+                                    className: 'aircraft-marker',
+                                    html: `<span style="transform: rotate(${rotation}deg); display: inline-block;">✈</span>`,
+                                    iconSize: [14, 14],
+                                    iconAnchor: [7, 7]
+                                }),
+                                rotationAngle: rotation
+                            });
+
+                            const alt = baroAltitude ? `${(baroAltitude * 3.28084).toFixed(0)} ft` : 'N/A';
+                            const speed = velocity ? `${(velocity * 1.94384).toFixed(0)} kts` : 'N/A';
+
+                            marker.bindPopup(`
+                                <div class="popup-title">✈️ ${(callsign || 'Unknown').trim() || icao24}</div>
+                                <div class="popup-row">
+                                    <span class="popup-label">ICAO24</span>
+                                    <span>${icao24}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Country</span>
+                                    <span>${originCountry}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Altitude</span>
+                                    <span>${alt}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Speed</span>
+                                    <span>${speed}</span>
+                                </div>
+                                <div class="popup-row">
+                                    <span class="popup-label">Heading</span>
+                                    <span>${trueTrack ? trueTrack.toFixed(0) + '°' : 'N/A'}</span>
+                                </div>
+                            `);
+
+                            state.layers.aircraft.addLayer(marker);
+                        }
+                    });
+
+                    document.getElementById('aircraftInfo').textContent = `${aircraft.length} visible`;
+                    updateStatus(`${aircraft.length} aircraft loaded`, 'success');
+                }
+            } catch (error) {
+                console.error('Aircraft fetch error:', error);
+                document.getElementById('aircraftInfo').textContent = 'Error';
+                updateStatus('Aircraft fetch failed', 'error');
+            }
+        }
+
+        /* ==========================================================================
+           Weather Layers
+           ========================================================================== */
+
+        // RainViewer - Free radar layer (no API key required)
+        async function initRadarLayer() {
+            try {
+                // Get the latest radar timestamp from RainViewer API
+                const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                const data = await response.json();
+
+                if (data.radar && data.radar.past && data.radar.past.length > 0) {
+                    // Get the most recent radar frame
+                    const latestFrame = data.radar.past[data.radar.past.length - 1];
+                    const radarPath = latestFrame.path;
+
+                    state.layers.weather.radar = L.tileLayer(
+                        `https://tilecache.rainviewer.com${radarPath}/256/{z}/{x}/{y}/2/1_1.png`,
+                        {
+                            opacity: 0.7,
+                            attribution: '&copy; <a href="https://rainviewer.com">RainViewer</a>',
+                            crossOrigin: 'anonymous'
+                        }
+                    ).addTo(state.map);
+
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('RainViewer init error:', error);
+                return false;
+            }
+        }
+
+        function stopRadarLayer() {
+            if (state.layers.weather.radar) {
+                state.map.removeLayer(state.layers.weather.radar);
+                state.layers.weather.radar = null;
+            }
+        }
+
+        // OpenWeatherMap layers (requires API key)
+        function initWeatherLayer(layerType) {
+            if (!state.settings.openweatherKey) {
+                alert('Please add your OpenWeatherMap API key in Settings first.');
+                return false;
+            }
+
+            const layerMap = {
+                clouds: 'clouds_new',
+                precipitation: 'precipitation_new',
+                temp: 'temp_new',
+                wind: 'wind_new',
+                pressure: 'pressure_new'
+            };
+
+            const owmLayer = layerMap[layerType];
+            if (!owmLayer) return false;
+
+            state.layers.weather[layerType] = L.tileLayer(
+                `${CONFIG.apis.openweather}/${owmLayer}/{z}/{x}/{y}.png?appid=${state.settings.openweatherKey}`,
+                {
+                    opacity: 0.6,
+                    attribution: '&copy; <a href="https://openweathermap.org">OpenWeatherMap</a>',
+                    crossOrigin: 'anonymous'
+                }
+            ).addTo(state.map);
+
+            return true;
+        }
+
+        function stopWeatherLayer(layerType) {
+            if (state.layers.weather[layerType]) {
+                state.map.removeLayer(state.layers.weather[layerType]);
+                state.layers.weather[layerType] = null;
+            }
+        }
+
+        /* ==========================================================================
+           Layer Toggle Management
+           ========================================================================== */
+        function initLayerToggles() {
+            // Core layers
+            document.getElementById('layer-terminator').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    state.layers.terminator.addTo(state.map);
+                } else {
+                    state.map.removeLayer(state.layers.terminator);
+                }
+            });
+
+            document.getElementById('layer-sun').addEventListener('change', (e) => {
+                if (e.target.checked && state.markers.sun) {
+                    state.markers.sun.addTo(state.map);
+                } else if (state.markers.sun) {
+                    state.map.removeLayer(state.markers.sun);
+                }
+            });
+
+            document.getElementById('layer-timezones').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    state.layers.timezones.addTo(state.map);
+                } else {
+                    state.map.removeLayer(state.layers.timezones);
+                }
+            });
+
+            // ISS
+            document.getElementById('layer-iss').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    initISS();
+                } else {
+                    stopISS();
+                }
+            });
+
+            // Satellites
+            document.getElementById('layer-satellites').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    initSatellites();
+                } else {
+                    stopSatellites();
+                }
+            });
+
+            // RainViewer radar (free, no API key)
+            document.getElementById('layer-radar').addEventListener('change', async (e) => {
+                if (e.target.checked) {
+                    const success = await initRadarLayer();
+                    if (!success) {
+                        e.target.checked = false;
+                        alert('Failed to load radar data. Please try again.');
+                    }
+                } else {
+                    stopRadarLayer();
+                }
+            });
+
+            // OpenWeatherMap layers (requires API key)
+            ['clouds', 'precipitation', 'temp', 'wind', 'pressure'].forEach(type => {
+                document.getElementById(`layer-${type}`).addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        if (!initWeatherLayer(type)) {
+                            e.target.checked = false;
+                        }
+                    } else {
+                        stopWeatherLayer(type);
+                    }
+                });
+            });
+
+            // Aircraft
+            document.getElementById('layer-aircraft').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    initAircraft();
+                } else {
+                    stopAircraft();
+                }
+            });
+
+            // Update weather layer availability
+            updateWeatherLayerStatus();
+        }
+
+        /* ==========================================================================
+           UI Helpers
+           ========================================================================== */
+        function toggleControlPanel() {
+            const panel = document.getElementById('controlPanel');
+            const toggle = document.getElementById('panelToggle');
+            panel.classList.toggle('collapsed');
+            toggle.textContent = panel.classList.contains('collapsed') ? '+' : '−';
+        }
+
+        function updateStatus(message, type = 'success') {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            dot.className = 'status-dot';
+            if (type === 'loading') dot.classList.add('loading');
+            if (type === 'error') dot.classList.add('error');
+
+            text.textContent = message;
+        }
+
+        /* ==========================================================================
+           Keyboard Shortcuts
+           ========================================================================== */
+        document.addEventListener('keydown', (e) => {
+            // Escape closes modal
+            if (e.key === 'Escape') {
+                closeSettings();
+            }
+
+            // F for fullscreen
+            if (e.key === 'f' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT') {
+                if (document.fullscreenElement) {
+                    document.exitFullscreen();
+                } else {
+                    document.documentElement.requestFullscreen();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
