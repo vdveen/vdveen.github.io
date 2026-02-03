@@ -805,7 +805,7 @@
                     <label for="openskyUsername">OpenSky Network Username</label>
                     <input type="text" id="openskyUsername" placeholder="Enter your OpenSky username">
                     <p class="form-hint">
-                        Optional but recommended for aircraft tracking.
+                        Optional but recommended for aircraft tracking (higher rate limits).
                         <a href="https://opensky-network.org/index.php?option=com_users&view=registration" target="_blank">Create free account</a>
                     </p>
                 </div>
@@ -813,7 +813,7 @@
                     <label for="openskyPassword">OpenSky Network Password</label>
                     <input type="password" id="openskyPassword" placeholder="Enter your OpenSky password">
                     <p class="form-hint">
-                        Stored locally in your browser only.
+                        Stored locally in your browser only. Passed securely to proxy.
                     </p>
                 </div>
                 <div class="form-group">
@@ -1431,13 +1431,13 @@
 
                 // Get current map bounds to limit request
                 const bounds = state.map.getBounds();
-                const baseUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
+                const openskyUrl = `${CONFIG.apis.opensky}?lamin=${bounds.getSouth()}&lomin=${bounds.getWest()}&lamax=${bounds.getNorth()}&lomax=${bounds.getEast()}`;
 
                 // Check if we have OpenSky credentials
                 const hasAuth = state.settings.openskyUsername && state.settings.openskyPassword;
 
-                // Build proxy URL with optional auth
-                let proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(baseUrl)}`;
+                // Build proxy URL with optional auth (Basic auth credentials)
+                let proxyUrl = `${state.settings.proxyUrl}/?url=${encodeURIComponent(openskyUrl)}`;
                 if (hasAuth) {
                     proxyUrl += `&auth=${encodeURIComponent(btoa(state.settings.openskyUsername + ':' + state.settings.openskyPassword))}`;
                 }
