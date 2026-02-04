@@ -1413,16 +1413,42 @@
             // Close the loop
             points.push(points[0]);
 
-            // Draw the analemma as a polyline
-            const analemmaLine = L.polyline(points, {
-                color: '#ffd700',
-                weight: 2,
-                opacity: 0.7,
-                dashArray: '5, 5',
-                interactive: false
-            });
+            // Split polyline at antimeridian crossings to avoid wrapping artifacts
+            const segments = [];
+            let currentSegment = [points[0]];
 
-            state.layers.analemma.addLayer(analemmaLine);
+            for (let i = 1; i < points.length; i++) {
+                const prevLng = points[i - 1][1];
+                const currLng = points[i][1];
+
+                // Detect antimeridian crossing (large longitude jump > 180 degrees)
+                if (Math.abs(currLng - prevLng) > 180) {
+                    // End current segment and start a new one
+                    if (currentSegment.length > 1) {
+                        segments.push(currentSegment);
+                    }
+                    currentSegment = [points[i]];
+                } else {
+                    currentSegment.push(points[i]);
+                }
+            }
+
+            // Add the last segment
+            if (currentSegment.length > 1) {
+                segments.push(currentSegment);
+            }
+
+            // Draw each segment as a separate polyline
+            segments.forEach(segment => {
+                const analemmaLine = L.polyline(segment, {
+                    color: '#ffd700',
+                    weight: 2,
+                    opacity: 0.7,
+                    dashArray: '5, 5',
+                    interactive: false
+                });
+                state.layers.analemma.addLayer(analemmaLine);
+            });
 
             // Add month markers on the analemma
             const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
