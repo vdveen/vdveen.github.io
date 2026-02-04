@@ -1470,7 +1470,8 @@
                         ] = ac;
 
                         if (latitude && longitude) {
-                            const rotation = trueTrack || 0;
+                            // Adjust rotation: plane emoji points east by default, subtract 90° to make 0° = north
+                            const rotation = trueTrack ? (trueTrack - 90) : 0;
 
                             const marker = L.marker([latitude, longitude], {
                                 icon: L.divIcon({
