@@ -2355,6 +2355,39 @@ ISS (ZARYA)
         /* ==========================================================================
            Satellite Tracking
            ========================================================================== */
+
+        // Split a trail into segments that don't cross the antimeridian
+        // This prevents lines from spanning the entire map when satellites cross ±180° longitude
+        function splitTrailAtAntimeridian(trail) {
+            if (trail.length < 2) return [trail];
+
+            const segments = [];
+            let currentSegment = [trail[0]];
+
+            for (let i = 1; i < trail.length; i++) {
+                const prevLng = trail[i - 1][1];
+                const currLng = trail[i][1];
+
+                // If longitude difference > 180°, we crossed the antimeridian
+                if (Math.abs(currLng - prevLng) > 180) {
+                    // End current segment and start a new one
+                    if (currentSegment.length > 0) {
+                        segments.push(currentSegment);
+                    }
+                    currentSegment = [trail[i]];
+                } else {
+                    currentSegment.push(trail[i]);
+                }
+            }
+
+            // Add the final segment
+            if (currentSegment.length > 0) {
+                segments.push(currentSegment);
+            }
+
+            return segments;
+        }
+
         async function initSatellites() {
             updateStatus('Loading satellites...', 'loading');
 
@@ -2450,14 +2483,20 @@ ISS (ZARYA)
                         }
 
                         // Draw trail if we have at least 2 points
+                        // Split at antimeridian to avoid lines spanning the map
                         if (trail.length > 1) {
-                            const trailLine = L.polyline(trail, {
-                                color: '#4fc3f7',
-                                weight: 1.5,
-                                opacity: 0.4,
-                                smoothFactor: 1
+                            const segments = splitTrailAtAntimeridian(trail);
+                            segments.forEach(segment => {
+                                if (segment.length > 1) {
+                                    const trailLine = L.polyline(segment, {
+                                        color: '#4fc3f7',
+                                        weight: 1.5,
+                                        opacity: 0.4,
+                                        smoothFactor: 1
+                                    });
+                                    state.layers.satellites.addLayer(trailLine);
+                                }
                             });
-                            state.layers.satellites.addLayer(trailLine);
                         }
 
                         // Draw satellite marker on top of trail
@@ -2713,14 +2752,20 @@ ISS (ZARYA)
                         }
 
                         // Draw trail with satellite's color
+                        // Split at antimeridian to avoid lines spanning the map
                         if (trail.length > 1) {
-                            const trailLine = L.polyline(trail, {
-                                color: sat.color,
-                                weight: 2.5,
-                                opacity: 0.6,
-                                smoothFactor: 1
+                            const segments = splitTrailAtAntimeridian(trail);
+                            segments.forEach(segment => {
+                                if (segment.length > 1) {
+                                    const trailLine = L.polyline(segment, {
+                                        color: sat.color,
+                                        weight: 2.5,
+                                        opacity: 0.6,
+                                        smoothFactor: 1
+                                    });
+                                    state.layers.userSatellites.addLayer(trailLine);
+                                }
                             });
-                            state.layers.userSatellites.addLayer(trailLine);
                         }
 
                         // Draw satellite marker
