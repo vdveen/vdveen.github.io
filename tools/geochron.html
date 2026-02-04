@@ -58,7 +58,7 @@
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: stretch;
-            justify-content: flex-start;
+            justify-content: stretch;
             font-size: 11px;
             font-family: 'Courier New', monospace;
             overflow: hidden;
@@ -66,9 +66,8 @@
         }
 
         .timezone-bar .tz-label {
-            flex: 1;
-            min-width: 40px;
-            max-width: 120px;
+            flex: 1 1 0;
+            min-width: 0;
             text-align: center;
             padding: 4px 6px;
             border-right: 1px solid var(--border);
@@ -955,8 +954,8 @@
                 celestrak: 'https://celestrak.org/NORAD/elements/gp.php',
                 openweather: 'https://tile.openweathermap.org/map',
                 rainviewer: 'https://tilecache.rainviewer.com/v2/radar',
-                // Simplified timezone boundaries (TopoJSON from timezone-boundary-builder)
-                timezones: 'https://gist.githubusercontent.com/curran/a1b7699480e05ed923be0115381d8f19/raw/ebded09c550b026b0359627be8718f580980ef2b/timezones.json'
+                // Simplified timezone boundaries (Natural Earth 10m via TopoJSON)
+                timezones: 'https://gist.githubusercontent.com/tschaub/cc70281ce4df5358eac38b34409b9ef9/raw/d152ba9e83d7733d9fb5f37f52202c0fcead834a/timezones.json'
             },
 
             // UTC offset to letter mapping (A-Y for -12 to +12)
@@ -1237,8 +1236,9 @@
         }
 
         // Get timezone offsets visible in the current map viewport
+        // Uses longitude-based calculation for reliability
         function getVisibleTimezoneOffsets() {
-            if (!state.map || !state.data.timezoneOffsets || state.data.timezoneOffsets.size === 0) {
+            if (!state.map) {
                 // Return all standard offsets as fallback
                 const fallback = [];
                 for (let offset = -12; offset <= 12; offset++) {
@@ -1248,28 +1248,40 @@
             }
 
             const bounds = state.map.getBounds();
+            let west = bounds.getWest();
+            let east = bounds.getEast();
+
+            // Handle world wrap (when viewing across the antimeridian)
+            if (east < west) {
+                east += 360;
+            }
+
+            // Calculate timezone offsets from longitude (15 degrees per hour)
+            const minOffset = Math.max(-12, Math.floor(west / 15));
+            const maxOffset = Math.min(14, Math.ceil(east / 15));
+
             const visibleOffsets = [];
 
-            state.data.timezoneOffsets.forEach((info, tzid) => {
-                // Check if timezone bounds intersect with viewport
-                if (info.bounds && bounds.intersects(info.bounds)) {
-                    visibleOffsets.push({
-                        offset: info.offset,
-                        isFractional: info.isFractional
-                    });
-                }
-            });
+            // Add integer offsets
+            for (let offset = minOffset; offset <= maxOffset; offset++) {
+                // Normalize offset to -12 to +14 range
+                let normalizedOffset = offset;
+                if (normalizedOffset > 14) normalizedOffset -= 24;
+                if (normalizedOffset < -12) normalizedOffset += 24;
 
-            // If no timezones found (shouldn't happen), calculate from longitude
-            if (visibleOffsets.length === 0) {
-                const west = bounds.getWest();
-                const east = bounds.getEast();
-                const minOffset = Math.max(-12, Math.floor(west / 15));
-                const maxOffset = Math.min(14, Math.ceil(east / 15));
+                visibleOffsets.push({ offset: normalizedOffset, isFractional: false });
+            }
 
-                for (let offset = minOffset; offset <= maxOffset; offset++) {
-                    visibleOffsets.push({ offset, isFractional: false });
-                }
+            // Check for fractional timezones in visible area from loaded data
+            if (state.data.timezoneOffsets && state.data.timezoneOffsets.size > 0) {
+                state.data.timezoneOffsets.forEach((info, tzid) => {
+                    if (info.isFractional && info.bounds && bounds.intersects(info.bounds)) {
+                        visibleOffsets.push({
+                            offset: info.offset,
+                            isFractional: true
+                        });
+                    }
+                });
             }
 
             return visibleOffsets;
@@ -1632,12 +1644,32 @@
                 const fractionalZones = [];
 
                 geoData.features.forEach(feature => {
-                    const tzid = feature.properties.tzid || feature.properties.TZID || feature.properties.name || 'Unknown';
-                    const offset = getTimezoneOffset(tzid);
+                    const props = feature.properties;
+
+                    // Handle both IANA names (tzid) and Natural Earth format (zone as numeric offset)
+                    let tzid, offset;
+
+                    if (props.tzid || props.TZID) {
+                        // IANA timezone name format
+                        tzid = props.tzid || props.TZID;
+                        offset = getTimezoneOffset(tzid);
+                    } else if (props.zone !== undefined) {
+                        // Natural Earth format: zone is numeric UTC offset
+                        offset = parseFloat(props.zone);
+                        tzid = props.tz_name1st || props.name || `UTC${formatOffset(offset)}`;
+                    } else if (props.name) {
+                        tzid = props.name;
+                        offset = getTimezoneOffset(tzid);
+                    } else {
+                        tzid = 'Unknown';
+                        offset = 0;
+                    }
+
                     const centroid = getPolygonCentroid(feature.geometry.coordinates);
 
-                    // Store timezone info
-                    state.data.timezoneOffsets.set(tzid, {
+                    // Store timezone info (use unique key to avoid duplicates)
+                    const key = `${tzid}_${offset}`;
+                    state.data.timezoneOffsets.set(key, {
                         offset,
                         isFractional: isFractionalOffset(offset),
                         centroid,
@@ -1712,6 +1744,10 @@
                 });
                 state.layers.timezones.addLayer(line);
             }
+
+            // Still set up viewport listeners for header bar
+            state.map.on('moveend', updateTimezoneBar);
+            state.map.on('zoomend', updateTimezoneBar);
         }
 
         // Add map labels for fractional timezones
