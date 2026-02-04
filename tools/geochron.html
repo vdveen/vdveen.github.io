@@ -473,6 +473,16 @@
             text-shadow: 0 0 20px #ffeb3b, 0 0 40px #ff9800;
         }
 
+        /* Analemma tooltip */
+        .analemma-tooltip {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
         /* ISS marker */
         .iss-marker {
             font-size: 20px;
@@ -654,6 +664,13 @@
                         <span class="toggle-switch"></span>
                         <span class="toggle-label">
                             <span class="toggle-icon">☀️</span> Sun Position
+                        </span>
+                    </label>
+                    <label class="layer-toggle">
+                        <input type="checkbox" id="layer-analemma">
+                        <span class="toggle-switch"></span>
+                        <span class="toggle-label">
+                            <span class="toggle-icon">∞</span> Analemma
                         </span>
                     </label>
                     <label class="layer-toggle">
@@ -893,6 +910,7 @@
             layers: {
                 terminator: null,
                 sun: null,
+                analemma: null,
                 timezones: null,
                 iss: null,
                 issOrbit: null,
@@ -1191,6 +1209,85 @@
 
         function getJulianDate(date) {
             return date.getTime() / 86400000 + 2440587.5;
+        }
+
+        /* ==========================================================================
+           Analemma (Seasonal Sun Path)
+           ========================================================================== */
+        function initAnalemma() {
+            updateAnalemma();
+        }
+
+        function updateAnalemma() {
+            // Remove existing analemma layer if present
+            if (state.layers.analemma) {
+                state.map.removeLayer(state.layers.analemma);
+            }
+
+            state.layers.analemma = L.layerGroup().addTo(state.map);
+
+            // Calculate analemma points - sun position at current time for each day of year
+            const now = new Date();
+            const points = [];
+            const year = now.getFullYear();
+
+            // Calculate for each day of the year
+            for (let dayOfYear = 0; dayOfYear < 365; dayOfYear++) {
+                // Create date for this day of year at current time
+                const date = new Date(year, 0, 1 + dayOfYear,
+                    now.getHours(), now.getMinutes(), now.getSeconds());
+
+                const sunPos = getSunPosition(date);
+                points.push([sunPos.lat, sunPos.lng]);
+            }
+
+            // Close the loop
+            points.push(points[0]);
+
+            // Draw the analemma as a polyline
+            const analemmaLine = L.polyline(points, {
+                color: '#ffd700',
+                weight: 2,
+                opacity: 0.7,
+                dashArray: '5, 5',
+                interactive: false
+            });
+
+            state.layers.analemma.addLayer(analemmaLine);
+
+            // Add month markers on the analemma
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                               'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+            for (let month = 0; month < 12; month++) {
+                // Get position for the 15th of each month
+                const date = new Date(year, month, 15,
+                    now.getHours(), now.getMinutes(), now.getSeconds());
+                const sunPos = getSunPosition(date);
+
+                const monthMarker = L.circleMarker([sunPos.lat, sunPos.lng], {
+                    radius: 4,
+                    fillColor: '#ffd700',
+                    fillOpacity: 0.9,
+                    color: '#fff',
+                    weight: 1
+                });
+
+                monthMarker.bindTooltip(monthNames[month], {
+                    permanent: false,
+                    direction: 'top',
+                    className: 'analemma-tooltip'
+                });
+
+                state.layers.analemma.addLayer(monthMarker);
+            }
+        }
+
+        function stopAnalemma() {
+            if (state.layers.analemma) {
+                state.map.removeLayer(state.layers.analemma);
+                state.layers.analemma = null;
+            }
         }
 
         /* ==========================================================================
@@ -1620,6 +1717,15 @@
                     state.markers.sun.addTo(state.map);
                 } else if (state.markers.sun) {
                     state.map.removeLayer(state.markers.sun);
+                }
+            });
+
+            // Analemma
+            document.getElementById('layer-analemma').addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    initAnalemma();
+                } else {
+                    stopAnalemma();
                 }
             });
 
