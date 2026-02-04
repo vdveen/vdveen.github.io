@@ -1135,6 +1135,9 @@
                     <button class="add-sat-btn" onclick="openTLEImport()">
                         <span>+</span> Add Satellite
                     </button>
+                    <button class="add-sat-btn" id="clearAllSatsBtn" style="display: none; border-color: var(--accent); color: var(--accent);" onclick="clearAllUserSatellites()">
+                        <span>🗑️</span> Clear All
+                    </button>
                 </div>
 
                 <!-- Weather -->
@@ -2791,8 +2794,13 @@ ISS (ZARYA)
         // Render the user satellite list in the layer panel
         function renderUserSatelliteList() {
             const container = document.getElementById('userSatList');
+            const clearBtn = document.getElementById('clearAllSatsBtn');
+            const count = state.data.userSatellites.length;
 
-            if (state.data.userSatellites.length === 0) {
+            // Show/hide Clear All button
+            clearBtn.style.display = count > 0 ? 'flex' : 'none';
+
+            if (count === 0) {
                 container.innerHTML = `
                     <div class="user-sat-empty">
                         No satellites added yet.<br>
@@ -2802,7 +2810,12 @@ ISS (ZARYA)
                 return;
             }
 
-            container.innerHTML = state.data.userSatellites.map(sat => {
+            // For large lists, show summary instead of all items
+            const MAX_DISPLAY = 50;
+            const displaySats = state.data.userSatellites.slice(0, MAX_DISPLAY);
+            const hiddenCount = count - MAX_DISPLAY;
+
+            let html = displaySats.map(sat => {
                 let metaClass = '';
                 let metaText = `${sat.ageDays} day${sat.ageDays !== 1 ? 's' : ''} old`;
 
@@ -2831,6 +2844,17 @@ ISS (ZARYA)
                     </div>
                 `;
             }).join('');
+
+            if (hiddenCount > 0) {
+                html += `
+                    <div class="user-sat-empty" style="padding: 8px;">
+                        ... and ${hiddenCount.toLocaleString()} more satellites<br>
+                        <small>Use "Clear All" to remove all at once</small>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
         }
 
         // Toggle visibility of a user satellite
@@ -2926,6 +2950,28 @@ ISS (ZARYA)
                     clearInterval(state.intervals.userSatellites);
                     state.intervals.userSatellites = null;
                 }
+            }
+        }
+
+        // Clear all user satellites
+        function clearAllUserSatellites() {
+            const count = state.data.userSatellites.length;
+            if (count === 0) return;
+
+            if (confirm(`Delete all ${count} satellites from your list?`)) {
+                state.data.userSatellites = [];
+                state.data.userSatelliteTrails.clear();
+                saveUserSatellites();
+                renderUserSatelliteList();
+                updateUserSatellitePositions();
+
+                // Stop the update interval
+                if (state.intervals.userSatellites) {
+                    clearInterval(state.intervals.userSatellites);
+                    state.intervals.userSatellites = null;
+                }
+
+                updateStatus('All satellites cleared', 'success');
             }
         }
 
