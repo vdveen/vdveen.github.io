@@ -1029,6 +1029,7 @@
             },
             intervals: {
                 terminator: null,
+                analemma: null,
                 iss: null,
                 aircraft: null,
                 satellites: null,
@@ -1398,6 +1399,8 @@
            ========================================================================== */
         function initAnalemma() {
             updateAnalemma();
+            // Update analemma periodically (same interval as terminator/sun)
+            state.intervals.analemma = setInterval(updateAnalemma, CONFIG.intervals.terminator);
         }
 
         function updateAnalemma() {
@@ -1498,6 +1501,10 @@
         }
 
         function stopAnalemma() {
+            if (state.intervals.analemma) {
+                clearInterval(state.intervals.analemma);
+                state.intervals.analemma = null;
+            }
             if (state.layers.analemma) {
                 state.map.removeLayer(state.layers.analemma);
                 state.layers.analemma = null;
