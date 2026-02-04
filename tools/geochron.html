@@ -504,7 +504,7 @@
 
         /* Satellite markers */
         .satellite-marker {
-            font-size: 10px;
+            font-size: 14px;
             color: #4fc3f7;
             text-shadow: 0 0 4px #4fc3f7;
         }
@@ -1037,6 +1037,7 @@
             data: {
                 tle: null,
                 aircraft: [],
+                satelliteTrails: new Map(), // Map of satellite name -> array of [lat, lng] positions
                 timezones: null,          // GeoJSON timezone data
                 timezoneOffsets: new Map() // Map of tzid -> { offset, isFractional, centroid }
             },
@@ -1945,6 +1946,7 @@
                 state.layers.satellites = null;
             }
             state.markers.satellites = [];
+            state.data.satelliteTrails.clear(); // Clear trail history
         }
 
         function parseTLE(tleText) {
@@ -1970,6 +1972,10 @@
             state.layers.satellites.clearLayers();
             const now = new Date();
 
+            // Maximum number of trail points to keep (about 10% of a 90-minute orbit)
+            // At 30-second intervals, 18 points = 9 minutes
+            const MAX_TRAIL_POINTS = 18;
+
             satellites.forEach(sat => {
                 try {
                     const satrec = satellite.twoline2satrec(sat.line1, sat.line2);
@@ -1983,12 +1989,36 @@
                         const lng = satellite.degreesLong(position.longitude);
                         const alt = position.height;
 
+                        // Update trail history
+                        if (!state.data.satelliteTrails.has(sat.name)) {
+                            state.data.satelliteTrails.set(sat.name, []);
+                        }
+                        const trail = state.data.satelliteTrails.get(sat.name);
+                        trail.push([lat, lng]);
+
+                        // Keep only the last MAX_TRAIL_POINTS positions
+                        if (trail.length > MAX_TRAIL_POINTS) {
+                            trail.shift();
+                        }
+
+                        // Draw trail if we have at least 2 points
+                        if (trail.length > 1) {
+                            const trailLine = L.polyline(trail, {
+                                color: '#4fc3f7',
+                                weight: 1.5,
+                                opacity: 0.4,
+                                smoothFactor: 1
+                            });
+                            state.layers.satellites.addLayer(trailLine);
+                        }
+
+                        // Draw satellite marker on top of trail
                         const marker = L.marker([lat, lng], {
                             icon: L.divIcon({
                                 className: 'satellite-marker',
                                 html: '•',
-                                iconSize: [10, 10],
-                                iconAnchor: [5, 5]
+                                iconSize: [14, 14],
+                                iconAnchor: [7, 7]
                             })
                         });
 
