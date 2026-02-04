@@ -1408,16 +1408,22 @@
 
             state.layers.analemma = L.layerGroup().addTo(state.map);
 
-            // Calculate analemma points - sun position at current time for each day of year
+            // Calculate analemma points - sun position at current UTC time for each day of year
             const now = new Date();
             const points = [];
             const year = now.getFullYear();
 
+            // Use UTC time to avoid DST shifts affecting the analemma
+            // Using local time would cause ~15° eastward shift during DST months
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcSeconds = now.getUTCSeconds();
+
             // Calculate for each day of the year
             for (let dayOfYear = 0; dayOfYear < 365; dayOfYear++) {
-                // Create date for this day of year at current time
-                const date = new Date(year, 0, 1 + dayOfYear,
-                    now.getHours(), now.getMinutes(), now.getSeconds());
+                // Create date for this day of year at current UTC time
+                const date = new Date(Date.UTC(year, 0, 1 + dayOfYear,
+                    utcHours, utcMinutes, utcSeconds));
 
                 const sunPos = getSunPosition(date);
                 points.push([sunPos.lat, sunPos.lng]);
@@ -1468,9 +1474,9 @@
                                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
             for (let month = 0; month < 12; month++) {
-                // Get position for the 15th of each month
-                const date = new Date(year, month, 15,
-                    now.getHours(), now.getMinutes(), now.getSeconds());
+                // Get position for the 15th of each month (using UTC to match analemma points)
+                const date = new Date(Date.UTC(year, month, 15,
+                    utcHours, utcMinutes, utcSeconds));
                 const sunPos = getSunPosition(date);
 
                 const monthMarker = L.circleMarker([sunPos.lat, sunPos.lng], {
