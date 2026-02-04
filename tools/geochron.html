@@ -1032,7 +1032,8 @@
                 iss: null,
                 aircraft: null,
                 satellites: null,
-                timezone: null
+                timezone: null,
+                analemma: null
             },
             data: {
                 tle: null,
@@ -1398,6 +1399,9 @@
            ========================================================================== */
         function initAnalemma() {
             updateAnalemma();
+
+            // Update analemma periodically using user's refresh interval
+            state.intervals.analemma = setInterval(updateAnalemma, state.settings.refreshInterval * 1000);
         }
 
         function updateAnalemma() {
@@ -1498,6 +1502,10 @@
         }
 
         function stopAnalemma() {
+            if (state.intervals.analemma) {
+                clearInterval(state.intervals.analemma);
+                state.intervals.analemma = null;
+            }
             if (state.layers.analemma) {
                 state.map.removeLayer(state.layers.analemma);
                 state.layers.analemma = null;
