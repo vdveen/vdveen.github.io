@@ -509,6 +509,347 @@
             text-shadow: 0 0 4px #4fc3f7;
         }
 
+        /* User satellite markers (larger, with custom colors) */
+        .user-satellite-marker {
+            font-size: 18px;
+            filter: drop-shadow(0 0 6px currentColor);
+        }
+
+        .user-satellite-label {
+            background: rgba(22, 33, 62, 0.9);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        /* User Satellites Layer Panel */
+        .user-sat-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+
+        .user-sat-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-sat-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-sat-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .user-sat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-sat-name {
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-sat-meta {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .user-sat-meta.stale {
+            color: var(--warning);
+        }
+
+        .user-sat-meta.very-stale {
+            color: var(--accent);
+        }
+
+        .user-sat-toggle {
+            width: 28px;
+            height: 16px;
+            background: var(--border);
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .user-sat-toggle::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .user-sat-toggle.active {
+            background: var(--accent);
+        }
+
+        .user-sat-toggle.active::after {
+            transform: translateX(12px);
+            background: white;
+        }
+
+        .user-sat-actions {
+            display: flex;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .user-sat-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 2px 4px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        .user-sat-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .user-sat-btn.delete:hover {
+            color: var(--accent);
+        }
+
+        .add-sat-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 8px;
+            background: var(--bg-tertiary);
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .add-sat-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .user-sat-empty {
+            text-align: center;
+            padding: 16px 8px;
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        /* TLE Import Modal */
+        .import-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 16px;
+        }
+
+        .import-tab {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .import-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .import-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .import-panel {
+            display: none;
+        }
+
+        .import-panel.active {
+            display: block;
+        }
+
+        .tle-textarea {
+            width: 100%;
+            height: 120px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            padding: 10px;
+            resize: vertical;
+        }
+
+        .tle-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 32px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(233, 69, 96, 0.1);
+        }
+
+        .file-drop-zone .drop-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .file-drop-zone .drop-text {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .file-drop-zone .drop-hint {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .file-input-hidden {
+            display: none;
+        }
+
+        /* Preview list */
+        .import-preview {
+            margin-top: 16px;
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+        }
+
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .preview-title {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .preview-count {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .preview-list {
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .preview-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: var(--bg-primary);
+            border-radius: 6px;
+            margin-bottom: 6px;
+            gap: 10px;
+        }
+
+        .preview-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .preview-checkbox {
+            flex-shrink: 0;
+        }
+
+        .preview-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .preview-name {
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preview-meta {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .preview-color-picker {
+            width: 24px;
+            height: 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            padding: 0;
+            background: none;
+        }
+
+        .preview-warning {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 11px;
+            color: var(--warning);
+        }
+
+        .preview-error {
+            background: rgba(233, 69, 96, 0.1);
+            border-color: rgba(233, 69, 96, 0.3);
+            color: var(--accent);
+        }
+
         /* Aircraft markers */
         .aircraft-marker {
             font-size: 14px;
@@ -782,6 +1123,20 @@
                     </label>
                 </div>
 
+                <!-- User Satellites -->
+                <div class="layer-group">
+                    <div class="layer-group-title">My Satellites</div>
+                    <div id="userSatList" class="user-sat-list">
+                        <div class="user-sat-empty">
+                            No satellites added yet.<br>
+                            Import a TLE to track custom satellites.
+                        </div>
+                    </div>
+                    <button class="add-sat-btn" onclick="openTLEImport()">
+                        <span>+</span> Add Satellite
+                    </button>
+                </div>
+
                 <!-- Weather -->
                 <div class="layer-group">
                     <div class="layer-group-title">Weather</div>
@@ -929,6 +1284,64 @@
         </div>
     </div>
 
+    <!-- TLE Import Modal -->
+    <div class="modal-overlay" id="tleImportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>🛰️ Add Satellite</h2>
+                <button class="modal-close" onclick="closeTLEImport()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-tabs">
+                    <button class="import-tab active" data-tab="paste" onclick="switchImportTab('paste')">
+                        📋 Paste TLE
+                    </button>
+                    <button class="import-tab" data-tab="file" onclick="switchImportTab('file')">
+                        📁 Upload File
+                    </button>
+                </div>
+
+                <!-- Paste Panel -->
+                <div id="importPanelPaste" class="import-panel active">
+                    <textarea id="tleTextarea" class="tle-textarea" placeholder="Paste TLE data here...
+
+Example (3-line format):
+ISS (ZARYA)
+1 25544U 98067A   24020.54166667  .00016717  00000-0  10270-3 0  9025
+2 25544  51.6403 247.4711 0007185 329.9682  30.0970 15.49952157395432"></textarea>
+                    <p class="form-hint" style="margin-top: 8px;">
+                        Supports 2-line and 3-line TLE formats. Multiple satellites can be pasted at once.
+                    </p>
+                </div>
+
+                <!-- File Panel -->
+                <div id="importPanelFile" class="import-panel">
+                    <div class="file-drop-zone" id="fileDropZone" onclick="document.getElementById('tleFileInput').click()">
+                        <div class="drop-icon">📂</div>
+                        <div class="drop-text">Drop TLE file here or click to browse</div>
+                        <div class="drop-hint">.tle, .txt files supported</div>
+                    </div>
+                    <input type="file" id="tleFileInput" class="file-input-hidden" accept=".tle,.txt,.TLE,.TXT" onchange="handleFileSelect(event)">
+                </div>
+
+                <!-- Preview -->
+                <div id="importPreview" class="import-preview" style="display: none;">
+                    <div class="preview-header">
+                        <span class="preview-title">Preview</span>
+                        <span class="preview-count" id="previewCount">0 satellites found</span>
+                    </div>
+                    <div id="previewMessages"></div>
+                    <div id="previewList" class="preview-list"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeTLEImport()">Cancel</button>
+                    <button class="btn btn-primary" id="importBtn" onclick="importSelectedSatellites()" disabled>Import Selected</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- Leaflet.Terminator - https://github.com/joergdietrich/Leaflet.Terminator -->
@@ -993,8 +1406,15 @@
                 tleCache: 'geochron_tle_cache',
                 settings: 'geochron_settings',
                 openskyUsername: 'geochron_opensky_username',
-                openskyPassword: 'geochron_opensky_password'
-            }
+                openskyPassword: 'geochron_opensky_password',
+                userSatellites: 'geochron_user_satellites'
+            },
+
+            // Default colors for user satellites (cycle through these)
+            satelliteColors: [
+                '#ff6b6b', '#4ecdc4', '#ffe66d', '#95e1d3', '#f38181',
+                '#aa96da', '#fcbad3', '#a8d8ea', '#ffb347', '#87ceeb'
+            ]
         };
 
         /* ==========================================================================
@@ -1012,6 +1432,7 @@
                 issOrbit: null,
                 satellites: null,
                 aircraft: null,
+                userSatellites: null,
                 weather: {
                     radar: null,
                     clouds: null,
@@ -1033,14 +1454,18 @@
                 aircraft: null,
                 satellites: null,
                 timezone: null,
-                analemma: null
+                analemma: null,
+                userSatellites: null
             },
             data: {
                 tle: null,
                 aircraft: [],
                 satelliteTrails: new Map(), // Map of satellite name -> array of [lat, lng] positions
+                userSatelliteTrails: new Map(), // Map of user satellite id -> array of [lat, lng] positions
                 timezones: null,          // GeoJSON timezone data
-                timezoneOffsets: new Map() // Map of tzid -> { offset, isFractional, centroid }
+                timezoneOffsets: new Map(), // Map of tzid -> { offset, isFractional, centroid }
+                userSatellites: [],       // Array of user satellite objects
+                importPreview: []         // Temporary array for import preview
             },
             settings: {
                 openweatherKey: '',
@@ -1058,8 +1483,10 @@
 
         async function init() {
             loadSettings();
+            loadUserSatellites();
             initMap();
             initLayerToggles();
+            initTLEImportHandlers();
 
             // Initialize default layers
             await initTerminator();
@@ -1068,6 +1495,10 @@
             // Load timezone polygons (async) and initialize bar
             await initTimezonePolygons();
             initTimezoneBar();
+
+            // Initialize user satellites layer and render list
+            initUserSatellitesLayer();
+            renderUserSatelliteList();
 
             // Hide loading overlay
             setTimeout(() => {
@@ -2058,6 +2489,712 @@
                     // Skip satellites with invalid TLE
                 }
             });
+        }
+
+        /* ==========================================================================
+           User Satellite Management
+           ========================================================================== */
+
+        // Enhanced TLE parser supporting 2LE, 3LE, comments, and edge cases
+        function parseEnhancedTLE(tleText) {
+            // Normalize line endings and split
+            const lines = tleText
+                .replace(/\r\n/g, '\n')
+                .replace(/\r/g, '\n')
+                .split('\n')
+                .map(line => line.trimEnd())  // Keep leading spaces but trim trailing
+                .filter(line => line.length > 0 && !line.startsWith('#')); // Remove empty lines and comments
+
+            const satellites = [];
+            const errors = [];
+            let i = 0;
+
+            while (i < lines.length) {
+                const currentLine = lines[i];
+
+                // Check if this looks like TLE Line 1
+                if (currentLine.match(/^1\s+\d/)) {
+                    // 2LE format - no name line
+                    const line1 = currentLine;
+                    const line2 = lines[i + 1];
+
+                    if (line2 && line2.match(/^2\s+\d/)) {
+                        // Extract NORAD ID from line 1 for name
+                        const noradId = line1.substring(2, 7).trim();
+                        const result = validateAndParseTLE(`NORAD ${noradId}`, line1, line2);
+                        if (result.valid) {
+                            satellites.push(result.satellite);
+                        } else {
+                            errors.push(result.error);
+                        }
+                        i += 2;
+                    } else {
+                        errors.push(`Line ${i + 1}: Expected Line 2 after Line 1`);
+                        i++;
+                    }
+                } else if (!currentLine.match(/^[12]\s+\d/)) {
+                    // This should be a name line (3LE format)
+                    const name = currentLine.trim();
+                    const line1 = lines[i + 1];
+                    const line2 = lines[i + 2];
+
+                    if (line1 && line2 && line1.match(/^1\s+\d/) && line2.match(/^2\s+\d/)) {
+                        const result = validateAndParseTLE(name, line1, line2);
+                        if (result.valid) {
+                            satellites.push(result.satellite);
+                        } else {
+                            errors.push(result.error);
+                        }
+                        i += 3;
+                    } else {
+                        // Not a valid TLE block, skip this line
+                        errors.push(`Line ${i + 1}: "${name.substring(0, 20)}..." - Missing or invalid TLE lines`);
+                        i++;
+                    }
+                } else {
+                    // Unexpected line, skip
+                    i++;
+                }
+            }
+
+            return { satellites, errors };
+        }
+
+        function validateAndParseTLE(name, line1, line2) {
+            // Validate line lengths (should be 69 characters)
+            if (line1.length < 68 || line2.length < 68) {
+                return {
+                    valid: false,
+                    error: `${name}: TLE lines too short (Line1: ${line1.length}, Line2: ${line2.length})`
+                };
+            }
+
+            // Validate checksums
+            const checksum1 = calculateTLEChecksum(line1.substring(0, 68));
+            const checksum2 = calculateTLEChecksum(line2.substring(0, 68));
+            const expected1 = parseInt(line1[68]) || 0;
+            const expected2 = parseInt(line2[68]) || 0;
+
+            const checksumValid = (checksum1 === expected1) && (checksum2 === expected2);
+
+            // Extract NORAD catalog ID (supports Alpha-5 format)
+            const noradId = line1.substring(2, 7).trim();
+
+            // Parse epoch from line 1
+            const epochYear = parseInt(line1.substring(18, 20));
+            const epochDay = parseFloat(line1.substring(20, 32));
+
+            // Convert 2-digit year to 4-digit (assumes 57-99 = 1957-1999, 00-56 = 2000-2056)
+            const fullYear = epochYear >= 57 ? 1900 + epochYear : 2000 + epochYear;
+
+            // Calculate epoch date
+            const epochDate = new Date(Date.UTC(fullYear, 0, 1));
+            epochDate.setUTCDate(epochDay);
+
+            // Calculate age in days
+            const ageMs = Date.now() - epochDate.getTime();
+            const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+
+            return {
+                valid: true,
+                checksumValid,
+                satellite: {
+                    name: name,
+                    noradId: noradId,
+                    line1: line1.substring(0, 69),
+                    line2: line2.substring(0, 69),
+                    epoch: epochDate.toISOString(),
+                    ageDays: ageDays
+                }
+            };
+        }
+
+        function calculateTLEChecksum(line) {
+            let sum = 0;
+            for (let i = 0; i < 68; i++) {
+                const char = line[i];
+                if (char >= '0' && char <= '9') {
+                    sum += parseInt(char);
+                } else if (char === '-') {
+                    sum += 1;
+                }
+                // Letters, spaces, periods, plus signs are ignored
+            }
+            return sum % 10;
+        }
+
+        // Load user satellites from localStorage
+        function loadUserSatellites() {
+            try {
+                const stored = localStorage.getItem(CONFIG.storage.userSatellites);
+                if (stored) {
+                    state.data.userSatellites = JSON.parse(stored);
+
+                    // Recalculate age for each satellite
+                    state.data.userSatellites.forEach(sat => {
+                        const epochDate = new Date(sat.epoch);
+                        const ageMs = Date.now() - epochDate.getTime();
+                        sat.ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load user satellites:', e);
+                state.data.userSatellites = [];
+            }
+        }
+
+        // Save user satellites to localStorage
+        function saveUserSatellites() {
+            try {
+                localStorage.setItem(
+                    CONFIG.storage.userSatellites,
+                    JSON.stringify(state.data.userSatellites)
+                );
+            } catch (e) {
+                console.error('Failed to save user satellites:', e);
+                if (e.name === 'QuotaExceededError') {
+                    alert('Local storage is full. Please delete some satellites to save more.');
+                }
+            }
+        }
+
+        // Initialize user satellites layer
+        function initUserSatellitesLayer() {
+            if (!state.layers.userSatellites) {
+                state.layers.userSatellites = L.layerGroup().addTo(state.map);
+            }
+
+            // Start update interval if we have visible satellites
+            const hasVisible = state.data.userSatellites.some(s => s.visible);
+            if (hasVisible && !state.intervals.userSatellites) {
+                updateUserSatellitePositions();
+                state.intervals.userSatellites = setInterval(
+                    updateUserSatellitePositions,
+                    5000 // Update every 5 seconds for better tracking
+                );
+            }
+        }
+
+        // Update positions for all visible user satellites
+        function updateUserSatellitePositions() {
+            if (!state.layers.userSatellites) return;
+
+            state.layers.userSatellites.clearLayers();
+            const now = new Date();
+            const MAX_TRAIL_POINTS = 24; // More trail points for user satellites
+
+            state.data.userSatellites.forEach(sat => {
+                if (!sat.visible) return;
+
+                try {
+                    const satrec = satellite.twoline2satrec(sat.line1, sat.line2);
+                    const positionAndVelocity = satellite.propagate(satrec, now);
+
+                    if (positionAndVelocity.position) {
+                        const gmst = satellite.gstime(now);
+                        const position = satellite.eciToGeodetic(positionAndVelocity.position, gmst);
+
+                        const lat = satellite.degreesLat(position.latitude);
+                        const lng = satellite.degreesLong(position.longitude);
+                        const alt = position.height;
+
+                        // Update trail history
+                        if (!state.data.userSatelliteTrails.has(sat.id)) {
+                            state.data.userSatelliteTrails.set(sat.id, []);
+                        }
+                        const trail = state.data.userSatelliteTrails.get(sat.id);
+                        trail.push([lat, lng]);
+
+                        if (trail.length > MAX_TRAIL_POINTS) {
+                            trail.shift();
+                        }
+
+                        // Draw trail with satellite's color
+                        if (trail.length > 1) {
+                            const trailLine = L.polyline(trail, {
+                                color: sat.color,
+                                weight: 2.5,
+                                opacity: 0.6,
+                                smoothFactor: 1
+                            });
+                            state.layers.userSatellites.addLayer(trailLine);
+                        }
+
+                        // Draw satellite marker
+                        const marker = L.marker([lat, lng], {
+                            icon: L.divIcon({
+                                className: 'user-satellite-marker',
+                                html: `<span style="color: ${sat.color}">${sat.icon || '🛰️'}</span>`,
+                                iconSize: [20, 20],
+                                iconAnchor: [10, 10]
+                            }),
+                            zIndexOffset: 1000 // Ensure user satellites are on top
+                        });
+
+                        // Staleness warning for popup
+                        let stalenessNote = '';
+                        if (sat.ageDays > 14) {
+                            stalenessNote = `<div class="popup-row" style="color: var(--accent);">
+                                <span class="popup-label">⚠️ Warning</span>
+                                <span>TLE is ${sat.ageDays} days old</span>
+                            </div>`;
+                        } else if (sat.ageDays > 7) {
+                            stalenessNote = `<div class="popup-row" style="color: var(--warning);">
+                                <span class="popup-label">⚠️ Note</span>
+                                <span>TLE is ${sat.ageDays} days old</span>
+                            </div>`;
+                        }
+
+                        marker.bindPopup(`
+                            <div class="popup-title">${sat.icon || '🛰️'} ${sat.name}</div>
+                            <div class="popup-row">
+                                <span class="popup-label">NORAD ID</span>
+                                <span>${sat.noradId}</span>
+                            </div>
+                            <div class="popup-row">
+                                <span class="popup-label">Latitude</span>
+                                <span>${lat.toFixed(4)}°</span>
+                            </div>
+                            <div class="popup-row">
+                                <span class="popup-label">Longitude</span>
+                                <span>${lng.toFixed(4)}°</span>
+                            </div>
+                            <div class="popup-row">
+                                <span class="popup-label">Altitude</span>
+                                <span>${alt.toFixed(1)} km</span>
+                            </div>
+                            ${stalenessNote}
+                        `);
+
+                        state.layers.userSatellites.addLayer(marker);
+
+                        // Add label if enabled
+                        if (sat.showLabel !== false) {
+                            const label = L.marker([lat, lng], {
+                                icon: L.divIcon({
+                                    className: 'user-satellite-label',
+                                    html: sat.name,
+                                    iconSize: [100, 16],
+                                    iconAnchor: [-12, 8]
+                                }),
+                                interactive: false
+                            });
+                            state.layers.userSatellites.addLayer(label);
+                        }
+                    }
+                } catch (e) {
+                    console.error(`Failed to update position for ${sat.name}:`, e);
+                }
+            });
+        }
+
+        // Render the user satellite list in the layer panel
+        function renderUserSatelliteList() {
+            const container = document.getElementById('userSatList');
+
+            if (state.data.userSatellites.length === 0) {
+                container.innerHTML = `
+                    <div class="user-sat-empty">
+                        No satellites added yet.<br>
+                        Import a TLE to track custom satellites.
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = state.data.userSatellites.map(sat => {
+                let metaClass = '';
+                let metaText = `${sat.ageDays} day${sat.ageDays !== 1 ? 's' : ''} old`;
+
+                if (sat.ageDays > 14) {
+                    metaClass = 'very-stale';
+                    metaText = `⚠️ ${metaText} (stale)`;
+                } else if (sat.ageDays > 7) {
+                    metaClass = 'stale';
+                    metaText = `⚠️ ${metaText}`;
+                }
+
+                return `
+                    <div class="user-sat-item" data-id="${sat.id}">
+                        <div class="user-sat-color" style="background: ${sat.color};"
+                             onclick="changeUserSatColor('${sat.id}')" title="Change color"></div>
+                        <div class="user-sat-info">
+                            <div class="user-sat-name">${sat.icon || '🛰️'} ${sat.name}</div>
+                            <div class="user-sat-meta ${metaClass}">${metaText}</div>
+                        </div>
+                        <div class="user-sat-toggle ${sat.visible ? 'active' : ''}"
+                             onclick="toggleUserSatVisibility('${sat.id}')" title="Toggle visibility"></div>
+                        <div class="user-sat-actions">
+                            <button class="user-sat-btn" onclick="editUserSat('${sat.id}')" title="Edit">✏️</button>
+                            <button class="user-sat-btn delete" onclick="deleteUserSat('${sat.id}')" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Toggle visibility of a user satellite
+        function toggleUserSatVisibility(id) {
+            const sat = state.data.userSatellites.find(s => s.id === id);
+            if (sat) {
+                sat.visible = !sat.visible;
+                saveUserSatellites();
+                renderUserSatelliteList();
+
+                // Clear trail when hiding
+                if (!sat.visible) {
+                    state.data.userSatelliteTrails.delete(id);
+                }
+
+                // Update positions and manage interval
+                updateUserSatellitePositions();
+
+                const hasVisible = state.data.userSatellites.some(s => s.visible);
+                if (hasVisible && !state.intervals.userSatellites) {
+                    state.intervals.userSatellites = setInterval(
+                        updateUserSatellitePositions,
+                        5000
+                    );
+                } else if (!hasVisible && state.intervals.userSatellites) {
+                    clearInterval(state.intervals.userSatellites);
+                    state.intervals.userSatellites = null;
+                }
+            }
+        }
+
+        // Change color of a user satellite
+        function changeUserSatColor(id) {
+            const sat = state.data.userSatellites.find(s => s.id === id);
+            if (!sat) return;
+
+            // Create a temporary color input
+            const input = document.createElement('input');
+            input.type = 'color';
+            input.value = sat.color;
+            input.style.position = 'absolute';
+            input.style.visibility = 'hidden';
+
+            input.addEventListener('change', () => {
+                sat.color = input.value;
+                saveUserSatellites();
+                renderUserSatelliteList();
+                updateUserSatellitePositions();
+                document.body.removeChild(input);
+            });
+
+            input.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (document.body.contains(input)) {
+                        document.body.removeChild(input);
+                    }
+                }, 100);
+            });
+
+            document.body.appendChild(input);
+            input.click();
+        }
+
+        // Edit user satellite (name, icon)
+        function editUserSat(id) {
+            const sat = state.data.userSatellites.find(s => s.id === id);
+            if (!sat) return;
+
+            const newName = prompt('Enter satellite name:', sat.name);
+            if (newName && newName.trim()) {
+                sat.name = newName.trim();
+                saveUserSatellites();
+                renderUserSatelliteList();
+                updateUserSatellitePositions();
+            }
+        }
+
+        // Delete a user satellite
+        function deleteUserSat(id) {
+            const sat = state.data.userSatellites.find(s => s.id === id);
+            if (!sat) return;
+
+            if (confirm(`Delete "${sat.name}" from your satellites?`)) {
+                state.data.userSatellites = state.data.userSatellites.filter(s => s.id !== id);
+                state.data.userSatelliteTrails.delete(id);
+                saveUserSatellites();
+                renderUserSatelliteList();
+                updateUserSatellitePositions();
+
+                // Stop interval if no visible satellites
+                const hasVisible = state.data.userSatellites.some(s => s.visible);
+                if (!hasVisible && state.intervals.userSatellites) {
+                    clearInterval(state.intervals.userSatellites);
+                    state.intervals.userSatellites = null;
+                }
+            }
+        }
+
+        // Generate unique ID for satellites
+        function generateSatId() {
+            return 'sat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Get next color from palette
+        function getNextSatColor() {
+            const usedColors = state.data.userSatellites.map(s => s.color);
+            const availableColors = CONFIG.satelliteColors.filter(c => !usedColors.includes(c));
+            if (availableColors.length > 0) {
+                return availableColors[0];
+            }
+            // If all colors used, cycle through
+            return CONFIG.satelliteColors[state.data.userSatellites.length % CONFIG.satelliteColors.length];
+        }
+
+        /* ==========================================================================
+           TLE Import Modal
+           ========================================================================== */
+
+        function openTLEImport() {
+            document.getElementById('tleImportModal').classList.add('active');
+            document.getElementById('tleTextarea').value = '';
+            document.getElementById('importPreview').style.display = 'none';
+            document.getElementById('importBtn').disabled = true;
+            state.data.importPreview = [];
+            switchImportTab('paste');
+        }
+
+        function closeTLEImport() {
+            document.getElementById('tleImportModal').classList.remove('active');
+            state.data.importPreview = [];
+        }
+
+        function switchImportTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.import-tab').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tab === tab);
+            });
+
+            // Update panels
+            document.getElementById('importPanelPaste').classList.toggle('active', tab === 'paste');
+            document.getElementById('importPanelFile').classList.toggle('active', tab === 'file');
+        }
+
+        function initTLEImportHandlers() {
+            // Textarea input handler with debounce
+            let debounceTimer;
+            document.getElementById('tleTextarea').addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    previewTLEInput(e.target.value);
+                }, 300);
+            });
+
+            // File drop zone handlers
+            const dropZone = document.getElementById('fileDropZone');
+
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    readTLEFile(file);
+                }
+            });
+
+            // Keyboard shortcut to close modal
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeTLEImport();
+                }
+            });
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                readTLEFile(file);
+            }
+        }
+
+        function readTLEFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                previewTLEInput(content);
+            };
+            reader.onerror = () => {
+                alert('Failed to read file');
+            };
+            reader.readAsText(file);
+        }
+
+        function previewTLEInput(text) {
+            const preview = document.getElementById('importPreview');
+            const previewList = document.getElementById('previewList');
+            const previewCount = document.getElementById('previewCount');
+            const previewMessages = document.getElementById('previewMessages');
+            const importBtn = document.getElementById('importBtn');
+
+            if (!text.trim()) {
+                preview.style.display = 'none';
+                importBtn.disabled = true;
+                state.data.importPreview = [];
+                return;
+            }
+
+            const { satellites, errors } = parseEnhancedTLE(text);
+
+            // Show preview
+            preview.style.display = 'block';
+
+            // Show errors/warnings
+            let messagesHtml = '';
+            if (errors.length > 0) {
+                const displayErrors = errors.slice(0, 3);
+                messagesHtml = `
+                    <div class="preview-warning preview-error">
+                        ⚠️ ${errors.length} parsing issue${errors.length > 1 ? 's' : ''}:
+                        ${displayErrors.join('; ')}${errors.length > 3 ? '...' : ''}
+                    </div>
+                `;
+            }
+
+            // Check for stale TLEs
+            const staleSats = satellites.filter(s => s.ageDays > 7);
+            if (staleSats.length > 0) {
+                messagesHtml += `
+                    <div class="preview-warning">
+                        ⚠️ ${staleSats.length} satellite${staleSats.length > 1 ? 's have' : ' has'}
+                        TLE data older than 7 days - positions may be inaccurate
+                    </div>
+                `;
+            }
+
+            previewMessages.innerHTML = messagesHtml;
+
+            // Check for duplicates
+            const existingNoradIds = state.data.userSatellites.map(s => s.noradId);
+
+            // Build preview list with selection and color
+            state.data.importPreview = satellites.map((sat, index) => ({
+                ...sat,
+                selected: true,
+                color: getNextColorForIndex(index),
+                isDuplicate: existingNoradIds.includes(sat.noradId)
+            }));
+
+            previewCount.textContent = `${satellites.length} satellite${satellites.length !== 1 ? 's' : ''} found`;
+
+            previewList.innerHTML = state.data.importPreview.map((sat, index) => `
+                <div class="preview-item">
+                    <input type="checkbox" class="preview-checkbox"
+                           ${sat.selected ? 'checked' : ''}
+                           onchange="togglePreviewSelection(${index})">
+                    <div class="preview-info">
+                        <div class="preview-name">
+                            ${sat.name}
+                            ${sat.isDuplicate ? '<span style="color: var(--warning);">(duplicate)</span>' : ''}
+                        </div>
+                        <div class="preview-meta">
+                            NORAD: ${sat.noradId} · ${sat.ageDays} day${sat.ageDays !== 1 ? 's' : ''} old
+                        </div>
+                    </div>
+                    <input type="color" class="preview-color-picker"
+                           value="${sat.color}"
+                           onchange="updatePreviewColor(${index}, this.value)">
+                </div>
+            `).join('');
+
+            // Enable/disable import button
+            const selectedCount = state.data.importPreview.filter(s => s.selected).length;
+            importBtn.disabled = selectedCount === 0;
+            importBtn.textContent = `Import ${selectedCount > 0 ? selectedCount + ' ' : ''}Selected`;
+        }
+
+        function getNextColorForIndex(index) {
+            const usedCount = state.data.userSatellites.length;
+            return CONFIG.satelliteColors[(usedCount + index) % CONFIG.satelliteColors.length];
+        }
+
+        function togglePreviewSelection(index) {
+            state.data.importPreview[index].selected = !state.data.importPreview[index].selected;
+            const selectedCount = state.data.importPreview.filter(s => s.selected).length;
+            const importBtn = document.getElementById('importBtn');
+            importBtn.disabled = selectedCount === 0;
+            importBtn.textContent = `Import ${selectedCount > 0 ? selectedCount + ' ' : ''}Selected`;
+        }
+
+        function updatePreviewColor(index, color) {
+            state.data.importPreview[index].color = color;
+        }
+
+        function importSelectedSatellites() {
+            const toImport = state.data.importPreview.filter(s => s.selected);
+
+            if (toImport.length === 0) {
+                alert('No satellites selected');
+                return;
+            }
+
+            // Check for duplicates and ask about replacement
+            const existingByNorad = new Map(
+                state.data.userSatellites.map(s => [s.noradId, s])
+            );
+
+            let replacedCount = 0;
+
+            toImport.forEach(sat => {
+                const existing = existingByNorad.get(sat.noradId);
+
+                if (existing) {
+                    // Replace existing satellite's TLE data
+                    existing.line1 = sat.line1;
+                    existing.line2 = sat.line2;
+                    existing.epoch = sat.epoch;
+                    existing.ageDays = sat.ageDays;
+                    // Keep existing name, color, visibility
+                    replacedCount++;
+                } else {
+                    // Add new satellite
+                    state.data.userSatellites.push({
+                        id: generateSatId(),
+                        name: sat.name,
+                        noradId: sat.noradId,
+                        line1: sat.line1,
+                        line2: sat.line2,
+                        epoch: sat.epoch,
+                        ageDays: sat.ageDays,
+                        color: sat.color,
+                        icon: '🛰️',
+                        visible: true,
+                        showLabel: true,
+                        addedAt: new Date().toISOString(),
+                        source: 'manual'
+                    });
+                }
+            });
+
+            saveUserSatellites();
+            renderUserSatelliteList();
+            initUserSatellitesLayer(); // Ensure interval is running
+            updateUserSatellitePositions();
+
+            closeTLEImport();
+
+            const newCount = toImport.length - replacedCount;
+            let message = '';
+            if (newCount > 0 && replacedCount > 0) {
+                message = `Added ${newCount} new satellite${newCount !== 1 ? 's' : ''}, updated ${replacedCount}`;
+            } else if (newCount > 0) {
+                message = `Added ${newCount} satellite${newCount !== 1 ? 's' : ''}`;
+            } else {
+                message = `Updated ${replacedCount} satellite${replacedCount !== 1 ? 's' : ''}`;
+            }
+            updateStatus(message, 'success');
         }
 
         /* ==========================================================================
