@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="theme-color" content="#EC0000">
+    <title>Commute Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sbb-red: #EC0000;
+            --sbb-dark: #1a1a1a;
+            --sbb-grey: #999;
+            --sbb-light: #e0e0e0;
+            --bg: #f5f5f0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--sbb-dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .main {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5vw;
+            padding: 2rem;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .clock-section {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock-wrap {
+            width: 360px;
+            height: 360px;
+            position: relative;
+        }
+
+        #clock {
+            width: 100%;
+            height: 100%;
+        }
+
+        .info-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 0;
+        }
+
+        .time-range {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--sbb-grey);
+            margin-bottom: 0.75rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .bus-name {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--sbb-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
+        }
+
+        .bus-subtitle {
+            font-size: 0.8rem;
+            color: var(--sbb-grey);
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+        }
+
+        .countdown {
+            font-size: 5rem;
+            font-weight: 200;
+            font-variant-numeric: tabular-nums;
+            color: var(--sbb-red);
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .countdown.urgent {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .countdown-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--sbb-grey);
+            margin-bottom: 2rem;
+        }
+
+        .progress-track {
+            width: 100%;
+            max-width: 300px;
+            height: 2px;
+            background: var(--sbb-light);
+            border-radius: 1px;
+            overflow: hidden;
+            margin-bottom: 2.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--sbb-red);
+            border-radius: 1px;
+            transition: width 1s linear;
+        }
+
+        .links {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .links a {
+            font-size: 0.75rem;
+            color: var(--sbb-grey);
+            text-decoration: none;
+            padding: 0.5rem 1.25rem;
+            border: 1px solid var(--sbb-light);
+            border-radius: 3px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .links a:hover {
+            color: var(--sbb-red);
+            border-color: var(--sbb-red);
+        }
+
+        /* === MOBILE (portrait) === */
+        @media (max-width: 740px) {
+            body {
+                align-items: stretch;
+            }
+
+            .main {
+                flex-direction: column;
+                gap: 1.5rem;
+                padding: 1.5rem;
+                min-height: 100vh;
+                min-height: 100dvh;
+                justify-content: center;
+            }
+
+            .clock-section {
+                flex: 1;
+                align-items: flex-end;
+            }
+
+            .clock-wrap {
+                width: min(300px, 70vw, 42vh);
+                height: min(300px, 70vw, 42vh);
+            }
+
+            .info-section {
+                flex: 1;
+                justify-content: flex-start;
+                padding-top: 1rem;
+            }
+
+            .bus-name {
+                font-size: 2rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .bus-subtitle {
+                margin-bottom: 1.25rem;
+            }
+
+            .countdown {
+                font-size: 3.5rem;
+            }
+
+            .countdown-label {
+                margin-bottom: 1.25rem;
+            }
+
+            .progress-track {
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .clock-wrap {
+                width: min(240px, 65vw, 38vh);
+                height: min(240px, 65vw, 38vh);
+            }
+
+            .bus-name { font-size: 1.6rem; }
+            .countdown { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="clock-section">
+            <div class="clock-wrap">
+                <canvas id="clock"></canvas>
+            </div>
+        </div>
+        <div class="info-section">
+            <div class="time-range" id="timeRange">:50 — :05</div>
+            <div class="bus-name" id="busName">—</div>
+            <div class="bus-subtitle" id="busSubtitle">wordt geladen...</div>
+            <div class="countdown" id="countdown">00:00</div>
+            <div class="countdown-label">resterend</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="links" id="links">
+                <a href="https://9292.nl" target="_blank" rel="noopener">9292.nl</a>
+                <a href="https://www.ns.nl" target="_blank" rel="noopener">NS Reisplanner</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ==========================================
+        // CONFIGURATION — edit these blocks as needed
+        // ==========================================
+        var BLOCKS = [
+            { startMin: 50, endMin: 5,  bus: 'Bus 346', subtitle: 'Richting Centraal Station' },
+            { startMin: 5,  endMin: 20, bus: 'Bus 347', subtitle: 'Via Marktplein' },
+            { startMin: 20, endMin: 35, bus: 'Bus 348', subtitle: 'Snelbus richting Zuid' },
+            { startMin: 35, endMin: 50, bus: 'Bus 349', subtitle: 'Via Stationsweg' }
+        ];
+
+        // Colors
+        var RED = '#EC0000';
+        var DARK = '#1a1a1a';
+        var GREY_TICK = '#aaa';
+        var ARC_INACTIVE = '#ddd';
+        var BG_COLOR = '#f5f5f0';
+        var FACE_COLOR = '#ffffff';
+
+        // ==========================================
+        // CANVAS SETUP
+        // ==========================================
+        var canvas = document.getElementById('clock');
+        var ctx = canvas.getContext('2d');
+        var dpr = 1;
+
+        function resize() {
+            var rect = canvas.getBoundingClientRect();
+            dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+        }
+
+        // ==========================================
+        // TIME UTILITIES
+        // ==========================================
+        function minuteToAngle(m) {
+            return (m / 60) * 2 * Math.PI - Math.PI / 2;
+        }
+
+        function getCurrentBlockIndex(min) {
+            if (min >= 50 || min < 5) return 0;
+            if (min < 20) return 1;
+            if (min < 35) return 2;
+            return 3;
+        }
+
+        function getSecondsRemaining(min, sec) {
+            var block = BLOCKS[getCurrentBlockIndex(min)];
+            var endMin = block.endMin;
+            var remaining;
+            if (min >= 50) {
+                remaining = ((60 - min) + endMin) * 60 - sec;
+            } else {
+                remaining = (endMin - min) * 60 - sec;
+            }
+            return Math.max(0, remaining);
+        }
+
+        function getBlockDurationSec(idx) {
+            var b = BLOCKS[idx];
+            if (b.startMin > b.endMin) {
+                return (60 - b.startMin + b.endMin) * 60;
+            }
+            return (b.endMin - b.startMin) * 60;
+        }
+
+        function pad2(n) {
+            return n < 10 ? '0' + n : '' + n;
+        }
+
+        // ==========================================
+        // CLOCK DRAWING
+        // ==========================================
+        function drawClock(now) {
+            var rect = canvas.getBoundingClientRect();
+            var w = rect.width;
+            var h = rect.height;
+            var cx = w / 2;
+            var cy = h / 2;
+            var r = Math.min(cx, cy) - 12;
+
+            ctx.save();
+            ctx.scale(dpr, dpr);
+            ctx.clearRect(0, 0, w, h);
+
+            var min = now.getMinutes();
+            var sec = now.getSeconds();
+            var ms = now.getMilliseconds();
+            var hr = now.getHours() % 12;
+            var currentBlock = getCurrentBlockIndex(min);
+
+            // --- Arc segments (outer ring) ---
+            var arcR = r + 6;
+            var arcW = 6;
+
+            for (var i = 0; i < BLOCKS.length; i++) {
+                var b = BLOCKS[i];
+                var sa = minuteToAngle(b.startMin);
+                var ea = (b.startMin > b.endMin)
+                    ? minuteToAngle(b.endMin + 60)
+                    : minuteToAngle(b.endMin);
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, arcR, sa, ea);
+                ctx.lineWidth = arcW;
+                ctx.strokeStyle = (i === currentBlock) ? RED : ARC_INACTIVE;
+                ctx.lineCap = 'butt';
+                ctx.stroke();
+            }
+
+            // Gap lines at transition points
+            var transitions = [5, 20, 35, 50];
+            for (var t = 0; t < transitions.length; t++) {
+                var gAngle = minuteToAngle(transitions[t]);
+                var gx1 = cx + Math.cos(gAngle) * (arcR - arcW);
+                var gy1 = cy + Math.sin(gAngle) * (arcR - arcW);
+                var gx2 = cx + Math.cos(gAngle) * (arcR + arcW);
+                var gy2 = cy + Math.sin(gAngle) * (arcR + arcW);
+                ctx.beginPath();
+                ctx.moveTo(gx1, gy1);
+                ctx.lineTo(gx2, gy2);
+                ctx.strokeStyle = BG_COLOR;
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // --- Clock face ---
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+            ctx.fillStyle = FACE_COLOR;
+            ctx.fill();
+            ctx.strokeStyle = DARK;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // --- Hour markers ---
+            for (var hi = 0; hi < 12; hi++) {
+                var hAngle = (hi / 12) * 2 * Math.PI - Math.PI / 2;
+                var outerR = r - 5;
+                var innerR = r - (hi % 3 === 0 ? 26 : 18);
+                var markerW = (hi % 3 === 0) ? 5 : 3;
+
+                ctx.beginPath();
+                ctx.moveTo(
+                    cx + Math.cos(hAngle) * innerR,
+                    cy + Math.sin(hAngle) * innerR
+                );
+                ctx.lineTo(
+                    cx + Math.cos(hAngle) * outerR,
+                    cy + Math.sin(hAngle) * outerR
+                );
+                ctx.strokeStyle = DARK;
+                ctx.lineWidth = markerW;
+                ctx.lineCap = 'butt';
+                ctx.stroke();
+            }
+
+            // --- Minute ticks ---
+            for (var mi = 0; mi < 60; mi++) {
+                if (mi % 5 === 0) continue;
+                var mAngle = (mi / 60) * 2 * Math.PI - Math.PI / 2;
+                ctx.beginPath();
+                ctx.moveTo(
+                    cx + Math.cos(mAngle) * (r - 5),
+                    cy + Math.sin(mAngle) * (r - 5)
+                );
+                ctx.lineTo(
+                    cx + Math.cos(mAngle) * (r - 10),
+                    cy + Math.sin(mAngle) * (r - 10)
+                );
+                ctx.strokeStyle = GREY_TICK;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // --- Hour hand ---
+            var hourAngle = ((hr + min / 60) / 12) * 2 * Math.PI - Math.PI / 2;
+            drawHand(cx, cy, hourAngle, r * 0.48, 7, r * 0.09);
+
+            // --- Minute hand ---
+            var minAngle = ((min + sec / 60) / 60) * 2 * Math.PI - Math.PI / 2;
+            drawHand(cx, cy, minAngle, r * 0.70, 5, r * 0.12);
+
+            // --- Second hand (smooth sweep) ---
+            var totalSec = sec + ms / 1000;
+            var secAngle = (totalSec / 60) * 2 * Math.PI - Math.PI / 2;
+
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(secAngle + Math.PI / 2);
+
+            // Tail
+            ctx.beginPath();
+            ctx.moveTo(0, r * 0.18);
+            ctx.lineTo(0, -r * 0.58);
+            ctx.strokeStyle = RED;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            // Lollipop circle
+            ctx.beginPath();
+            ctx.arc(0, -r * 0.65, r * 0.04, 0, 2 * Math.PI);
+            ctx.fillStyle = RED;
+            ctx.fill();
+
+            // Tip beyond circle
+            ctx.beginPath();
+            ctx.moveTo(0, -r * 0.69);
+            ctx.lineTo(0, -r * 0.85);
+            ctx.strokeStyle = RED;
+            ctx.lineWidth = 1.5;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+
+            ctx.restore();
+
+            // --- Center cap ---
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, 2 * Math.PI);
+            ctx.fillStyle = DARK;
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        function drawHand(cx, cy, angle, length, width, tail) {
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle + Math.PI / 2);
+
+            var hw = width / 2;
+            var tw = width * 0.65;
+            ctx.beginPath();
+            ctx.moveTo(-tw, tail);
+            ctx.lineTo(-hw, 0);
+            ctx.lineTo(-hw * 0.7, -length);
+            ctx.lineTo(hw * 0.7, -length);
+            ctx.lineTo(hw, 0);
+            ctx.lineTo(tw, tail);
+            ctx.closePath();
+            ctx.fillStyle = DARK;
+            ctx.fill();
+
+            ctx.restore();
+        }
+
+        // ==========================================
+        // UI UPDATE
+        // ==========================================
+        var elBusName = document.getElementById('busName');
+        var elBusSub = document.getElementById('busSubtitle');
+        var elCountdown = document.getElementById('countdown');
+        var elProgress = document.getElementById('progressFill');
+        var elRange = document.getElementById('timeRange');
+        var lastBlockIdx = -1;
+
+        function updateUI(now) {
+            var min = now.getMinutes();
+            var sec = now.getSeconds();
+            var blockIdx = getCurrentBlockIndex(min);
+            var block = BLOCKS[blockIdx];
+
+            if (blockIdx !== lastBlockIdx) {
+                elBusName.textContent = block.bus;
+                elBusSub.textContent = block.subtitle;
+                elRange.textContent =
+                    ':' + pad2(block.startMin) + '  \u2014  :' + pad2(block.endMin);
+                lastBlockIdx = blockIdx;
+            }
+
+            // Countdown
+            var remaining = getSecondsRemaining(min, sec);
+            var remMin = Math.floor(remaining / 60);
+            var remSec = remaining % 60;
+            elCountdown.textContent = pad2(remMin) + ':' + pad2(remSec);
+
+            // Urgent pulse when < 60 seconds
+            if (remaining <= 60) {
+                elCountdown.classList.add('urgent');
+            } else {
+                elCountdown.classList.remove('urgent');
+            }
+
+            // Progress bar
+            var totalDur = getBlockDurationSec(blockIdx);
+            var elapsed = totalDur - remaining;
+            var pct = Math.min(100, (elapsed / totalDur) * 100);
+            elProgress.style.width = pct + '%';
+        }
+
+        // ==========================================
+        // MAIN LOOP
+        // ==========================================
+        function tick() {
+            var now = new Date();
+            drawClock(now);
+            updateUI(now);
+            requestAnimationFrame(tick);
+        }
+
+        resize();
+        window.addEventListener('resize', resize);
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) resize();
+        });
+
+        tick();
+    })();
+    </script>
+</body>
+</html>
