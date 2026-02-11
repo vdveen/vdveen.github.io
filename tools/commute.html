@@ -260,6 +260,9 @@
             { startMin: 35, endMin: 50, bus: 'Bus 349', subtitle: 'Via Stationsweg' }
         ];
 
+        // Transition points derived from BLOCKS (used for arc gaps on clock)
+        var TRANSITIONS = BLOCKS.map(function (b) { return b.endMin; });
+
         // Colors
         var RED = '#EC0000';
         var DARK = '#1a1a1a';
@@ -290,17 +293,22 @@
         }
 
         function getCurrentBlockIndex(min) {
-            if (min >= 50 || min < 5) return 0;
-            if (min < 20) return 1;
-            if (min < 35) return 2;
-            return 3;
+            for (var i = 0; i < BLOCKS.length; i++) {
+                var b = BLOCKS[i];
+                if (b.startMin > b.endMin) {
+                    if (min >= b.startMin || min < b.endMin) return i;
+                } else {
+                    if (min >= b.startMin && min < b.endMin) return i;
+                }
+            }
+            return 0;
         }
 
         function getSecondsRemaining(min, sec) {
             var block = BLOCKS[getCurrentBlockIndex(min)];
             var endMin = block.endMin;
             var remaining;
-            if (min >= 50) {
+            if (block.startMin > block.endMin && min >= block.startMin) {
                 remaining = ((60 - min) + endMin) * 60 - sec;
             } else {
                 remaining = (endMin - min) * 60 - sec;
@@ -361,9 +369,8 @@
             }
 
             // Gap lines at transition points
-            var transitions = [5, 20, 35, 50];
-            for (var t = 0; t < transitions.length; t++) {
-                var gAngle = minuteToAngle(transitions[t]);
+            for (var t = 0; t < TRANSITIONS.length; t++) {
+                var gAngle = minuteToAngle(TRANSITIONS[t]);
                 var gx1 = cx + Math.cos(gAngle) * (arcR - arcW);
                 var gy1 = cy + Math.sin(gAngle) * (arcR - arcW);
                 var gx2 = cx + Math.cos(gAngle) * (arcR + arcW);
