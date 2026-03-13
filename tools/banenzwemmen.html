@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="theme-color" content="#0077B6">
+    <title>Banenzwemmen Amerena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #0077B6;
+            --blue-light: #00B4D8;
+            --teal: #0891B2;
+            --green: #059669;
+            --dark: #1a1a1a;
+            --grey: #999;
+            --light: #e0e0e0;
+            --bg: #f5f5f0;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 1.5rem;
+        }
+
+        /* ---- STATUS SECTION ---- */
+        .status {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .status-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--grey);
+            margin-bottom: 0.5rem;
+        }
+
+        .status-detail {
+            font-size: 0.85rem;
+            color: var(--grey);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        .status-countdown {
+            font-size: 4.5rem;
+            font-weight: 200;
+            font-variant-numeric: tabular-nums;
+            color: var(--blue);
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-countdown.active {
+            color: var(--green);
+        }
+
+        .status-countdown.urgent {
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .status-sub {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--grey);
+            margin-bottom: 1.25rem;
+        }
+
+        .status-time {
+            font-size: 0.8rem;
+            letter-spacing: 3px;
+            color: var(--grey);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .progress-track {
+            width: 100%;
+            max-width: 300px;
+            height: 2px;
+            background: var(--light);
+            border-radius: 1px;
+            overflow: hidden;
+            margin: 1.25rem auto 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--blue);
+            border-radius: 1px;
+            transition: width 1s linear;
+        }
+
+        .progress-fill.active {
+            background: var(--green);
+        }
+
+        /* ---- WEEK GRID ---- */
+        .week {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin-bottom: 2rem;
+        }
+
+        .day {
+            min-width: 0;
+        }
+
+        .day-header {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--grey);
+            text-align: center;
+            padding-bottom: 0.5rem;
+        }
+
+        .day.today .day-header {
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .session {
+            background: var(--card);
+            border: 1px solid var(--light);
+            border-radius: 4px;
+            padding: 0.5rem;
+            margin-bottom: 4px;
+            transition: opacity 0.3s;
+        }
+
+        .session.past {
+            opacity: 0.35;
+        }
+
+        .session.now {
+            border-left: 3px solid var(--green);
+        }
+
+        .session-time {
+            font-size: 0.7rem;
+            font-variant-numeric: tabular-nums;
+            color: var(--dark);
+            margin-bottom: 2px;
+            letter-spacing: 0.3px;
+        }
+
+        .session-pool {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pool-lanes50 { color: var(--blue); }
+        .pool-lanes25width { color: var(--teal); }
+        .pool-fullpool { color: var(--green); }
+        .pool-lanes50partial { color: var(--blue-light); }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            padding-top: 0.5rem;
+        }
+
+        .footer a {
+            font-size: 0.7rem;
+            color: var(--grey);
+            text-decoration: none;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--light);
+            border-radius: 3px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .footer a:hover {
+            color: var(--blue);
+            border-color: var(--blue);
+        }
+
+        .data-source {
+            font-size: 0.6rem;
+            color: var(--grey);
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        /* ---- MOBILE ---- */
+        @media (max-width: 640px) {
+            .container {
+                padding: 1.5rem 1rem 1rem;
+            }
+
+            .status-countdown {
+                font-size: 3.5rem;
+            }
+
+            .week {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .day {
+                display: grid;
+                grid-template-columns: 56px 1fr;
+                gap: 0 8px;
+                align-items: start;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid var(--light);
+            }
+
+            .day:last-child {
+                border-bottom: none;
+            }
+
+            .day-header {
+                text-align: left;
+                padding-bottom: 0;
+                padding-top: 0.5rem;
+            }
+
+            .day-sessions {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .session {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .status-countdown {
+                font-size: 2.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="status">
+            <div class="status-label" id="statusLabel">laden...</div>
+            <div class="status-detail" id="statusDetail"></div>
+            <div class="status-countdown" id="statusCountdown">--:--</div>
+            <div class="status-sub" id="statusSub"></div>
+            <div class="status-time" id="statusTime"></div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+        <div class="week" id="weekGrid"></div>
+        <div class="footer">
+            <a href="https://sro.nl/amerena/aanbod/banenzwemmen/" target="_blank" rel="noopener">sro.nl</a>
+            <div class="data-source" id="dataSource"></div>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ==========================================
+        // FALLBACK SCHEDULE DATA
+        // Updated: 2026-03-13
+        // Source: https://sro.nl/amerena/aanbod/banenzwemmen/
+        // ==========================================
+        var FALLBACK_DATE = '2026-03-13';
+        var FALLBACK = [
+            // Maandag
+            { day: 0, startHour: 7, startMin: 0, endHour: 16, endMin: 0,
+              poolConfig: 'lanes50', detail: '' },
+            { day: 0, startHour: 19, startMin: 30, endHour: 21, endMin: 30,
+              poolConfig: 'lanes25width', detail: 'In de breedte \u2013 25 meter' },
+
+            // Dinsdag
+            { day: 1, startHour: 7, startMin: 0, endHour: 16, endMin: 0,
+              poolConfig: 'lanes50', detail: '' },
+            { day: 1, startHour: 20, startMin: 0, endHour: 21, endMin: 0,
+              poolConfig: 'fullpool', detail: 'Hele bad beschikbaar' },
+
+            // Woensdag
+            { day: 2, startHour: 7, startMin: 0, endHour: 16, endMin: 0,
+              poolConfig: 'lanes50', detail: '' },
+            { day: 2, startHour: 20, startMin: 0, endHour: 21, endMin: 0,
+              poolConfig: 'lanes50partial', detail: '5 banen van 50 meter' },
+
+            // Donderdag
+            { day: 3, startHour: 7, startMin: 0, endHour: 16, endMin: 0,
+              poolConfig: 'lanes50', detail: '' },
+            { day: 3, startHour: 19, startMin: 30, endHour: 21, endMin: 30,
+              poolConfig: 'lanes25width', detail: 'In de breedte \u2013 25 meter' },
+
+            // Vrijdag
+            { day: 4, startHour: 7, startMin: 0, endHour: 16, endMin: 0,
+              poolConfig: 'lanes50', detail: '' },
+
+            // Zaterdag
+            { day: 5, startHour: 12, startMin: 0, endHour: 13, endMin: 0,
+              poolConfig: 'fullpool', detail: 'Hele bad beschikbaar' },
+
+            // Zondag
+            { day: 6, startHour: 10, startMin: 0, endHour: 13, endMin: 0,
+              poolConfig: 'fullpool', detail: 'Hele bad beschikbaar' }
+        ];
+
+        var POOL_LABELS = {
+            lanes50: '50m banen',
+            lanes25width: '25m breedte',
+            fullpool: 'Hele bad',
+            lanes50partial: '50m deels'
+        };
+
+        var DAY_NAMES = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
+        var DAY_NAMES_LONG = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag'];
+
+        var CORS_PROXIES = [
+            'https://corsproxy.io/?url=',
+            'https://api.allorigins.win/raw?url='
+        ];
+        var SRO_URL = 'https://sro.nl/amerena/aanbod/banenzwemmen/';
+
+        // ==========================================
+        // STATE
+        // ==========================================
+        var schedule = FALLBACK;
+        var dataSource = 'fallback';
+
+        // ==========================================
+        // TIME LOGIC
+        // ==========================================
+        function todayIndex() {
+            // Monday=0, Sunday=6
+            return (new Date().getDay() + 6) % 7;
+        }
+
+        function nowMinutes() {
+            var n = new Date();
+            return n.getHours() * 60 + n.getMinutes();
+        }
+
+        function sessionStart(s) {
+            return s.startHour * 60 + s.startMin;
+        }
+
+        function sessionEnd(s) {
+            return s.endHour * 60 + s.endMin;
+        }
+
+        function sessionsForDay(day) {
+            return schedule.filter(function (s) { return s.day === day; })
+                .sort(function (a, b) { return sessionStart(a) - sessionStart(b); });
+        }
+
+        function getSwimStatus() {
+            var today = todayIndex();
+            var mins = nowMinutes();
+            var active = null;
+            var next = null;
+
+            // Check for active session today
+            var todaySessions = sessionsForDay(today);
+            for (var i = 0; i < todaySessions.length; i++) {
+                var s = todaySessions[i];
+                if (mins >= sessionStart(s) && mins < sessionEnd(s)) {
+                    active = s;
+                    break;
+                }
+            }
+
+            if (!active) {
+                // Find next session
+                for (var d = 0; d < 7; d++) {
+                    var checkDay = (today + d) % 7;
+                    var daySessions = sessionsForDay(checkDay);
+                    for (var j = 0; j < daySessions.length; j++) {
+                        var sess = daySessions[j];
+                        if (d === 0 && sessionStart(sess) <= mins) continue;
+                        next = { session: sess, daysAway: d };
+                        break;
+                    }
+                    if (next) break;
+                }
+            }
+
+            return { active: active, next: next };
+        }
+
+        function pad2(n) {
+            return n < 10 ? '0' + n : '' + n;
+        }
+
+        function formatTime(h, m) {
+            return pad2(h) + ':' + pad2(m);
+        }
+
+        function formatCountdown(totalMinutes) {
+            var h = Math.floor(totalMinutes / 60);
+            var m = totalMinutes % 60;
+            if (h > 0) return h + ':' + pad2(m);
+            return '0:' + pad2(m);
+        }
+
+        // ==========================================
+        // FETCH + PARSE
+        // ==========================================
+        function tryFetch() {
+            var proxyIndex = 0;
+
+            function attempt() {
+                if (proxyIndex >= CORS_PROXIES.length) {
+                    return Promise.resolve(null);
+                }
+                var url = CORS_PROXIES[proxyIndex] + encodeURIComponent(SRO_URL);
+                return fetch(url, { signal: AbortSignal.timeout(5000) })
+                    .then(function (r) {
+                        if (!r.ok) throw new Error(r.status);
+                        return r.text();
+                    })
+                    .then(function (html) {
+                        var parsed = parseSROHtml(html);
+                        if (parsed.length === 0) throw new Error('Empty parse');
+                        return parsed;
+                    })
+                    .catch(function () {
+                        proxyIndex++;
+                        return attempt();
+                    });
+            }
+
+            return attempt();
+        }
+
+        function parseSROHtml(html) {
+            var parser = new DOMParser();
+            var doc = parser.parseFromString(html, 'text/html');
+            var results = [];
+
+            // Try to find schedule entries from the page content
+            // The SRO page structures data in sections per day
+            var text = doc.body ? doc.body.innerText || doc.body.textContent || '' : '';
+
+            var dayPatterns = [
+                { name: 'maandag', idx: 0 },
+                { name: 'dinsdag', idx: 1 },
+                { name: 'woensdag', idx: 2 },
+                { name: 'donderdag', idx: 3 },
+                { name: 'vrijdag', idx: 4 },
+                { name: 'zaterdag', idx: 5 },
+                { name: 'zondag', idx: 6 }
+            ];
+
+            // Split text into day sections
+            for (var d = 0; d < dayPatterns.length; d++) {
+                var dayName = dayPatterns[d].name;
+                var dayIdx = dayPatterns[d].idx;
+                var nextDay = d < dayPatterns.length - 1 ? dayPatterns[d + 1].name : null;
+
+                var startPos = text.toLowerCase().indexOf(dayName);
+                if (startPos === -1) continue;
+
+                var endPos = nextDay ? text.toLowerCase().indexOf(nextDay, startPos + dayName.length) : text.length;
+                if (endPos === -1) endPos = text.length;
+
+                var section = text.substring(startPos, endPos);
+
+                // Find all time ranges in this section
+                var timeRegex = /(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/g;
+                var match;
+                while ((match = timeRegex.exec(section)) !== null) {
+                    var sh = parseInt(match[1], 10);
+                    var sm = parseInt(match[2], 10);
+                    var eh = parseInt(match[3], 10);
+                    var em = parseInt(match[4], 10);
+
+                    // Get surrounding text for detail
+                    var context = section.substring(
+                        Math.max(0, match.index - 10),
+                        Math.min(section.length, match.index + match[0].length + 80)
+                    ).toLowerCase();
+
+                    var poolConfig = 'lanes50';
+                    var detail = '';
+
+                    if (context.indexOf('breedte') !== -1 || context.indexOf('25 meter') !== -1) {
+                        poolConfig = 'lanes25width';
+                        detail = 'In de breedte \u2013 25 meter';
+                    } else if (context.indexOf('hele bad') !== -1) {
+                        poolConfig = 'fullpool';
+                        detail = 'Hele bad beschikbaar';
+                    } else if (/\d+\s*banen/.test(context) && context.indexOf('50') !== -1) {
+                        poolConfig = 'lanes50partial';
+                        var laneMatch = context.match(/(\d+)\s*banen/);
+                        detail = laneMatch ? laneMatch[1] + ' banen van 50 meter' : '';
+                    }
+
+                    results.push({
+                        day: dayIdx,
+                        startHour: sh,
+                        startMin: sm,
+                        endHour: eh,
+                        endMin: em,
+                        poolConfig: poolConfig,
+                        detail: detail
+                    });
+                }
+            }
+
+            return results;
+        }
+
+        // ==========================================
+        // RENDERING
+        // ==========================================
+        var elLabel = document.getElementById('statusLabel');
+        var elDetail = document.getElementById('statusDetail');
+        var elCountdown = document.getElementById('statusCountdown');
+        var elSub = document.getElementById('statusSub');
+        var elTime = document.getElementById('statusTime');
+        var elProgress = document.getElementById('progressFill');
+        var elGrid = document.getElementById('weekGrid');
+        var elSource = document.getElementById('dataSource');
+
+        function renderStatus() {
+            var status = getSwimStatus();
+            var now = new Date();
+            var mins = now.getHours() * 60 + now.getMinutes();
+
+            if (status.active) {
+                var s = status.active;
+                var remaining = sessionEnd(s) - mins;
+                elLabel.textContent = 'nu zwemmen';
+                elDetail.textContent = POOL_LABELS[s.poolConfig] + (s.detail ? ' \u2014 ' + s.detail : '');
+                elCountdown.textContent = formatCountdown(remaining);
+                elCountdown.className = 'status-countdown active' + (remaining <= 5 ? ' urgent' : '');
+                elSub.textContent = 'resterend';
+                elTime.textContent = formatTime(s.startHour, s.startMin) + '  \u2014  ' + formatTime(s.endHour, s.endMin);
+                var duration = sessionEnd(s) - sessionStart(s);
+                var elapsed = mins - sessionStart(s);
+                var pct = Math.min(100, (elapsed / duration) * 100);
+                elProgress.style.width = pct + '%';
+                elProgress.className = 'progress-fill active';
+            } else if (status.next) {
+                var ns = status.next.session;
+                var daysAway = status.next.daysAway;
+                var minsUntil;
+                if (daysAway === 0) {
+                    minsUntil = sessionStart(ns) - mins;
+                    elLabel.textContent = 'volgende sessie vandaag';
+                } else if (daysAway === 1) {
+                    minsUntil = (24 * 60 - mins) + sessionStart(ns);
+                    elLabel.textContent = 'volgende sessie morgen';
+                } else {
+                    minsUntil = ((daysAway - 1) * 24 * 60) + (24 * 60 - mins) + sessionStart(ns);
+                    elLabel.textContent = 'volgende sessie ' + DAY_NAMES_LONG[ns.day];
+                }
+                elDetail.textContent = POOL_LABELS[ns.poolConfig] + (ns.detail ? ' \u2014 ' + ns.detail : '');
+                elCountdown.textContent = formatCountdown(minsUntil);
+                elCountdown.className = 'status-countdown';
+                elSub.textContent = 'tot start';
+                elTime.textContent = formatTime(ns.startHour, ns.startMin) + '  \u2014  ' + formatTime(ns.endHour, ns.endMin);
+                elProgress.style.width = '0%';
+                elProgress.className = 'progress-fill';
+            } else {
+                elLabel.textContent = 'geen sessies gevonden';
+                elDetail.textContent = '';
+                elCountdown.textContent = '--:--';
+                elCountdown.className = 'status-countdown';
+                elSub.textContent = '';
+                elTime.textContent = '';
+                elProgress.style.width = '0%';
+            }
+        }
+
+        function renderGrid() {
+            var today = todayIndex();
+            var mins = nowMinutes();
+            var html = '';
+
+            for (var d = 0; d < 7; d++) {
+                var isToday = d === today;
+                var sessions = sessionsForDay(d);
+
+                html += '<div class="day' + (isToday ? ' today' : '') + '">';
+                html += '<div class="day-header">' + DAY_NAMES[d] + '</div>';
+                html += '<div class="day-sessions">';
+
+                for (var i = 0; i < sessions.length; i++) {
+                    var s = sessions[i];
+                    var isPast = isToday && mins >= sessionEnd(s);
+                    var isNow = isToday && mins >= sessionStart(s) && mins < sessionEnd(s);
+                    var cls = 'session';
+                    if (isPast) cls += ' past';
+                    if (isNow) cls += ' now';
+
+                    html += '<div class="' + cls + '">';
+                    html += '<div class="session-time">' +
+                        formatTime(s.startHour, s.startMin) + '\u2009\u2013\u2009' +
+                        formatTime(s.endHour, s.endMin) + '</div>';
+                    html += '<div class="session-pool pool-' + s.poolConfig + '">' +
+                        POOL_LABELS[s.poolConfig] + '</div>';
+                    html += '</div>';
+                }
+
+                if (sessions.length === 0) {
+                    html += '<div class="session" style="opacity:0.3;border-style:dashed">';
+                    html += '<div class="session-time" style="color:var(--grey)">\u2014</div>';
+                    html += '</div>';
+                }
+
+                html += '</div></div>';
+            }
+
+            elGrid.innerHTML = html;
+        }
+
+        function renderSource() {
+            if (dataSource === 'live') {
+                elSource.textContent = 'Live van sro.nl';
+            } else {
+                elSource.textContent = 'Lokale data \u00b7 bijgewerkt ' + FALLBACK_DATE;
+            }
+        }
+
+        function render() {
+            renderStatus();
+            renderGrid();
+            renderSource();
+        }
+
+        // ==========================================
+        // MAIN
+        // ==========================================
+        render();
+
+        // Try live fetch in background
+        tryFetch().then(function (parsed) {
+            if (parsed && parsed.length > 0) {
+                schedule = parsed;
+                dataSource = 'live';
+                render();
+            }
+        });
+
+        // Refresh every 30 seconds
+        setInterval(render, 30000);
+    })();
+    </script>
+</body>
+</html>
