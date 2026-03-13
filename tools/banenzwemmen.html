@@ -338,11 +338,8 @@
         var DAY_NAMES = ['ma', 'di', 'wo', 'do', 'vr', 'za', 'zo'];
         var DAY_NAMES_LONG = ['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag'];
 
-        var CORS_PROXIES = [
-            'https://corsproxy.io/?url=',
-            'https://api.allorigins.win/raw?url='
-        ];
-        var SRO_URL = 'https://sro.nl/amerena/aanbod/banenzwemmen/';
+        // Railway worker URL — update this after deploying workers/sro-proxy
+        var PROXY_URL = 'https://sro-proxy.up.railway.app/schedule';
 
         // ==========================================
         // STATE
@@ -426,111 +423,23 @@
         }
 
         // ==========================================
-        // FETCH + PARSE
+        // FETCH FROM PROXY
         // ==========================================
         function tryFetch() {
-            var proxyIndex = 0;
-
-            function attempt() {
-                if (proxyIndex >= CORS_PROXIES.length) {
-                    return Promise.resolve(null);
-                }
-                var url = CORS_PROXIES[proxyIndex] + encodeURIComponent(SRO_URL);
-                return fetch(url, { signal: AbortSignal.timeout(5000) })
-                    .then(function (r) {
-                        if (!r.ok) throw new Error(r.status);
-                        return r.text();
-                    })
-                    .then(function (html) {
-                        var parsed = parseSROHtml(html);
-                        if (parsed.length === 0) throw new Error('Empty parse');
-                        return parsed;
-                    })
-                    .catch(function () {
-                        proxyIndex++;
-                        return attempt();
-                    });
-            }
-
-            return attempt();
-        }
-
-        function parseSROHtml(html) {
-            var parser = new DOMParser();
-            var doc = parser.parseFromString(html, 'text/html');
-            var results = [];
-
-            // Try to find schedule entries from the page content
-            // The SRO page structures data in sections per day
-            var text = doc.body ? doc.body.innerText || doc.body.textContent || '' : '';
-
-            var dayPatterns = [
-                { name: 'maandag', idx: 0 },
-                { name: 'dinsdag', idx: 1 },
-                { name: 'woensdag', idx: 2 },
-                { name: 'donderdag', idx: 3 },
-                { name: 'vrijdag', idx: 4 },
-                { name: 'zaterdag', idx: 5 },
-                { name: 'zondag', idx: 6 }
-            ];
-
-            // Split text into day sections
-            for (var d = 0; d < dayPatterns.length; d++) {
-                var dayName = dayPatterns[d].name;
-                var dayIdx = dayPatterns[d].idx;
-                var nextDay = d < dayPatterns.length - 1 ? dayPatterns[d + 1].name : null;
-
-                var startPos = text.toLowerCase().indexOf(dayName);
-                if (startPos === -1) continue;
-
-                var endPos = nextDay ? text.toLowerCase().indexOf(nextDay, startPos + dayName.length) : text.length;
-                if (endPos === -1) endPos = text.length;
-
-                var section = text.substring(startPos, endPos);
-
-                // Find all time ranges in this section
-                var timeRegex = /(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})/g;
-                var match;
-                while ((match = timeRegex.exec(section)) !== null) {
-                    var sh = parseInt(match[1], 10);
-                    var sm = parseInt(match[2], 10);
-                    var eh = parseInt(match[3], 10);
-                    var em = parseInt(match[4], 10);
-
-                    // Get surrounding text for detail
-                    var context = section.substring(
-                        Math.max(0, match.index - 10),
-                        Math.min(section.length, match.index + match[0].length + 80)
-                    ).toLowerCase();
-
-                    var poolConfig = 'lanes50';
-                    var detail = '';
-
-                    if (context.indexOf('breedte') !== -1 || context.indexOf('25 meter') !== -1) {
-                        poolConfig = 'lanes25width';
-                        detail = 'In de breedte \u2013 25 meter';
-                    } else if (context.indexOf('hele bad') !== -1) {
-                        poolConfig = 'fullpool';
-                        detail = 'Hele bad beschikbaar';
-                    } else if (/\d+\s*banen/.test(context) && context.indexOf('50') !== -1) {
-                        poolConfig = 'lanes50partial';
-                        var laneMatch = context.match(/(\d+)\s*banen/);
-                        detail = laneMatch ? laneMatch[1] + ' banen van 50 meter' : '';
+            return fetch(PROXY_URL, { signal: AbortSignal.timeout(5000) })
+                .then(function (r) {
+                    if (!r.ok) throw new Error(r.status);
+                    return r.json();
+                })
+                .then(function (data) {
+                    if (data.schedule && data.schedule.length > 0) {
+                        return data;
                     }
-
-                    results.push({
-                        day: dayIdx,
-                        startHour: sh,
-                        startMin: sm,
-                        endHour: eh,
-                        endMin: em,
-                        poolConfig: poolConfig,
-                        detail: detail
-                    });
-                }
-            }
-
-            return results;
+                    return null;
+                })
+                .catch(function () {
+                    return null;
+                });
         }
 
         // ==========================================
@@ -658,9 +567,9 @@
         render();
 
         // Try live fetch in background
-        tryFetch().then(function (parsed) {
-            if (parsed && parsed.length > 0) {
-                schedule = parsed;
+        tryFetch().then(function (result) {
+            if (result && result.schedule && result.schedule.length > 0) {
+                schedule = result.schedule;
                 dataSource = 'live';
                 render();
             }

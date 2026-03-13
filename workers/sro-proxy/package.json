@@ -1,0 +1,11 @@
+{
+  "name": "sro-proxy",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
