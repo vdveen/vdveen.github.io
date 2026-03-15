@@ -2,75 +2,112 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Morning Routine Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="theme-color" content="#1a1a1a">
+    <title>Morning Routine</title>
     <style>
-        :root {
-            --base03: #002b36;
-            --base02: #073642;
-            --base01: #586e75;
-            --base0: #839496;
-            --base1: #93a1a1;
-            --yellow: #b58900;
-            --orange: #cb4b16;
-            --blue: #268bd2;
-            --cyan: #2aa198;
-            --green: #859900;
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #1a1a1a;
+            --surface: #242424;
+            --border: #333;
+            --text: #e0e0e0;
+            --muted: #777;
+            --accent: #ffffff;
         }
 
         body {
-            font-family: 'Menlo', 'Consolas', 'Monaco', monospace;
-            background: var(--base03);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            padding: 12px;
-            color: var(--base0);
+            min-height: 100dvh;
         }
 
         .container {
-            max-width: 480px;
+            max-width: 560px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem 2rem;
+        }
+
+        /* ---- ALARM SECTION ---- */
+        .alarm {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .alarm-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .alarm-time {
+            font-size: 5rem;
+            font-weight: 200;
+            font-variant-numeric: tabular-nums;
+            color: var(--accent);
+            letter-spacing: 2px;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+        }
+
+        .alarm-sub {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--muted);
+            margin-bottom: 1.25rem;
+        }
+
+        .progress-track {
+            width: 100%;
+            max-width: 300px;
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            overflow: hidden;
             margin: 0 auto;
         }
 
-        h1 {
-            font-size: 1.1rem;
-            text-align: center;
-            margin-bottom: 12px;
-            color: var(--yellow);
-            font-weight: normal;
+        .progress-fill {
+            height: 100%;
+            background: var(--text);
+            border-radius: 1px;
+            transition: width 1s linear;
         }
 
-        .section {
-            background: var(--base02);
-            border-radius: 6px;
-            padding: 8px 10px;
-            margin-bottom: 6px;
-            border-left: 3px solid var(--base01);
+        /* ---- OPTIONS ---- */
+        .options {
+            margin-bottom: 2rem;
+        }
+
+        .option-row {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .section.arrival-section {
-            border-left-color: var(--yellow);
+        .option-row:first-child {
+            border-top: 1px solid var(--border);
         }
 
-        .section-label {
-            font-size: 0.65rem;
+        .option-label {
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--base01);
-            min-width: 70px;
+            letter-spacing: 2px;
+            color: var(--muted);
+            min-width: 72px;
             flex-shrink: 0;
-        }
-
-        .section.arrival-section .section-label {
-            color: var(--yellow);
         }
 
         .picker-row {
@@ -81,205 +118,244 @@
 
         .picker-btn {
             flex: 1;
-            padding: 6px 2px;
-            border: 1px solid var(--base01);
-            background: var(--base03);
-            color: var(--base0);
-            border-radius: 4px;
-            font-size: 0.7rem;
+            padding: 0.5rem 0.25rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--muted);
+            border-radius: 3px;
+            font-size: 0.75rem;
             font-family: inherit;
             cursor: pointer;
-            transition: all 0.15s;
+            transition: all 0.2s;
             text-align: center;
-        }
-
-        .picker-btn:hover {
-            border-color: var(--base0);
-            background: var(--base02);
-        }
-
-        .picker-btn.active {
-            background: var(--blue);
-            border-color: var(--blue);
-            color: var(--base03);
-            font-weight: 600;
+            letter-spacing: 0.3px;
         }
 
         .picker-btn small {
             display: block;
-            font-size: 0.55rem;
-            opacity: 0.8;
+            font-size: 0.6rem;
             margin-top: 1px;
+            opacity: 0.7;
+        }
+
+        .picker-btn:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .picker-btn.active {
+            background: var(--text);
+            border-color: var(--text);
+            color: var(--bg);
+            font-weight: 600;
+        }
+
+        .picker-btn.active small {
+            opacity: 1;
         }
 
         select {
             flex: 1;
-            padding: 6px 8px;
-            border: 1px solid var(--yellow);
-            background: var(--base03);
-            color: var(--yellow);
-            border-radius: 4px;
-            font-size: 0.9rem;
+            padding: 0.5rem 0.5rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text);
+            border-radius: 3px;
+            font-size: 0.85rem;
             font-family: inherit;
             cursor: pointer;
-            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            font-weight: 300;
         }
 
         select:focus {
             outline: none;
-            border-color: var(--yellow);
-            box-shadow: 0 0 0 1px var(--yellow);
+            border-color: var(--text);
         }
 
         select option {
-            background: var(--base02);
-            color: var(--base0);
+            background: var(--surface);
+            color: var(--text);
         }
 
-        .schedule {
-            background: var(--base02);
-            border: 1px solid var(--cyan);
-            border-radius: 6px;
-            padding: 10px;
-            margin-top: 10px;
-        }
-
+        /* ---- SCHEDULE ---- */
         .schedule-title {
-            font-size: 0.65rem;
-            color: var(--cyan);
-            margin-bottom: 8px;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 3px;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
         }
 
         .schedule-item {
             display: flex;
             align-items: center;
-            padding: 5px 0;
-            border-bottom: 1px solid var(--base03);
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
         }
 
-        .schedule-item:last-child {
-            border-bottom: none;
+        .schedule-item:first-child {
+            border-top: 1px solid var(--border);
         }
 
         .schedule-time {
-            font-size: 0.9rem;
-            font-weight: 700;
-            width: 50px;
-            color: var(--base1);
+            font-size: 0.85rem;
+            font-variant-numeric: tabular-nums;
+            width: 52px;
+            color: var(--text);
+            letter-spacing: 0.5px;
         }
 
         .schedule-activity {
-            font-size: 0.75rem;
-            color: var(--base0);
+            font-size: 0.8rem;
+            color: var(--muted);
             flex: 1;
+            letter-spacing: 0.3px;
         }
 
         .schedule-duration {
-            font-size: 0.6rem;
-            color: var(--base01);
-            background: var(--base03);
-            padding: 2px 6px;
-            border-radius: 8px;
-            border: 1px solid var(--base01);
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.5px;
         }
 
-        .alarm-highlight {
-            background: var(--base03);
-            margin: -5px -10px 5px -10px;
-            padding: 8px 10px;
-            border-radius: 5px 5px 0 0;
-            border-bottom: 1px solid var(--yellow);
+        .schedule-item.alarm-highlight .schedule-time {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--accent);
         }
 
-        .alarm-highlight .schedule-time {
-            color: var(--yellow);
-            font-size: 1.1rem;
-        }
-
-        .alarm-highlight .schedule-activity {
-            color: var(--yellow);
+        .schedule-item.alarm-highlight .schedule-activity {
+            color: var(--text);
         }
 
         .schedule-item.skipped .schedule-activity,
         .schedule-item.skipped .schedule-time {
-            color: var(--base01);
+            color: var(--border);
             text-decoration: line-through;
-            opacity: 0.5;
+        }
+
+        /* ---- FOOTER ---- */
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer a {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-decoration: none;
+            padding: 0.4rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .footer a:hover {
+            color: var(--text);
+            border-color: var(--text);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.5rem 1rem 1.5rem;
+            }
+
+            .alarm-time {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .alarm-time {
+                font-size: 2.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>// Morning Routine</h1>
-
-        <div class="section">
-            <div class="section-label">Buffer</div>
-            <div class="picker-row">
-                <button class="picker-btn" data-group="buffer" data-value="tight">Tight<small>1h04m</small></button>
-                <button class="picker-btn active" data-group="buffer" data-value="relaxed">Relaxed<small>1h19m</small></button>
+        <div class="alarm">
+            <div class="alarm-label">alarm</div>
+            <div class="alarm-time" id="alarmDisplay">—</div>
+            <div class="alarm-sub" id="alarmSub">morning routine</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
             </div>
         </div>
 
-        <div class="section">
-            <div class="section-label">Travel</div>
-            <div class="picker-row">
-                <button class="picker-btn active" data-group="travel" data-value="bicycle">Bike<small>28m</small></button>
-                <button class="picker-btn" data-group="travel" data-value="bus">Bus<small>35m</small></button>
-                <button class="picker-btn" data-group="travel" data-value="earlybus">Early<small>45m</small></button>
+        <div class="options">
+            <div class="option-row">
+                <div class="option-label">Buffer</div>
+                <div class="picker-row">
+                    <button class="picker-btn" data-group="buffer" data-value="tight">Tight<small>1h04m</small></button>
+                    <button class="picker-btn active" data-group="buffer" data-value="relaxed">Relaxed<small>1h19m</small></button>
+                </div>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">Breakfast</div>
-            <div class="picker-row">
-                <button class="picker-btn" data-group="breakfast" data-value="quick">Quick<small>25m</small></button>
-                <button class="picker-btn active" data-group="breakfast" data-value="relaxed">Relaxed<small>35m</small></button>
+            <div class="option-row">
+                <div class="option-label">Travel</div>
+                <div class="picker-row">
+                    <button class="picker-btn active" data-group="travel" data-value="bicycle">Bike<small>28m</small></button>
+                    <button class="picker-btn" data-group="travel" data-value="bus">Bus<small>35m</small></button>
+                    <button class="picker-btn" data-group="travel" data-value="earlybus">Early<small>45m</small></button>
+                </div>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">Shower</div>
-            <div class="picker-row">
-                <button class="picker-btn active" data-group="shower" data-value="none">None<small>0m</small></button>
-                <button class="picker-btn" data-group="shower" data-value="quick">Quick<small>17m</small></button>
-                <button class="picker-btn" data-group="shower" data-value="normal">Normal<small>22m</small></button>
+            <div class="option-row">
+                <div class="option-label">Breakfast</div>
+                <div class="picker-row">
+                    <button class="picker-btn" data-group="breakfast" data-value="quick">Quick<small>25m</small></button>
+                    <button class="picker-btn active" data-group="breakfast" data-value="relaxed">Relaxed<small>35m</small></button>
+                </div>
             </div>
-        </div>
-
-        <div class="section">
-            <div class="section-label">Meditate</div>
-            <div class="picker-row">
-                <button class="picker-btn" data-group="meditation" data-value="long">Long<small>35m</small></button>
-                <button class="picker-btn active" data-group="meditation" data-value="medium">Medium<small>25m</small></button>
-                <button class="picker-btn" data-group="meditation" data-value="short">Short<small>20m</small></button>
+            <div class="option-row">
+                <div class="option-label">Shower</div>
+                <div class="picker-row">
+                    <button class="picker-btn active" data-group="shower" data-value="none">None<small>0m</small></button>
+                    <button class="picker-btn" data-group="shower" data-value="quick">Quick<small>17m</small></button>
+                    <button class="picker-btn" data-group="shower" data-value="normal">Normal<small>22m</small></button>
+                </div>
             </div>
-        </div>
-
-        <div class="section arrival-section">
-            <div class="section-label">Arrive @</div>
-            <select id="arrivalTime">
-                <option value="510">08:30</option>
-                <option value="540">09:00</option>
-                <option value="570">09:30</option>
-                <option value="600" selected>10:00</option>
-                <option value="630">10:30</option>
-                <option value="660">11:00</option>
-                <option value="690">11:30</option>
-                <option value="720">12:00</option>
-                <option value="750">12:30</option>
-                <option value="780">13:00</option>
-            </select>
+            <div class="option-row">
+                <div class="option-label">Meditate</div>
+                <div class="picker-row">
+                    <button class="picker-btn" data-group="meditation" data-value="long">Long<small>35m</small></button>
+                    <button class="picker-btn active" data-group="meditation" data-value="medium">Medium<small>25m</small></button>
+                    <button class="picker-btn" data-group="meditation" data-value="short">Short<small>20m</small></button>
+                </div>
+            </div>
+            <div class="option-row">
+                <div class="option-label">Arrive</div>
+                <select id="arrivalTime">
+                    <option value="510">08:30</option>
+                    <option value="540">09:00</option>
+                    <option value="570">09:30</option>
+                    <option value="600" selected>10:00</option>
+                    <option value="630">10:30</option>
+                    <option value="660">11:00</option>
+                    <option value="690">11:30</option>
+                    <option value="720">12:00</option>
+                    <option value="750">12:30</option>
+                    <option value="780">13:00</option>
+                </select>
+            </div>
         </div>
 
         <div class="schedule">
-            <div class="schedule-title">» Schedule</div>
+            <div class="schedule-title">Schedule</div>
             <div id="scheduleOutput"></div>
+        </div>
+
+        <div class="footer">
+            <a href="/">Home</a>
         </div>
     </div>
 
     <script>
+    (function () {
+        'use strict';
+
         var BUFFER_TIGHT = 64;
         var BUFFER_RELAXED = 79;
         var TRAVEL_BICYCLE = 28;
@@ -304,6 +380,9 @@
             meditation: 'medium'
         };
 
+        // Calculated schedule (set by calculate())
+        var currentSchedule = null;
+
         function formatTime(minutes) {
             var h = Math.floor(minutes / 60);
             var m = minutes % 60;
@@ -326,7 +405,6 @@
         }
 
         function getShowerMinutes() {
-            if (state.shower === 'none') return SHOWER_NONE;
             if (state.shower === 'quick') return SHOWER_QUICK;
             if (state.shower === 'normal') return SHOWER_NORMAL;
             return SHOWER_NONE;
@@ -334,7 +412,6 @@
 
         function getMeditationMinutes() {
             if (state.meditation === 'long') return MEDITATION_LONG;
-            if (state.meditation === 'medium') return MEDITATION_MEDIUM;
             if (state.meditation === 'short') return MEDITATION_SHORT;
             return MEDITATION_MEDIUM;
         }
@@ -349,8 +426,16 @@
         function getShowerLabel() {
             if (state.shower === 'none') return 'Shower (skipped)';
             if (state.shower === 'quick') return '🚿 Quick shower';
-            if (state.shower === 'normal') return '🚿 Shower';
-            return 'Shower';
+            return '🚿 Shower';
+        }
+
+        function formatDuration(minutes) {
+            if (minutes >= 60) {
+                var h = Math.floor(minutes / 60);
+                var m = minutes % 60;
+                return m > 0 ? h + 'h' + m + 'm' : h + 'h';
+            }
+            return minutes + 'm';
         }
 
         function calculate() {
@@ -364,47 +449,74 @@
 
             var showerMinutes = getShowerMinutes();
             var showerSkipped = showerMinutes === 0;
+            var totalMinutes = arrival - alarmTime;
 
-            var schedule = [
-                { time: alarmTime, activity: '⏰ Alarm', duration: WAKE_UP_BUFFER + 'm', highlight: true, skipped: false },
-                { time: startMeditation, activity: '🧘 Meditation', duration: getMeditationMinutes() + 'm', highlight: false, skipped: false },
-                { time: startShower, activity: getShowerLabel(), duration: showerSkipped ? '-' : showerMinutes + 'm', highlight: false, skipped: showerSkipped },
-                { time: startBreakfast, activity: '🥞 Breakfast', duration: getBreakfastMinutes() + 'm', highlight: false, skipped: false },
-                { time: leaveHome, activity: getTravelLabel(), duration: getTravelMinutes() + 'm', highlight: false, skipped: false },
-                { time: trainDeparture, activity: '🚂 Train departs', duration: getBufferMinutes() + 'm', highlight: false, skipped: false },
-                { time: arrival, activity: '🏢 Arrive at work', duration: '', highlight: false, skipped: false }
-            ];
+            currentSchedule = {
+                alarm: alarmTime,
+                arrival: arrival,
+                items: [
+                    { time: alarmTime, activity: '⏰ Alarm', duration: WAKE_UP_BUFFER, highlight: true, skipped: false },
+                    { time: startMeditation, activity: '🧘 Meditation', duration: getMeditationMinutes(), highlight: false, skipped: false },
+                    { time: startShower, activity: getShowerLabel(), duration: showerMinutes, highlight: false, skipped: showerSkipped },
+                    { time: startBreakfast, activity: '🥞 Breakfast', duration: getBreakfastMinutes(), highlight: false, skipped: false },
+                    { time: leaveHome, activity: getTravelLabel(), duration: getTravelMinutes(), highlight: false, skipped: false },
+                    { time: trainDeparture, activity: '🚂 Train departs', duration: getBufferMinutes(), highlight: false, skipped: false },
+                    { time: arrival, activity: '🏢 Arrive at work', duration: 0, highlight: false, skipped: false }
+                ]
+            };
 
+            // Update alarm display
+            document.getElementById('alarmDisplay').textContent = formatTime(alarmTime);
+            document.getElementById('alarmSub').textContent = formatDuration(totalMinutes) + ' total';
+
+            // Render schedule
             var output = document.getElementById('scheduleOutput');
             var html = '';
-            for (var i = 0; i < schedule.length; i++) {
-                var item = schedule[i];
+            for (var i = 0; i < currentSchedule.items.length; i++) {
+                var item = currentSchedule.items[i];
                 var classes = 'schedule-item';
                 if (item.highlight) classes += ' alarm-highlight';
                 if (item.skipped) classes += ' skipped';
-                
+
                 html += '<div class="' + classes + '">';
                 html += '<div class="schedule-time">' + formatTime(item.time) + '</div>';
                 html += '<div class="schedule-activity">' + item.activity + '</div>';
-                if (item.duration) {
-                    html += '<div class="schedule-duration">' + item.duration + '</div>';
+                if (item.duration > 0) {
+                    html += '<div class="schedule-duration">' + item.duration + 'm</div>';
                 }
                 html += '</div>';
             }
             output.innerHTML = html;
+
+            updateProgress();
         }
 
-        document.getElementById('arrivalTime').addEventListener('change', function(e) {
+        function nowMinutes() {
+            var n = new Date();
+            return n.getHours() * 60 + n.getMinutes();
+        }
+
+        function updateProgress() {
+            if (!currentSchedule) return;
+            var mins = nowMinutes();
+            var alarm = currentSchedule.alarm;
+            var arrival = currentSchedule.arrival;
+            var total = arrival - alarm;
+            var elapsed = mins - alarm;
+            var pct = Math.min(100, Math.max(0, (elapsed / total) * 100));
+            document.getElementById('progressFill').style.width = pct + '%';
+        }
+
+        document.getElementById('arrivalTime').addEventListener('change', function (e) {
             state.arrival = parseInt(e.target.value);
             calculate();
         });
 
         var buttons = document.querySelectorAll('.picker-btn');
         for (var i = 0; i < buttons.length; i++) {
-            buttons[i].addEventListener('click', function() {
+            buttons[i].addEventListener('click', function () {
                 var group = this.getAttribute('data-group');
                 var value = this.getAttribute('data-value');
-                
                 var groupButtons = document.querySelectorAll('[data-group="' + group + '"]');
                 for (var j = 0; j < groupButtons.length; j++) {
                     groupButtons[j].classList.remove('active');
@@ -416,6 +528,8 @@
         }
 
         calculate();
+        setInterval(updateProgress, 30000);
+    })();
     </script>
 </body>
 </html>
