@@ -418,8 +418,8 @@
         function formatCountdown(totalMinutes) {
             var h = Math.floor(totalMinutes / 60);
             var m = totalMinutes % 60;
-            if (h > 0) return h + ':' + pad2(m);
-            return '0:' + pad2(m);
+            if (h > 0) return h + ' hr ' + pad2(m) + ' min';
+            return m + ' min';
         }
 
         // ==========================================
