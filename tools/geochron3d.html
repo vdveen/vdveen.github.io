@@ -622,6 +622,7 @@
     <div class="time-dock">
         <div class="time-dock-row">
             <button class="dock-btn" id="autoRotateBtn" title="Auto-rotate the globe">⟳ auto</button>
+            <button class="dock-btn" id="followIssBtn" title="Keep the ISS centered (enables the ISS layer)">⌖ ISS</button>
             <button class="speed-btn" data-speed="0" title="Pause time">⏸</button>
             <button class="speed-btn active" data-speed="1" title="Real time">1×</button>
             <button class="speed-btn" data-speed="60" title="1 min per second">60×</button>
@@ -692,7 +693,8 @@
                 <p>A WebGL homage to the <a href="https://www.geochron.com/" target="_blank" rel="noopener" style="color:var(--accent)">Geochron world clock</a>: a live globe with a real-time day/night terminator, computed in a shader from the actual position of the sun.</p>
                 <h4>Controls</h4>
                 <p>
-                    <kbd>drag</kbd> rotate &nbsp;·&nbsp; <kbd>scroll / pinch</kbd> zoom &nbsp;·&nbsp; hover dots for details.<br>
+                    <kbd>drag</kbd> rotate &nbsp;·&nbsp; <kbd>scroll / pinch</kbd> zoom &nbsp;·&nbsp; <kbd>double-click</kbd> fly there &nbsp;·&nbsp; hover dots for details.<br>
+                    <kbd>⌖ ISS</kbd> in the dock keeps the station centered while it orbits.<br>
                     The time dock scrubs up to ±24 h and can run time at up to one day per second — watch the terminator sweep and the analemma's seasonal swing.
                 </p>
                 <h4>Layers</h4>
@@ -961,13 +963,28 @@
         // Pause auto-rotate while the user interacts; resume after 25 s idle
         let autoRotateWanted = true;
         let idleTimer = null;
+        let followISS = false;
+        let flyTarget = null; // unit vector the camera eases toward
+
+        function cancelFollow() {
+            if (!followISS) return;
+            followISS = false;
+            const btn = document.getElementById('followIssBtn');
+            if (btn) btn.classList.remove('active');
+            controls.autoRotate = autoRotateWanted;
+        }
+
         controls.addEventListener('start', () => {
             controls.autoRotate = false;
             clearTimeout(idleTimer);
+            flyTarget = null;
+            cancelFollow();
         });
         controls.addEventListener('end', () => {
             clearTimeout(idleTimer);
-            idleTimer = setTimeout(() => { controls.autoRotate = autoRotateWanted; }, 25000);
+            idleTimer = setTimeout(() => {
+                if (!followISS) controls.autoRotate = autoRotateWanted;
+            }, 25000);
         });
 
         /* ==========================================================================
@@ -1449,6 +1466,7 @@
                 if (this.track) { scene.remove(this.track); this.track.geometry.dispose(); this.track = null; }
                 $('issStatusItem').style.display = 'none';
                 setLiveDot('iss', 'off');
+                cancelFollow();
             },
             tick(simDate) {
                 if (!this.satrec || !issSprite.visible) return;
@@ -1856,6 +1874,22 @@
             speedButtons.forEach(b => b.classList.toggle('active', b.dataset.speed === '1'));
         });
 
+        const followIssBtn = $('followIssBtn');
+        followIssBtn.addEventListener('click', () => {
+            if (followISS) {
+                cancelFollow();
+                return;
+            }
+            followISS = true;
+            followIssBtn.classList.add('active');
+            controls.autoRotate = false;
+            const cb = checkboxFor('iss');
+            if (cb && !cb.checked) {
+                cb.checked = true;
+                setLayer('iss', true);
+            }
+        });
+
         const autoRotateBtn = $('autoRotateBtn');
         autoRotateBtn.classList.add('active');
         autoRotateBtn.addEventListener('click', () => {
@@ -1918,6 +1952,20 @@
             }
         });
         renderer.domElement.addEventListener('pointerleave', () => { tooltip.style.display = 'none'; });
+
+        // Double-click anywhere on the globe to fly the camera there
+        renderer.domElement.addEventListener('dblclick', e => {
+            pointerNdc.set(
+                (e.clientX / window.innerWidth) * 2 - 1,
+                -(e.clientY / window.innerHeight) * 2 + 1
+            );
+            raycaster.setFromCamera(pointerNdc, camera);
+            const hit = raycaster.intersectObject(globeMesh, false)[0];
+            if (hit) {
+                cancelFollow();
+                flyTarget = hit.point.clone().normalize();
+            }
+        });
 
         /* ==========================================================================
            Label projection (cities)
@@ -2041,6 +2089,19 @@
             updateClocks(simDate);
 
             controls.update();
+
+            // Camera easing: ISS follow mode and double-click fly-to
+            if (followISS && issSprite.visible) {
+                flyTarget = issSprite.position.clone().normalize();
+            }
+            if (flyTarget) {
+                const dist = camera.position.length();
+                const newDir = camera.position.clone().normalize().lerp(flyTarget, 0.07).normalize();
+                if (!followISS && newDir.distanceTo(flyTarget) < 0.002) flyTarget = null;
+                camera.position.copy(newDir).multiplyScalar(dist);
+                camera.lookAt(0, 0, 0);
+            }
+
             renderer.render(scene, camera);
 
             frames++;
@@ -2089,6 +2150,9 @@
             document.querySelectorAll('[data-layer]').forEach(cb => {
                 if (cb.checked) setLayer(cb.dataset.layer, true);
             });
+
+            // Small debug/console handle
+            window.__geochron = { camera, controls, scene, issSprite, timeEngine };
         }
 
         init();
