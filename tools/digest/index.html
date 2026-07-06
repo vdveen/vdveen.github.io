@@ -3,69 +3,220 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Nudge old e-ink browsers to refetch rather than show a stale issue. -->
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
 <title>The Daily — Monday, 6 July 2026</title>
 <style>
-  /* E-ink: high contrast, no JS, generous type, single column. */
+  /* E-ink: pure black on white, no JS, CSS 2.1-safe (old WebKit browsers).
+     Humanist stacks only — no webfonts, the device falls back gracefully. */
   :root { color-scheme: light; }
   * { box-sizing: border-box; }
   body {
     margin: 0 auto;
     max-width: 720px;
-    padding: 1.2rem 1.1rem 4rem;
-    font: 19px/1.55 Georgia, "Times New Roman", serif;
+    padding: 1.1rem 1.1rem 3.5rem;
+    font: 19px/1.5 Palatino, "Palatino Linotype", "Book Antiqua",
+          "URW Palladio L", Charter, Georgia, serif;
     color: #000;
     background: #fff;
     -webkit-text-size-adjust: 100%;
   }
-  header { border-bottom: 3px solid #000; padding-bottom: .6rem; margin-bottom: 1.2rem; }
-  .masthead { font-size: 1.9em; font-weight: 700; letter-spacing: .02em; }
-  .dateline { font-size: .8em; text-transform: uppercase; letter-spacing: .08em; }
-  .lede { font-style: italic; margin: .8rem 0 0; }
-  h2.section {
-    font-size: 1.05em; text-transform: uppercase; letter-spacing: .1em;
-    border-bottom: 1px solid #000; padding-bottom: .25rem;
-    margin: 2rem 0 1rem;
+  a { color: #000; }
+  .sans {
+    font-family: "Gill Sans", "Gill Sans MT", Seravek, "Segoe UI",
+                 "Trebuchet MS", Verdana, sans-serif;
   }
-  article { margin: 0 0 1.5rem; padding-bottom: 1.1rem; border-bottom: 1px dotted #888; }
+
+  /* Masthead: thick rule, big centered title, dateline bar. */
+  header { text-align: center; margin: 0 0 1.4rem; }
+  .toprule { border: 0; border-top: 5px solid #000; margin: 0 0 .1rem; }
+  .toprule2 { border: 0; border-top: 1px solid #000; margin: 0; }
+  .masthead {
+    font-size: 2.3em; font-weight: 700; letter-spacing: .03em;
+    line-height: 1.1; margin: .35rem 0;
+  }
+  .dateline {
+    font-family: "Gill Sans", "Gill Sans MT", Seravek, "Segoe UI",
+                 "Trebuchet MS", Verdana, sans-serif;
+    font-size: .68em; text-transform: uppercase; letter-spacing: .16em;
+    border-top: 1px solid #000; border-bottom: 1px solid #000;
+    padding: .4rem 0; margin: 0 0 1rem;
+  }
+  .dateline a { text-decoration: none; border-bottom: 1px dotted #000; }
+  .lede {
+    font-style: italic; font-size: 1.06em; line-height: 1.45;
+    margin: 0 auto; max-width: 92%;
+  }
+
+  /* The day's dithered illustration. */
+  figure.art { margin: 0 0 1.6rem; text-align: center; }
+  figure.art img {
+    max-width: 100%; height: auto;
+    border-top: 1px solid #000; border-bottom: 1px solid #000;
+    padding: .6rem 0;
+  }
+
+  /* Sections: centered small caps between rules, newspaper style. */
+  h2.section {
+    font-family: "Gill Sans", "Gill Sans MT", Seravek, "Segoe UI",
+                 "Trebuchet MS", Verdana, sans-serif;
+    font-size: .92em; font-weight: 700; text-align: center;
+    text-transform: uppercase; letter-spacing: .22em;
+    border-top: 3px double #000;
+    padding-top: .55rem; margin: 2.3rem 0 1.2rem;
+  }
+  article { margin: 0 0 1.4rem; padding-bottom: 1.1rem; border-bottom: 1px dotted #777; }
   article:last-child { border-bottom: none; }
-  h3 { font-size: 1.18em; margin: 0 0 .35rem; line-height: 1.3; }
+  h3 { font-size: 1.22em; font-weight: 700; margin: 0 0 .35rem; line-height: 1.25; }
   h3 a { color: #000; text-decoration: none; }
+  article.lead h3 { font-size: 1.55em; line-height: 1.2; }
   .summary { margin: 0; }
-  .meta { font-size: .78em; color: #333; margin-top: .4rem; }
+  .meta {
+    font-family: "Gill Sans", "Gill Sans MT", Seravek, "Segoe UI",
+                 "Trebuchet MS", Verdana, sans-serif;
+    font-size: .7em; text-transform: uppercase; letter-spacing: .08em;
+    color: #222; margin-top: .45rem;
+  }
   .meta a { color: #000; }
-  footer { margin-top: 3rem; font-size: .75em; color: #555; text-align: center; }
-  nav.archive { font-size: .8em; margin-top: 1rem; }
+
+  /* Part two: newsletter excerpts, each boxed like a clipping. */
+  h2.section.part { margin-top: 2.8rem; }
+  article.newsletter {
+    border: 1px solid #000; border-bottom: 1px solid #000;
+    padding: .9rem 1rem .8rem; margin: 0 0 1.5rem;
+  }
+  article.newsletter .meta { margin: .1rem 0 .7rem; }
+  article.newsletter .highlight { font-style: italic; margin: 0 0 .7rem; }
+  article.newsletter p { margin: 0 0 .7rem; }
+  .readmore { font-weight: 700; margin-bottom: 0; }
+  .readmore a { color: #000; }
+
+  footer {
+    margin-top: 3rem; text-align: center; color: #444;
+    font-family: "Gill Sans", "Gill Sans MT", Seravek, "Segoe UI",
+                 "Trebuchet MS", Verdana, sans-serif;
+    font-size: .7em; letter-spacing: .04em;
+  }
+  footer a { color: #000; }
+  nav.archive { margin-top: .6rem; }
 </style>
 </head>
 <body>
 <header>
-  <div class="masthead">The Daily</div>
-  <div class="dateline">Monday, 6 July 2026</div>
-  <p class="lede">Philippine vice-president Sara Duterte faces impeachment trial that could end her presidential ambitions</p>
+  <hr class="toprule"><hr class="toprule2">
+  <h1 class="masthead">The Daily</h1>
+  <div class="dateline">Monday, 6 July 2026 · <a href="2026-06-12.html">&larr; 12 June</a></div>
+  <p class="lede">The Philippine vice-president faces impeachment on corruption charges that could end her presidential ambitions. Sudan braces for another mass-atrocity event as paramilitaries encircle el-Obeid. Brazil cushions Trump's tariff threat with surging China trade. Plus: champagne-spuiting as status symbol, the summer of artisanal soft-serve, and why everyone suddenly wants a live-service game.</p>
 </header>
+<figure class="art"><img src="art-2026-07-06.png" alt="Today's illustration"></figure>
 <h2 class="section">World</h2>
-<article>
-  <h3>Philippine senate begins impeachment trial of Vice-President Sara Duterte</h3>
-  <p class="summary">Sara Duterte faces charges of corruption, misappropriating public funds, and plotting to assassinate President Marcos. If convicted, she would be barred from office, blocking her likely 2028 presidential bid and preventing restoration of the Duterte political dynasty.</p>
-  <div class="meta">The Economist</div>
+<article class="lead">
+  <h3>Philippine senate begins impeachment trial of vice-president Sara Duterte</h3>
+  <p class="summary">Sara Duterte faces charges of corruption, misappropriation of funds, and plotting to assassinate President Marcos. If convicted, she would be barred from office, blocking her likely 2028 presidential run and the return of her father's political dynasty.</p>
+  <div class="meta">The Economist · &ldquo;The Philippine vice-president goes on trial&rdquo;</div>
 </article>
 <article>
-  <h3>Rapid Support Forces encircle Sudanese city of el-Obeid, trapping 500,000 civilians</h3>
-  <p class="summary">The RSF paramilitary has surrounded el-Obeid with drones and destroyed infrastructure, raising fears of mass atrocities similar to last October's el-Fasher assault where tens of thousands were killed or raped. US warns mass atrocities could be imminent.</p>
-  <div class="meta">The Economist</div>
+  <h3>Mass atrocities feared imminent as RSF encircles el-Obeid in central Sudan</h3>
+  <p class="summary">The Rapid Support Forces have trapped half a million civilians in el-Obeid, destroying infrastructure with drones. Last October's RSF assault on el-Fasher killed or raped tens of thousands; a repeat now looks frighteningly possible in what remains a forgotten war.</p>
+  <div class="meta">The Economist · &ldquo;More impending horrors in Sudan&rdquo;</div>
 </article>
 <article>
-  <h3>Iran buries Ali Khamenei as military men replace clerics in power</h3>
-  <p class="summary">Tehran holds third day of funeral for the former supreme leader killed by Israeli strike in February. His successor son Mojtaba has not appeared publicly, while military figures now appear to control the regime amid stalled US talks.</p>
-  <div class="meta">The Economist</div>
+  <h3>Iran's funeral for Khamenei masks power shift from clerics to military</h3>
+  <p class="summary">Six-day state funeral for the former supreme leader, killed by Israel in February, ends Thursday. His son Mojtaba has nominally succeeded him but has not appeared publicly; military figures now seem to be in charge, and talks with America remain stalled.</p>
+  <div class="meta">The Economist · &ldquo;Iran will have to bury more than Ali Khamenei&rdquo;</div>
 </article>
 <article>
-  <h3>Brazil prepares for Trump tariffs ahead of July 15th deadline</h3>
-  <p class="summary">Trump administration threatens 25% tariffs on Brazilian exports, but impact may be limited as exports represent less than a fifth of GDP and only 10% go to America. Rising China trade and new EU-Mercosur agreement should cushion the blow.</p>
-  <div class="meta">The Economist</div>
+  <h3>Brazil cushions Trump tariff threat with surging China exports</h3>
+  <p class="summary">Trump threatens 25% tariffs on Brazilian goods by July 15th, but exports to China rose 22% in the first half of 2026, offsetting a fall in US sales. Exports account for less than a fifth of Brazil's GDP, and the new EU-Mercosur trade deal provides further cushion.</p>
+  <div class="meta">The Economist · &ldquo;Brazil braces for more of Trump's tariffs&rdquo;</div>
+</article>
+<h2 class="section">Tech</h2>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">Polymarket paid influencers to fake massive wins on rigged demo sites</a></h3>
+  <p class="summary">Wall Street Journal investigation reveals that dozens of viral videos showing huge Polymarket payouts were staged on fake websites with misspelled domains. Creators collectively claimed $900,000 in wins; if the bets were real, they would have lost $166,000.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Polymarket orkestreerde nep-winsten voor influencers&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">read</a></div>
+</article>
+<article>
+  <h3><a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">Google launches $99 Home Speaker with Gemini assistant after nine-month delay</a></h3>
+  <p class="summary">The smart speaker handles basic tasks like calendar entries and Spotify playback well, but Google's ongoing commitment to the smart home category remains uncertain.</p>
+  <div class="meta">The Verge: Installer · &ldquo;This might be the new best smart speaker&rdquo; · <a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">read</a></div>
+</article>
+<h2 class="section">Culture &amp; Internet</h2>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">Artisanal soft-serve becomes Amsterdam's summer status play</a></h3>
+  <p class="summary">Wijnhandel Winestories now sells Volta soft-serve in flavors like mango sticky rice and chocolate-sesame; Hartogs offers rhubarb; Taekee does matcha. High-margin soft-serve lets cafés cash in on the heatwave while signaling culinary sophistication.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Dit is de zomer van het ingewikkelde softijs&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">read</a></div>
+</article>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">Champagne-spuiting werd universeel feestsymbool dankzij Le Mans-coureur</a></h3>
+  <p class="summary">Amerikaanse coureur Dan Gurney spoot in 1967 spontaan een magnumfles leeg over omstanders na zijn overwinning. De foto werd iconisch; binnen tien jaar verspreidde het ritueel zich naar Formule 1, honkbal en de NBA als ultiem voorbeeld van conspicuous waste.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Een fles Moët kan je het beste wegspuiten&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">read</a></div>
+</article>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">Swingen onder twintigers verdubbeld op Britse app Swinghub</a></h3>
+  <p class="summary">Het aantal twintigers op de swingers-app is in twee jaar verdubbeld. Volgens Cosmopolitan is de aantrekkingskracht juist de begrenzing: alleen met andere stellen, op afgesproken avonden, beide partners aanwezig — minder gedoe dan Feeld of open relaties.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Dit is de zomer van het ingewikkelde softijs&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">read</a></div>
+</article>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">Podcast deals become the new book deals as Ina Garten signs seven-figure Vox contract</a></h3>
+  <p class="summary">Producers including Amazon and Obama's Higher Ground fiercely bid for the 78-year-old TV chef's podcast. The New York Times reports that 'talkshow-like podcasts' — unscripted conversations by celebrities — are now the hottest format, feeding parasocial demand better than traditional TV.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Een fles Moët kan je het beste wegspuiten&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">read</a></div>
+</article>
+<article>
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">Wimbledon's analog ticket queue remains a beloved British tradition</a></h3>
+  <p class="summary">Thousands queue daily from 4am for last-minute tickets, receiving numbered tickets like at a bakery. Unlike TikTok queues where everyone scrolls, people play cricket, drink margaritas, and picnic. Wimbledon refuses to digitize the system despite obvious alternatives.</p>
+  <div class="meta">Doortje Smithuijsen · &ldquo;Een fles Moët kan je het beste wegspuiten&rdquo; · <a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">read</a></div>
+</article>
+<h2 class="section">Ideas &amp; Essays</h2>
+<article>
+  <h3><a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">Video essay explores why tech companies keep making doomed live-service games</a></h3>
+  <p class="summary">Jason Schreier's YouTube investigation answers why studios pour resources into massive, expensive games that repeatedly fail. The piece unpacks the economic incentives and industry pressures driving the live-service obsession despite mounting evidence it rarely works.</p>
+  <div class="meta">The Verge: Installer · &ldquo;Why Everyone Wants A 'Live-Service' Game&rdquo; · <a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">read</a></div>
+</article>
+<article>
+  <h3><a href="https://link.mail.beehiiv.com/v1/c/8ZjhF0mfnzRtn%2FOsOQ%2FRIyzDyTi2EB85mDArHfqWsCytFZdfNgA9WhrFCZ%2BH%0AEDX8yw5n%2B6W0Mrnb%2B0njMfW9jlgP8f5lebIVmQhdEW4oNLYbeyxQspHnEdLb%0AnMTWcmArhiAN08HjHpwifHskQRJCL8Bb%2BaJBwqREhS7DbXmU5Rsk2AOLDgmz%0Ax6l7H2VNYunhVY1gxFTcjpDz5YADXOrfvQ%3D%3D%0A/c75f7fac43e83d17">Reflecting on America's founders and 250 years of progress beyond their vision</a></h3>
+  <p class="summary">Hank Green asks whether the average American in 1776 would approve of today's society, concluding they likely wouldn't — but for the wrong reasons. The founders would probably reject the expansion of rights to women, non-whites, and the non-wealthy as failures, when those are precisely our greatest achievements.</p>
+  <div class="meta">Hank &amp; John Green · &ldquo;The next 250 years&rdquo; · <a href="https://link.mail.beehiiv.com/v1/c/8ZjhF0mfnzRtn%2FOsOQ%2FRIyzDyTi2EB85mDArHfqWsCytFZdfNgA9WhrFCZ%2BH%0AEDX8yw5n%2B6W0Mrnb%2B0njMfW9jlgP8f5lebIVmQhdEW4oNLYbeyxQspHnEdLb%0AnMTWcmArhiAN08HjHpwifHskQRJCL8Bb%2BaJBwqREhS7DbXmU5Rsk2AOLDgmz%0Ax6l7H2VNYunhVY1gxFTcjpDz5YADXOrfvQ%3D%3D%0A/c75f7fac43e83d17">read</a></div>
+</article>
+<h2 class="section part">Newsletters</h2>
+<article class="newsletter">
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">Een fles Moët kan je het beste wegspuiten</a></h3>
+  <div class="meta">Doortje Smithuijsen · 5 July</div>
+  <p class="highlight">Doortje beschrijft hoe Amsterdam-horeca worstelt met teruglopende bezoekers en stijgende kosten, geïllustreerd door gesprekken op het Goudfazant-jubileum waar chefs hun zorgen deelden over lege zalen en bijbanen.</p>
+  <p>Afgelopen weekend was ik op het twintigste verjaardagsfeest van de Goudfazant. Er was een open bar en er stonden stands met Fazant-klassiekers - Hemelse modder in glazen potten, oesters van de barbecue, garnalencocktails uit papieren bakjes (ik at er drie). Heel horeca-Amsterdam liep er rond, en naarmate de middag vorderde sprak ik gevoelsmatig alleen nog maar mensen die zich enorm zorgen maakten. Ik sprak een chef die zijn eigen zaak had moeten verkopen wegens te weinig klanten en een te hoge huur. Hij verdiende nu zijn geld als privékok op feestjes. Ik sprak een restauranteigenaar die bijna de schuldsanering inging omdat de inkomsten na een grote verbouwing enorm waren teruggelopen - waar zijn zaak vroeger het hele weekend vol zat, kwamen mensen nu alleen nog op vrijdagavond, ‘en zelfs dan heb ik maar één echt drukke shift’. Ik sprak een chef die bijkluste op festivals omdat zijn werkgever hem niet genoeg dagen kon inroosteren. Je leest al lang over teruglopende bezoekers in de horeca en stijgende kosten voor de sector, maar op deze middag werden de gevolgen ineens heel duidelijk. Vandaag in Modern Leven: hoe champagne spuiten een universeel symbool van feestvieren werd, podcastdeals zijn de nieuwe boekendeals, de leukste rij van Europa staat op dit moment voor Wimbledon, de vrouwen van tech-miljardairs gaan voor hun orgasmes allemaal naar dezelfde gynaecoloog - en meer. Je kan haar boek lezen, je kan haar rechtszaak volgen, je kan discussiëren over haar integriteit, en nu kan je thee met haar drinken in het huis op Martha’s Vineyard waarin ze verlaten is door haar man. Belle Burden biedt deze zomer een ‘intieme thee-middag’ aan tijdens een veiling ten behoeve van de Martha’s Vineyard Community Service. De veiling wordt gehouden in een nog actieve schapenboerderij uit de zeventiende eeuw. Seth Meyers is de presentator. Deze setting voelt als een geweldige openingsscène voor Strangers twee. Podcastdeals lijken de nieuwe boekendeals te worden. De New York Times beschrijft hoe verschillende producenten recent fel tegen elkaar op boden in een strijd om het podcastcontract met Ina Garten - de 78-jarige, diva-achtige tv-chef. Naast haar kookprogramma gaat ze nu voor Vox ‘Happy Hour With Ina Garten’ - een videopodcast waarin Garten een cocktail maakt voor een beroemde gast, waarna ze een klein uurtje kletsen. Garten heeft een zevencijferig bedrag gekregen voor het format - ook Amazon en Obama’s podcastbedrijf Higher Ground boden mee.</p>
+  <p class="readmore"><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=205011547&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjA1MDExNTQ3LCJpYXQiOjE3ODMyMjc3OTIsImV4cCI6MTc4NTgxOTc5MiwiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.HYvleG9qS7skd-Y8sg3mksJLab_WPoPZ6mAGJ4knSOM">Read the rest &rarr;</a></p>
+</article>
+<article class="newsletter">
+  <h3><a href="https://link.mail.beehiiv.com/v1/c/8ZjhF0mfnzRtn%2FOsOQ%2FRIyzDyTi2EB85mDArHfqWsCytFZdfNgA9WhrFCZ%2BH%0AEDX8yw5n%2B6W0Mrnb%2B0njMfW9jlgP8f5lebIVmQhdEW4oNLYbeyxQspHnEdLb%0AnMTWcmArhiAN08HjHpwifHskQRJCL8Bb%2BaJBwqREhS7DbXmU5Rsk2AOLDgmz%0Ax6l7H2VNYunhVY1gxFTcjpDz5YADXOrfvQ%3D%3D%0A/c75f7fac43e83d17">The next 250 years</a></h3>
+  <div class="meta">Hank &amp; John Green · 4 July</div>
+  <p class="highlight">John Green reflects on his parents' 50th wedding anniversary and the importance of maintaining relationships through unglamorous, patient work — the kind that ultimately makes a life.</p>
+  <p>Hello! I’m sorry for the late message this week, but at least this way I get to message you on July 4th. Unquestionably, I’m thinking a lot about America these days. I’m thinking about the shape of our mythologies, our arguments, and our future. This is all pretty difficult to know. One thing it led me toward, however, was a question that I certainly cannot answer but think is very interesting to ask: “Would the average American in 1776 think we had done a good job?” I’m worried that they wouldn’t, but not for the reasons you might think. I’m worried that they would look at things that I see as miraculous, like the increase in rights for women and non-white people and people who are not upper class, and they would see that as some kind of failure of the social order. I hope some of them would look at our society and see the progress, but I think most of them would not. Though, honestly, I guess I wouldn’t be sad to discover that the founders of this country didn’t really live up to their own ideals, because I already knew that.</p>
+  <p class="readmore"><a href="https://link.mail.beehiiv.com/v1/c/8ZjhF0mfnzRtn%2FOsOQ%2FRIyzDyTi2EB85mDArHfqWsCytFZdfNgA9WhrFCZ%2BH%0AEDX8yw5n%2B6W0Mrnb%2B0njMfW9jlgP8f5lebIVmQhdEW4oNLYbeyxQspHnEdLb%0AnMTWcmArhiAN08HjHpwifHskQRJCL8Bb%2BaJBwqREhS7DbXmU5Rsk2AOLDgmz%0Ax6l7H2VNYunhVY1gxFTcjpDz5YADXOrfvQ%3D%3D%0A/c75f7fac43e83d17">Read the rest &rarr;</a></p>
+</article>
+<article class="newsletter">
+  <h3><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">Dit is de zomer van het ingewikkelde softijs</a></h3>
+  <div class="meta">Doortje Smithuijsen · 28 June</div>
+  <p class="highlight">Skins heeft zijn omzet in twee jaar verdubbeld naar 86 miljoen euro, mede dankzij tien nieuwe winkels en het beheer van luxemerken in de Bijenkorf — oprichter Hillege geeft principieel nooit korting aan influencers.</p>
+  <p>Hi allemaal, vandaag heb ik nieuws over softijs, over swingen en over de opkomst van datingapps speciaal voor in de sportschool. Seks en ijs domineren deze zomereditie van Modern Leven - en terecht. Ik ging deze week met vrienden in een boot naar Durgerdam - ik ben in principe geen boot-mens, tot het warmer wordt dan dertig graden, en dan ineens heel erg. Als je vanuit Noord naar Durgerdam vaart, moet je door de Oranjesluizen - eerst de sluis in, wachten tot die dichtgaat, het waterpijl stijgt, en de andere kant opent. Het geheel duurt een minuut of twintig, waarbij je in de wachtperiode omringd bent door alles wat door Amsterdam en omstreken vaart - jachten van mensen uit Loosdrecht, gehuurde bootjes met stonede toeristen, sloepjes met gezinnen, gammele speedbootjes met twee keer de veilige hoeveelheid aan studenten. Een groep jongens en meisjes van een jaar of twintig op een enorme sloep - waarschijnlijk van iemands vader - leende een aansteker van een stel op een catamaran die eruitzagen alsof ze in de Quote500 staan. De jonge stuurman knalde tijdens de overhandiging keihard tegen hun fenders.Op de terugweg voeren we langs de Mark in Durgerdam. Het restaurant/hotel schijnt veel kritiek te krijgen van buurtbewoners en dagjesmensen. Het is de enige horecazaak in het dorp; tot 2018 zat op dezelfde plek Zuyderziel - een buurtcafé waar je de hele dag appeltaart kon eten en ‘s avonds kip met friet. Bij De Mark kan je nu een ontbijt krijgen voor 40 euro (zuurdesembrood, huisgemaakte granola, wentelteefjes, eieren) en ‘s avonds een zes gangen chefs menu voor 105. Een suite kost 800 euro per nacht en het restaurant is kort na opening in 2023 opgenomen in de Michelingids. Vooral passerende wielrenners schijnen het er erg zwaar te hebben De Mark; en met het gebrek aan een appeltaart-en-bier-café op de Durgerdammerdijk. Als ik de eigenaar was, zou ik naast het restaurant een ijszaak openen - om toenemende vijandigheid te voorkomen.Toen wij deze week rond half zes langs voeren, vroegen we of we een cocktail mochten drinken op het terras. Het antwoord was nee - de zaak zou volzitten, ook al waren heel veel tafeltjes nog leeg. Naar de wc gaan mocht wel - wat het verhaal over volzitten eigenlijk meteen goed maakte. Iedereen weet dat varen boven alles vooral een zoektocht is naar sociaal acceptabele manieren om te kunnen plassen. De wc van De Mark was vervolgens zonder overdrijving een van de mooiste waar ik ooit ben geweest. Het licht is perfect zacht, er staat een massief marmeren wasbak met drie zilveren kranen erop.</p>
+  <p class="readmore"><a href="https://substack.com/app-link/post?publication_id=2187445&amp;post_id=203083693&amp;utm_source=post-email-title&amp;utm_campaign=email-post-title&amp;isFreemail=false&amp;r=g2t2b&amp;token=eyJ1c2VyX2lkIjoyNzAwNDgzNSwicG9zdF9pZCI6MjAzMDgzNjkzLCJpYXQiOjE3ODI2MjMxODcsImV4cCI6MTc4NTIxNTE4NywiaXNzIjoicHViLTIxODc0NDUiLCJzdWIiOiJwb3N0LXJlYWN0aW9uIn0.-FS7mmLa6YrHm25tQ7gi5jhf5hy_nDhtvTKJj2qQKWY">Read the rest &rarr;</a></p>
+</article>
+<article class="newsletter">
+  <h3><a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">This might be the new best smart speaker</a></h3>
+  <div class="meta">The Verge: Installer · 27 June</div>
+  <p class="highlight">David Pierce shares his ongoing temptation to make the iPad his main computer, inspired by Christopher Lawley's new tasks app Parchment and the tablet's focused, constraint-driven environment that helps with ADHD.</p>
+  <p>A weekly newsletter by David Pierce about the best and Verge-iest stuff you should know about. Hi, friends! Welcome to Installer No. 134, your guide to the best and Verge-iest stuff in the world. (If you’re new here, welcome, hope you’re okay in all this heat, and also you can read all the old editions at the Installer homepage.) This week, I’ve been reading about Polymarket lies and Jalen Brunson and the Arts and Crafts Movement, watching Not Suitable for Work and way too much of the World Cup, trying to catch up on The Bear before the final season starts, playing a bunch of Hank Green’s 4x3 game, trying my absolute hardest not to preorder this amazing Stanley Kubrick collection even though I’m obviously going to, buying a bunch of new AirTags and charging cables during Prime Day, poring over oral histories of data centers and Steven Spielberg, and thinking rude thoughts about whoever decided to kill Notion Mail. I also have for you a smart speaker worth a look, a great new remake of a great old game, a couple of excellent video essays, and a Netflix hit to binge on your vacation. Oh, and two more things. One, we’re off next week for the holiday weekend.</p>
+  <p class="readmore"><a href="https://link.theverge.com/click/46332868.44897/aHR0cHM6Ly93d3cudGhldmVyZ2UuY29tL2luc3RhbGxlci1uZXdzbGV0dGVyP3VlaWQ9ZmRiY2EyMTZhN2ZhZTNiNzJiYzFjM2ZiY2JhNzI5YTQ/68e2a6a1f1b1eb32ad097ce3B9b3e2017">Read the rest &rarr;</a></p>
+</article>
+<article class="newsletter">
+  <h3><a href="https://link.mail.beehiiv.com/v1/c/etBe04LY3XGV6IfaeVtbw1RCms9mvHvlAhegi69s5HOu5qZCpHAbtMPe%2FDT%2F%0AWPL2OIfwCeSrqytziTziIN6x7h%2BGf9T5vk0SdG0UX%2BLchmHNUAAhcT1Dq3Bq%0AEjDdPvThDtgz4eFI2aJS3WY%2FUKjPkVOyjbfsI3vpQcIdxbTgTTDh14AIEpO6%0APxLARjRn4eTmuMp8pqpqLnJA0dGA347PzA%3D%3D%0A/d11c7e375b160c7c">The relationships that carry us through</a></h3>
+  <div class="meta">Hank &amp; John Green · 27 June</div>
+  <p class="highlight">John Green celebrates his parents' 50th anniversary in France and reflects on the maintenance work required for lasting relationships — the unglamorous effort that, as Vonnegut noted, everyone avoids but which ultimately makes a life.</p>
+  <p>Hello! Greetings from Auxerre, France, where my family and I are celebrating my parents' fiftieth wedding anniversary. I've been thinking a lot about the relationships that carry us through—some of which are marriages, of course, but some of which are relationships with friends and family. In my own life, I've had the same best friends since 2007, the same partner since 2003, and the same brother since 1980. There's a lot of good fortune involved in that longevity, but also some work. &quot;One of the flaws in the human character is that everybody wants to build and nobody wants to do maintenance,&quot; Vonnegut famously wrote. I think that can be true not only for buildings and institutions but also for relationships. Maintaining them takes effort, sometimes unpleasant or uncomfortable effort, but I look to my parents as models for how to engage in that work with care and patience. So here's to Mike and Sydney Green, and to everyone out there who checks in on their friends or cleans up after their kids or does the other little work that in the end makes a life.</p>
+  <p class="readmore"><a href="https://link.mail.beehiiv.com/v1/c/etBe04LY3XGV6IfaeVtbw1RCms9mvHvlAhegi69s5HOu5qZCpHAbtMPe%2FDT%2F%0AWPL2OIfwCeSrqytziTziIN6x7h%2BGf9T5vk0SdG0UX%2BLchmHNUAAhcT1Dq3Bq%0AEjDdPvThDtgz4eFI2aJS3WY%2FUKjPkVOyjbfsI3vpQcIdxbTgTTDh14AIEpO6%0APxLARjRn4eTmuMp8pqpqLnJA0dGA347PzA%3D%3D%0A/d11c7e375b160c7c">Read the rest &rarr;</a></p>
 </article>
 <footer>
-  Compiled 2026-07-06 13:33 UTC.
+  Compiled 2026-07-06 17:43 UTC.
   <nav class="archive"><a href="index.html">Today</a> · <a href="2026-06-12.html">2026-06-12</a> · <a href="2026-06-08.html">2026-06-08</a></nav>
 </footer>
 </body>
