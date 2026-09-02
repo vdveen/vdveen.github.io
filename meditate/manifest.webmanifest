@@ -1,0 +1,25 @@
+{
+	"name": "Still meditation timer",
+	"short_name": "Still",
+	"description": "A quiet meditation timer with optional Apple Health queueing.",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"background_color": "#000000",
+	"theme_color": "#000000",
+	"orientation": "any",
+	"icons": [
+		{
+			"src": "icons/icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "icons/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
+}

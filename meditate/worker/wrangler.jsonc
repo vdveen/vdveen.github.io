@@ -1,0 +1,18 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "meditation-queue",
+	"main": "src/index.js",
+	"compatibility_date": "2026-09-02",
+	"workers_dev": true,
+	"vars": {
+		"ALLOWED_ORIGINS": "https://veenspace.com,https://www.veenspace.com,http://localhost:8000,http://127.0.0.1:8000,http://localhost:8444,http://127.0.0.1:8444"
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "meditation-queue",
+			"database_id": "REPLACE_WITH_D1_DATABASE_ID",
+			"migrations_dir": "migrations"
+		}
+	]
+}
