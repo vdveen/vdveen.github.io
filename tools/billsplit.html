@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2F5D50">
+    <title>Income Split Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --a: #2F5D50;
+            --b: #D08C3E;
+            --dark: #1a1a1a;
+            --grey: #777;
+            --line: #e2e0d8;
+            --bg: #f5f5f0;
+            --card: #ffffff;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--grey);
+            margin-bottom: 1.75rem;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--grey);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .field label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex: 0 0 auto;
+        }
+
+        .dot.a { background: var(--a); }
+        .dot.b { background: var(--b); }
+
+        .name-input {
+            border: none;
+            font: inherit;
+            font-weight: 600;
+            width: 100%;
+            background: transparent;
+            color: var(--dark);
+            padding: 0;
+        }
+
+        .name-input:focus {
+            outline: none;
+            text-decoration: underline;
+        }
+
+        .money {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 0 0.75rem;
+            background: var(--bg);
+        }
+
+        .money:focus-within {
+            border-color: var(--dark);
+        }
+
+        .money span {
+            color: var(--grey);
+            font-size: 1.1rem;
+        }
+
+        .money input {
+            border: none;
+            background: transparent;
+            font: inherit;
+            font-size: 1.2rem;
+            padding: 0.6rem 0.4rem;
+            width: 100%;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .money input:focus {
+            outline: none;
+        }
+
+        .bar {
+            display: flex;
+            height: 14px;
+            border-radius: 7px;
+            overflow: hidden;
+            background: var(--line);
+            margin-bottom: 1rem;
+        }
+
+        .bar div {
+            transition: width 0.25s ease;
+        }
+
+        .bar .a { background: var(--a); }
+        .bar .b { background: var(--b); }
+
+        .rows {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .row .who {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .row .big {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .row.total {
+            border-top: 1px solid var(--line);
+            padding-top: 0.5rem;
+            color: var(--grey);
+            font-size: 0.9rem;
+        }
+
+        .bill-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bill-head h2 {
+            margin-bottom: 0;
+        }
+
+        .bill-head .money {
+            width: 9rem;
+        }
+
+        .bill-head .money input {
+            font-size: 1rem;
+            padding: 0.4rem;
+        }
+
+        .calc {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--line);
+            font-family: 'SF Mono', Menlo, Consolas, monospace;
+            font-size: 0.8rem;
+            line-height: 1.7;
+            color: #444;
+            overflow-x: auto;
+        }
+
+        .calc .step {
+            color: var(--grey);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 0.6rem;
+        }
+
+        .calc .step:first-child {
+            margin-top: 0;
+        }
+
+        .empty {
+            color: var(--grey);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 420px) {
+            .inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>Income Split</h1>
+        <p class="subtitle">Share household costs in proportion to income.</p>
+
+        <div class="card">
+            <h2>Wages</h2>
+            <div class="inputs">
+                <div class="field">
+                    <label><span class="dot a"></span><input class="name-input" id="nameA" value="Person A" aria-label="Name of person A"></label>
+                    <div class="money"><span>€</span><input id="wageA" type="number" inputmode="decimal" min="0" step="any" value="1000" aria-label="Wage of person A"></div>
+                </div>
+                <div class="field">
+                    <label><span class="dot b"></span><input class="name-input" id="nameB" value="Person B" aria-label="Name of person B"></label>
+                    <div class="money"><span>€</span><input id="wageB" type="number" inputmode="decimal" min="0" step="any" value="2000" aria-label="Wage of person B"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Share of household income</h2>
+            <div id="incomeOut"></div>
+        </div>
+
+        <div class="card">
+            <div class="bill-head">
+                <h2>Splitting a bill</h2>
+                <div class="money"><span>€</span><input id="bill" type="number" inputmode="decimal" min="0" step="any" value="100" aria-label="Bill amount"></div>
+            </div>
+            <div id="billOut"></div>
+        </div>
+    </div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+        const eur = n => '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const pct = n => (n * 100).toLocaleString('nl-NL', { maximumFractionDigits: 2 }) + '%';
+        const num = el => Math.max(0, parseFloat(el.value) || 0);
+        const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+        function bar(shareA) {
+            return `<div class="bar"><div class="a" style="width:${shareA * 100}%"></div><div class="b" style="width:${(1 - shareA) * 100}%"></div></div>`;
+        }
+
+        function row(cls, name, main, side) {
+            return `<div class="row"><div class="who"><span class="dot ${cls}"></span>${name}</div><div><span class="big">${main}</span>${side ? ' <span style="color:var(--grey)">' + side + '</span>' : ''}</div></div>`;
+        }
+
+        // Splits the bill in cents so the two parts always add up to the total
+        function splitCents(bill, shareA) {
+            const cents = Math.round(bill * 100);
+            const a = Math.round(cents * shareA);
+            return [a / 100, (cents - a) / 100];
+        }
+
+        function render() {
+            const nameA = esc($('nameA').value.trim() || 'Person A');
+            const nameB = esc($('nameB').value.trim() || 'Person B');
+            const wageA = num($('wageA'));
+            const wageB = num($('wageB'));
+            const bill = num($('bill'));
+            const total = wageA + wageB;
+
+            if (total === 0) {
+                $('incomeOut').innerHTML = '<p class="empty">Enter at least one wage above zero.</p>';
+                $('billOut').innerHTML = '<p class="empty">Waiting for wages.</p>';
+                return;
+            }
+
+            const shareA = wageA / total;
+            const shareB = wageB / total;
+            const [payA, payB] = splitCents(bill, shareA);
+
+            $('incomeOut').innerHTML =
+                bar(shareA) +
+                '<div class="rows">' +
+                row('a', nameA, pct(shareA), eur(wageA)) +
+                row('b', nameB, pct(shareB), eur(wageB)) +
+                `<div class="row total"><span>Household income</span><span>${eur(total)}</span></div>` +
+                '</div>';
+
+            $('billOut').innerHTML =
+                bar(shareA) +
+                '<div class="rows">' +
+                row('a', nameA, eur(payA)) +
+                row('b', nameB, eur(payB)) +
+                '</div>' +
+                '<div class="calc">' +
+                '<div class="step">1. Household income</div>' +
+                `${eur(wageA)} + ${eur(wageB)} = ${eur(total)}` +
+                '<div class="step">2. Each share</div>' +
+                `${nameA}: ${eur(wageA)} ÷ ${eur(total)} = ${pct(shareA)}<br>` +
+                `${nameB}: ${eur(wageB)} ÷ ${eur(total)} = ${pct(shareB)}` +
+                '<div class="step">3. Share of the bill</div>' +
+                `${nameA}: ${eur(bill)} × ${pct(shareA)} = ${eur(payA)}<br>` +
+                `${nameB}: ${eur(bill)} × ${pct(shareB)} = ${eur(payB)}` +
+                '<div class="step">Check</div>' +
+                `${eur(payA)} + ${eur(payB)} = ${eur(payA + payB)}` +
+                '</div>';
+        }
+
+        ['nameA', 'nameB', 'wageA', 'wageB', 'bill'].forEach(id => $(id).addEventListener('input', render));
+        render();
+    </script>
+</body>
+</html>
