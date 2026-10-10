@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f1e7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Cello notes</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Cello notes</h1>
+    <label class="stage">
+      <span>I can play</span>
+      <select id="stage"></select>
+    </label>
+  </header>
+
+  <main>
+    <!-- Read: flash cards -->
+    <section id="read" class="view">
+      <div class="card">
+        <div class="cardtop">
+          <span id="count"></span>
+          <div class="seg" id="mode">
+            <button data-mode="where">String + finger</button>
+            <button data-mode="name">Name</button>
+          </div>
+        </div>
+        <div id="cardstaff" class="staffbox"></div>
+        <p id="prompt" class="prompt"></p>
+        <div id="reveal" class="reveal" hidden></div>
+        <div id="answer"></div>
+        <div id="cardbuttons" class="row" hidden>
+          <button id="again">Hear it</button>
+          <button id="next" class="primary">Next</button>
+        </div>
+      </div>
+      <div id="summary" class="card" hidden></div>
+      <details class="card progress">
+        <summary>Progress</summary>
+        <div id="grid"></div>
+        <p class="small">Each square is one note. It turns green as you answer it right
+          within three seconds. Slow or wrong notes come back more often.</p>
+        <label class="check"><input type="checkbox" id="showNames"> Show note names on the fingerboard</label>
+        <label class="check"><input type="checkbox" id="sound"> Play the note after each answer</label>
+        <button id="resetProgress" class="link">Reset progress</button>
+      </details>
+    </section>
+
+    <!-- Play: read a line and play it on the cello -->
+    <section id="play" class="view" hidden>
+      <div class="card">
+        <div id="linestaff" class="staffbox wide"></div>
+        <p id="playmsg" class="prompt">Play the line on your cello. Take your time:
+          it waits for each note.</p>
+        <div class="meter"><div id="level"></div></div>
+        <div class="row">
+          <button id="mic" class="primary">Start listening</button>
+          <button id="newline">New line</button>
+          <button id="hear">Hear it</button>
+        </div>
+        <label class="check"><input type="checkbox" id="hints"> Show string and finger under the notes</label>
+      </div>
+      <div id="playsummary" class="card" hidden></div>
+      <p class="small pad">Allow the microphone when the browser asks. Play in a quiet room, with the phone
+        on your music stand. If the app keeps hearing the wrong note, move the phone a bit closer.</p>
+    </section>
+
+    <!-- Tune: tuner and drones -->
+    <section id="tune" class="view" hidden>
+      <div class="card">
+        <div class="tuner">
+          <div id="tnote" class="tnote">–</div>
+          <div id="twhere" class="twhere">Start the tuner and play a note</div>
+          <div class="needle"><div class="scale"></div><div id="tneedle" class="pointer"></div></div>
+          <div class="ticks"><span>flat</span><span>in tune</span><span>sharp</span></div>
+        </div>
+        <div id="tunestaff" class="staffbox small-staff"></div>
+        <div class="row"><button id="tmic" class="primary">Start tuner</button></div>
+      </div>
+      <div class="card">
+        <h2>Drone</h2>
+        <p class="small">A drone is a long held note. Play your notes against it and listen:
+          when you are in tune, the sound gets calm and the wobble stops. Use headphones
+          if you want the tuner on at the same time.</p>
+        <div class="row" id="drones"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav>
+    <button data-view="read" class="active">Read</button>
+    <button data-view="play">Play</button>
+    <button data-view="tune">Tune</button>
+  </nav>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
